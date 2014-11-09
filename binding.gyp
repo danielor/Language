@@ -1,0 +1,11 @@
+{
+	"targets":[
+		"target_name":"Language",
+		"sources":[
+			"lib/bindings/javascript/Language.cc"
+		]
+	],
+	"include_dirs:[
+		'lib'
+	]
+}
