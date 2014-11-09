@@ -14,6 +14,13 @@
 
 #include <string.h>
 
+#ifndef STRINGUTILS_H
+#define STRINGUTILS_H
+
+#ifdef __cplusplus
+extern "C"{
+#endif
+
 /**
  * An enum that encapsulates the different encodings
  * supported by this function.
@@ -42,13 +49,13 @@ enum{
  */
 int getUTF8State(const char controlChar){
 	// Check the control character is
-	if(controlChar < 128){
+	if(!(controlChar & ((0x01) << 7))){
 		return UTF8_BINARY_7BIT_STATE;
-	}else if(controlChar & ((0x06) << 5)){
+	}else if(controlChar & ((0x03) << 6) && !(controlChar & ((0x01) << 5))){
 		return UTF8_BINARY_11BIT_STATE;
-	}else if(controlChar & ((0x0d) << 4)){
+	}else if(controlChar & ((0x07) << 5) && !(controlChar & ((0x01) << 4))){
 		return UTF8_BINARY_16BIT_STATE;
-	}else if(controlChar & ((0x1d) << 3)){
+	}else if(controlChar & ((0x0f) << 4) && !(controlChar & ((0x01) << 3))){
 		return UTF8_BINARY_21BIT_STATE;
 	}else{
 		return UTF8_BINARY_ERROR_STATE;
@@ -92,7 +99,7 @@ int _lenUTF8Binary(const char * buffer){
 			if(firstBit == '\0'){
 				return UTF8_BINARY_ERROR_STATE;
 			}
-			effectiveUTFValue = (c & 0x1f) << 8 + (firstBit & 0x3f);
+			effectiveUTFValue = ((c & 0x1f) << 8) + (firstBit & 0x3f);
 			if(effectiveUTFValue < 0x0300 || effectiveUTFValue > 0x036f){
 				stringLength++;
 			}
@@ -114,7 +121,7 @@ int _lenUTF8Binary(const char * buffer){
 			}
 
 			// Get the effective utf8 value to check
-			effectiveUTFValue = (c & 0xf) << 16 + (secondBit & 0x3f) << 8 + (firstBit & 0x3f);
+			effectiveUTFValue = ((c & 0xf) << 16) + ((secondBit & 0x3f) << 8) + (firstBit & 0x3f);
 
 			// Preincrement and decrement if it is a diacritical mark
 			stringLength++;
@@ -155,7 +162,8 @@ int _lenUTF8Binary(const char * buffer){
  * @param buffer: The buffer that contains the string
  * @param encoding: The encoding used to find the byte length
  */
-int len(const char * buffer, int encoding = UTF8_BINARY){
+int len(const char * buffer, int encoding){
+
 	// Handle an incorrectly structured buffer
 	if(buffer == NULL){
 		return 0;
@@ -172,3 +180,9 @@ int len(const char * buffer, int encoding = UTF8_BINARY){
 		return -1;
 	}
 }
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif
