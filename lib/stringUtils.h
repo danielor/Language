@@ -29,7 +29,7 @@ enum{
 	UTF8_BINARY = 0,	// This version of the utf8 analyzes the bits of the characters
 						// to guess the information associated with the string.
 	ASCII = 1,
-	LATIN_8859 = 2
+	ISO_8859_1 = 2
 };
 
 enum{
@@ -82,7 +82,6 @@ int _lenUTF8Binary(const char * buffer){
 		if(utf8ParseState == UTF8_BINARY_START_PARSE_STATE){
 			utf8ParseState = getUTF8State(c);
 		}
-
 		// Switch between all of the different binary states for the UTF8
 		// standard
 		if(utf8ParseState == UTF8_BINARY_7BIT_STATE){
@@ -99,12 +98,11 @@ int _lenUTF8Binary(const char * buffer){
 			if(firstBit == '\0'){
 				return UTF8_BINARY_ERROR_STATE;
 			}
-			effectiveUTFValue = ((c & 0x1f) << 8) + (firstBit & 0x3f);
+			effectiveUTFValue = ((c & 0x1f) << 6) + (firstBit & 0x3f);
 			if(effectiveUTFValue < 0x0300 || effectiveUTFValue > 0x036f){
 				stringLength++;
 			}
 			utf8ParseState = UTF8_BINARY_START_PARSE_STATE;
-			continue;
 		}else if(utf8ParseState == UTF8_BINARY_16BIT_STATE){
 			// This portion of UTF8 encodes the code points between 0x0800 and 0xffff
 			// This portion of the UTF8 contains the combining diacritical marks specified
@@ -121,7 +119,7 @@ int _lenUTF8Binary(const char * buffer){
 			}
 
 			// Get the effective utf8 value to check
-			effectiveUTFValue = ((c & 0xf) << 16) + ((secondBit & 0x3f) << 8) + (firstBit & 0x3f);
+			effectiveUTFValue = ((c & 0xf) << 10) + ((secondBit & 0x3f) << 6) + (firstBit & 0x3f);
 
 			// Preincrement and decrement if it is a diacritical mark
 			stringLength++;
@@ -135,7 +133,6 @@ int _lenUTF8Binary(const char * buffer){
 
 
 			utf8ParseState = UTF8_BINARY_START_PARSE_STATE;
-			continue;
 
 		}else if(utf8ParseState == UTF8_BINARY_21BIT_STATE){
 			for(int l=0; l < 3; l++){
@@ -145,9 +142,9 @@ int _lenUTF8Binary(const char * buffer){
 				}
 			}
 			utf8ParseState = UTF8_BINARY_START_PARSE_STATE;
-			continue;
+		}else if(utf8ParseState == UTF8_BINARY_ERROR_STATE){
+			return -1;
 		}
-
 		// Iterate the character pointer
 		characterPointer++;
 	}
@@ -172,7 +169,7 @@ int len(const char * buffer, int encoding){
 	// Deal with the simple ASCII/LATIN cases
 	if(encoding == ASCII){
 		return strlen(buffer);
-	}else if(encoding == LATIN_8859){
+	}else if(encoding == ISO_8859_1){
 		return strlen(buffer);
 	}else if(encoding == UTF8_BINARY){
 		return _lenUTF8Binary(buffer);

@@ -78,6 +78,52 @@ int testGetUTF8State(){
 	return -1;
 }
 
+// Test the string length in different encodings
+int testStringLength(){
+	// Test a few ascii strings
+	char ascii[10] = "Wedding";
+	char ascii2[10] = "1234 3533";
+	int asciiLen = len(ascii, ASCII);
+	int asciiLen2 = len(ascii2, ASCII);
+	if(asciiLen != 7){
+		return 0;
+	}
+	if(asciiLen2 != 9){
+		return 0;
+	}
+
+	// Test a few iso 8859-1 strings
+	// iso8859 = "As you were"
+	// iso88502 = "Como estas?"
+	char iso8859[12] = {0x41, 0x73, 0xa0, 0x79, 0x6f, 0x75, 0xa0,0x77,0x65,0x72,0x65};
+	char iso88592[12] = {0xbf,0xd3,0x6d,0x6f,0xa0,0x65,0x73,0x74,0xe1,0x73,0x3f};
+	int iso8859Len = len(iso8859, ISO_8859_1);
+	int iso88592Len = len(iso88592, ISO_8859_1);
+	if(iso8859Len != 11){
+		return 0;
+	}
+	if(iso88592Len != 11){
+		return 0;
+	}
+
+	// Test a few ut8 strings
+	char utf8[12] = "Wedding";			// This should undertand the ascii encoding
+	char utf82[20] = {0xc2,0xbf,0x43,0xc3,0xb2,0x6d,0x6f,0x20,0x65,0x74,0xc3,0xa1,0x73,0x3f};
+	int utf8len = len(utf8, UTF8_BINARY);
+	int utf82len = len(utf82, UTF8_BINARY);
+	printf("%d\n", utf8len);
+	printf("%d\n", utf82len);
+	if(utf8len != 7){
+		return 0;
+	}
+	if(utf82len != 11){
+		return 0;
+	}
+
+	// Passed all of the string length tests
+	return -1;
+}
+
 // A function that tests the main points of functionality associated with the
 int testStringUtils(){
 
@@ -86,6 +132,13 @@ int testStringUtils(){
 		printf("*SUCCESS - UTF8State test passed\n");
 	}else{
 		printf("*FAILURE - UTF8State test failed\n");
+	}
+
+	// Test the string length
+	if(testStringLength() == -1){
+		printf("*SUCCESS - String Length test passed\n");
+	}else{
+		printf("*FAILURE - String length test failed\n");
 	}
 
 	return 0;
