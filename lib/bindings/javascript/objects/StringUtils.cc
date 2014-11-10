@@ -11,9 +11,10 @@
 //WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //See the License for the specific language governing permissions and
 //limitations under the License.
-
+#define BUILDING_NODE_EXTENSION 1
 #include <node.h>
 #include "StringUtils.h"
+#include "../../../stringUtils.h"
 
 // Setup the string utils v8 constructor
 v8::Persistent<v8::Function> StringUtils::constructor;
@@ -30,7 +31,7 @@ StringUtils::~StringUtils(){
 // Intialize the StringUtils class object
 void StringUtils::Init(v8::Handle<v8::Object> exports){
 	// Prepare the constructor template
-	v8::Local<v8::FunctionTemplate> tpl = FunctionTemplate::New(New);
+	v8::Local<v8::FunctionTemplate> tpl = v8::FunctionTemplate::New(New);
 	tpl->SetClassName(v8::String::NewSymbol("StringUtils"));
 	tpl->InstanceTemplate()->SetInternalFieldCount(1);
 
@@ -38,12 +39,12 @@ void StringUtils::Init(v8::Handle<v8::Object> exports){
 	tpl->PrototypeTemplate()->Set(v8::String::NewSymbol("length"),
 			v8::FunctionTemplate::New(length)->GetFunction());
 	constructor = v8::Persistent<v8::Function>::New(tpl->GetFunction());
-	exports->Set(String::NewSymbol("StringUtils"), constructor);
+	exports->Set(v8::String::NewSymbol("StringUtils"), constructor);
 }
 
 
 // Setup the handle for the new operator
-void v8::Handle<v8::Value> StringUtils::New(const v8::Arguments & args){
+v8::Handle<v8::Value> StringUtils::New(const v8::Arguments & args){
 	v8::HandleScope scope;
 
 	// Split the argument constructor call by the two different modes
@@ -59,7 +60,7 @@ void v8::Handle<v8::Value> StringUtils::New(const v8::Arguments & args){
 }
 
 // Find the length of the string
-void v8::Handle<Value> length(const v8::Arguments & args){
+v8::Handle<v8::Value> StringUtils::length(const v8::Arguments & args){
 	v8::HandleScope scope;
 
 
@@ -69,11 +70,11 @@ void v8::Handle<Value> length(const v8::Arguments & args){
 	bool isValid = false;
 
 	// Get the variables from the arguments
-	if(args[0]->isString()){
-		buffer = v8::String::UTF8Value(args[0]);
+	if(args[0]->IsString()){
+		buffer = *v8::String::Utf8Value(args[0]);
 		isValid = true;
 	}
-	if(args[1]->isNumber()){
+	if(args[1]->IsNumber()){
 		encoding = args[1]->Uint32Value();
 	}
 

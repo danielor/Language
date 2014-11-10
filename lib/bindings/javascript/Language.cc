@@ -13,9 +13,10 @@
 //limitations under the License.
 
 // Define a Node extension
-#define BUILDING_NODE_EXTENSION
+#define BUILDING_NODE_EXTENSION 1
 #include <node.h>
-#include "StringUtils.h"
+#include "objects/StringUtils.h"
+
 
 // Setup the initialization of the node.js bindings.
 void InitAll(v8::Handle<v8::Object> exports){
