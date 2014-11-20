@@ -8,7 +8,7 @@
 		"url":"https://github.com/danielor/Language.git"
 	},
 	"homepage":"http://github.com/arturadib/node-qt",
-	"main":"lib/bindings/Language.js",
+	"main":"./lib/bindings/Language.js",
 	"keywords":[
 		"utility"
 	],
