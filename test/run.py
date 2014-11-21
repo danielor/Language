@@ -25,20 +25,39 @@ def runTests(compile):
     @param compile: A compile flag that is true when 
     """
     # Get a list of tests to run from the file directory
-    listOfTests = []
+    listOfJavascriptTests = []
+    listOfCTests = []
     for root, dirs, list_of_files in os.walk(os.getcwd()):
         for f in list_of_files:
-            if ".c" in f:
+            fileName, fileExt = os.path.splitext(f)
+            if fileExt == "c":
                 
                 # Save the actual file name and the executable associated with the filename
-                listOfTests.append((root + "/" + f, f.replace('Test.c', '')))
+                listOfCTests.append((root + "/" + f, f.replace('Test.c', '')))
+            elif fileExt == "js":
+                listOfJavascriptTests.append(root + "/" + f)
+    listOfCompiledExecutables =[]
     if compile:
         
         # Iterate over the tests and create a gcc executable for each test
-        for testFile, executable in listOfTests:
+        for testFile, executable in listOfCTests:
             cmd = ['gcc','-I../lib', '-o', executable, testFile]
             p = subprocess.Popen(cmd)
             p.wait()
+    else:
+        listOfCompiledExecutables.extend([executable for _, executable in listOfCTests])
+    
+    # Run the compiled executables
+    for c in listOfCompiledExecutables:
+        cmd = ["./" + c]
+        p = subprocess.Popen(cmd)
+        p.wait()
+        
+    # Run the javascript tests
+    for f in listOfJavascriptTests:
+        cmd = ["mocha %s" % f]
+        p = subprocess.Popen(cmd)
+        p.wait()
     
 if __name__ == '__main__':
     parser = argparse.ArgumentParser("Language TestingFramework")
