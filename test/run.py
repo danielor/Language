@@ -30,11 +30,12 @@ def runTests(compile):
     for root, dirs, list_of_files in os.walk(os.getcwd()):
         for f in list_of_files:
             fileName, fileExt = os.path.splitext(f)
-            if fileExt == "c":
+            print fileExt
+            if fileExt == ".c":
                 
                 # Save the actual file name and the executable associated with the filename
                 listOfCTests.append((root + "/" + f, f.replace('Test.c', '')))
-            elif fileExt == "js":
+            elif fileExt == ".js":
                 listOfJavascriptTests.append(root + "/" + f)
     listOfCompiledExecutables =[]
     if compile:
@@ -42,11 +43,12 @@ def runTests(compile):
         # Iterate over the tests and create a gcc executable for each test
         for testFile, executable in listOfCTests:
             cmd = ['gcc','-I../lib', '-o', executable, testFile]
-            p = subprocess.Popen(cmd)
+            p = subprocess.Popen(cmd,stdout=subprocess.PIPE)
             p.wait()
-    else:
-        listOfCompiledExecutables.extend([executable for _, executable in listOfCTests])
-    
+
+    # Setup the list of compiled executables    
+    listOfCompiledExecutables.extend([executable for _, executable in listOfCTests])
+
     # Run the compiled executables
     for c in listOfCompiledExecutables:
         cmd = ["./" + c]
@@ -55,6 +57,7 @@ def runTests(compile):
         
     # Run the javascript tests
     for f in listOfJavascriptTests:
+        print f
         cmd = ["mocha %s" % f]
         p = subprocess.Popen(cmd)
         p.wait()

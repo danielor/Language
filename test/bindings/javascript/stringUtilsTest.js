@@ -16,7 +16,10 @@ var JavascriptUtilsTest = (function(){
 	 * @memberof JavascriptUtilsTest
 	 */
 	function testStringLength(){
-		
+		var StringUtils = LanguageModule.StringUtils;
+		var stringUtils = new StringUtils();
+		var length = stringUtils.length("hiccup", 0);
+		expect(length).to.eql(6);
 	}
 	
 	/**

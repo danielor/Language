@@ -1,4 +1,4 @@
-var bindings = require('bindings')('Language')
+var bindings = require('./build/Release/Language.node');
 
 // Export the high level objects associated with
 // the Language package
