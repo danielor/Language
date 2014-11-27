@@ -135,7 +135,8 @@ int _lenUTF8Binary(const char * buffer){
 			utf8ParseState = UTF8_BINARY_START_PARSE_STATE;
 
 		}else if(utf8ParseState == UTF8_BINARY_21BIT_STATE){
-			for(int l=0; l < 3; l++){
+			int l;
+			for(l=0; l < 3; l++){
 				characterPointer++;
 				if(*characterPointer == '\0'){
 					return UTF8_BINARY_ERROR_STATE;
