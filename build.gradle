@@ -13,8 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 */
-apply plugin:java
-apply plugin:c
+apply plugin: 'java'
 
 /**
 Setup the build release
@@ -42,30 +41,13 @@ ext{
 Setup the source sets for the java file
 */
 sourceSets{
-	main{
+	test{
 		java{
-			srcDir "lib/bindings/java"
-			test "test/bindings/java"
+			srcDir "test/bindings/java"
 		}
 	}
 }
 
-/**
-The c sources and dependencies
-*/
-sources{
-	main{
-		c{
-			source{
-				srcDir "lib/bindings/java"
-				include "lib/*.h"
-			}
-			exportedHeaders{
-				srcDir "lib/*.h"
-			}
-		}
-	}
-}
 
 /**
 Setup the external dependencies for the Language repository
@@ -79,4 +61,37 @@ The dependencies for the test compilation
 */
 dependencies{
 	testCompile group:'junit', name:'junit', version: '4.+'
+	testCompile files("./lib/bindings/java")
 }
+
+ 
+task testCompile(type: Test, dependsOn: [testClasses]) {
+	println "Building and testing Language Java bindings.."
+	println System.properties['java.library.path']
+}
+
+
+
+/**
+Setup tasks of type Test
+*/
+tasks.withType(Test){
+	testLogging{
+		showStandardStreams = true
+		events 'started','passed', 'standard_out', 'standard_error'
+	}
+	systemProperty "java.library.path", file("./lib/bindings/java/")
+}
+
+/**
+Setup tasks of type JavaCompile
+*/
+tasks.withType(JavaCompile){
+	def warnLogFile = file("$buildDir/${name}Warnings.log")
+	logging.addStandardErrorListener(new StandardOutputListener(){
+		void onOutput(CharSequence output){
+			warnLogFile << output
+		}
+	})
+}
+

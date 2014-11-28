@@ -1,9 +1,7 @@
-package Language;
-
+package com.Language;
 /**
- * 
+ * The Language string utils interface
  * @author danielortiz
- *
  */
 public class LanguageStringUtils{
 	static{
@@ -15,5 +13,9 @@ public class LanguageStringUtils{
 	 * @param str A java string to get the length
 	 * @param enconding The encoding of the java string
 	 */
-	public native length(String str, int encoding);
+	public native int length(String str, int encoding);
+	
+	public static void main(String[] args) {
+		new LanguageStringUtils().length("Hello", 0);  // invoke the native method
+	}
 };

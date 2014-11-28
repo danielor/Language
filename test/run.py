@@ -44,6 +44,7 @@ def runTests(compile):
     listOfJavascriptTests = []
     listOfCTests = []
     listOfPythonTests = []
+
     for root, dirs, list_of_files in os.walk(os.getcwd()):
         for f in list_of_files:
             fileName, fileExt = os.path.splitext(f)
@@ -67,16 +68,19 @@ def runTests(compile):
         # Setup the python bindings
         listOfCommands = [['python ../setup.py build'], ['python ../setup.py install']]
         runListOfCommands(listOfCommands)
+        
 
     # Setup the list of compiled executables    
     listOfCompiledTests = [["./" + executable] for _, executable in listOfCTests]
     listOfJTests = [["mocha", f] for f in listOfJavascriptTests]
     listOfPTests = [["python",f] for f in listOfPythonTests]
+    gradleTest = [["gradle", "-p", "..", "testCompile"]]
    
     # Run the compiled executables
     runListOfCommands(listOfCompiledTests,withOutput=True, commandType='C Tests')
     runListOfCommands(listOfJTests,withOutput=True, commandType='Javascript Binding Tests')
     runListOfCommands(listOfPTests,withOutput=True, commandType='Python Binding Tests')
+    runListOfCommands(gradleTest, withOutput=True, commandType='Java Bindings Tests')
     
 if __name__ == '__main__':
     parser = argparse.ArgumentParser("Language TestingFramework")

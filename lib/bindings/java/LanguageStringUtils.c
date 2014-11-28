@@ -1,10 +1,11 @@
 #include <jni.h>
+#include "stringUtils.h"
 
 /*
  * Get the length of the string
  */
-JNIEXPORT jsint JNICALL Java_Language__LanguageStringUtils_length(JNIEnv * env, jobject thisObj, jstring str, jint encoding){
-	const char * buffer = (*env)->GetStringUTFChars(env, inJNIStr, NULL);
+JNIEXPORT jint JNICALL Java_com_Language_LanguageStringUtils_length(JNIEnv * env, jobject thisObj, jstring str, jint encoding){
+	const char * buffer = (*env)->GetStringUTFChars(env, str, NULL);
 	if(buffer == NULL){
 		return -1;
 	}
