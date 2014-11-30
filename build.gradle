@@ -80,7 +80,7 @@ tasks.withType(Test){
 		showStandardStreams = true
 		events 'started','passed', 'standard_out', 'standard_error'
 	}
-	systemProperty "java.library.path", file("./lib/bindings/java/")
+	systemProperty "java.library.path", file("./lib/bindings/java/com/Language")
 }
 
 /**

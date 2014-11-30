@@ -1,6 +1,6 @@
 package test.bindings.java;
 
-import Language.LanguageStringUtils.
+import com.Language.LanguageStringUtils;
 import static org.junit.Assert.assertEquals;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
