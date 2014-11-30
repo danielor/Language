@@ -16,9 +16,25 @@ Setup the files associated with the Lanaguage python package
 @author: Daniel Ortiz
 @version: 0.01
 """
+import subprocess, os
 from setuptools import setup, find_packages, Extension
 from codecs import open
 from os import path
+
+def setupJavaPackage():
+    """
+    Setup the java package for gradle
+    """
+    listOfMakefileDirs = []
+    for root, dirs, list_of_files in os.walk(os.getcwd()):
+        for f in list_of_files:
+            if 'Makefile' == f:
+                listOfMakefileDirs.append(root)
+                
+    for dir in listOfMakefileDirs:
+        cmd = ['make', 'c', dir]
+        p = subprocess.Popen(cmd,stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        p.wait()
 
 def setupPythonLanguagePackage():
     """
@@ -60,3 +76,4 @@ def setupPythonLanguagePackage():
     )
 if __name__ == '__main__':
     setupPythonLanguagePackage()
+    setupJavaPackage()

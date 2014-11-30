@@ -1,0 +1,97 @@
+/*
+# Copyright 2014 by Daniel Ortiz
+# 
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# 
+#     http://www.apache.org/licenses/LICENSE-2.0
+# 
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+*/
+apply plugin: 'java'
+
+/**
+Setup the build release
+*/
+model{
+	buildTypes{
+		release
+	}
+}
+
+/**
+Setup the java home environmental variable
+*/
+ext{
+	javaHome = System.getenv('JAVA_HOME')
+	javaHomeInclude = javaHome + "/include"
+	if(System.properties['os.name'].toLowerCase().contains('linux')){
+		javaHomeIncludeOs = javaHomeInclude + "/linux"
+	}else{
+		javaHomeIncludeOs = javaHomeInclude + "/win32"
+	}
+}
+
+/**
+Setup the source sets for the java file
+*/
+sourceSets{
+	test{
+		java{
+			srcDir "test/bindings/java"
+		}
+	}
+}
+
+
+/**
+Setup the external dependencies for the Language repository
+*/
+repositories{
+	mavenCentral()
+}
+
+/**
+The dependencies for the test compilation
+*/
+dependencies{
+	testCompile group:'junit', name:'junit', version: '4.+'
+	testCompile files("./lib/bindings/java")
+}
+
+ 
+task testCompile(type: Test, dependsOn: [testClasses]) {
+	println "Building and testing Language Java bindings.."
+	println System.properties['java.library.path']
+}
+
+
+
+/**
+Setup tasks of type Test
+*/
+tasks.withType(Test){
+	testLogging{
+		showStandardStreams = true
+		events 'started','passed', 'standard_out', 'standard_error'
+	}
+	systemProperty "java.library.path", file("./lib/bindings/java/com/Language")
+}
+
+/**
+Setup tasks of type JavaCompile
+*/
+tasks.withType(JavaCompile){
+	def warnLogFile = file("$buildDir/${name}Warnings.log")
+	logging.addStandardErrorListener(new StandardOutputListener(){
+		void onOutput(CharSequence output){
+			warnLogFile << output
+		}
+	})
+}
+
