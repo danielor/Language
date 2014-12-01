@@ -23,23 +23,39 @@ extern "C"{
 
 /**
  * An enum that encapsulates the different encodings
- * supported by this function.
+ * supported by the different functionality used by
+ * Language
  */
-enum{
+typedef enum {
 	UTF8_BINARY = 0,	// This version of the utf8 analyzes the bits of the characters
 						// to guess the information associated with the string.
 	ASCII = 1,
-	ISO_8859_1 = 2
-};
+	ISO_8859_1 = 2,
+} baseEncodings;
 
-enum{
+/**
+ * An enum that encapsulates the different escape encodings
+ * supported by different functionality in Language
+ */
+typedef enum {
+	ASCII_HEX_ESCAPE = 0,
+	ASCII_DECIMAL_ESCAPE = 1
+} escapedEncodings;
+
+/**
+ * An enum that encpasulates the different parsing states
+ * needed by the utf8 binary parsing
+ */
+typedef enum{
 	UTF8_BINARY_ERROR_STATE = -1,		// The error state associated with the parsing
 	UTF8_BINARY_START_PARSE_STATE = 0,	// The starting state of the utf8 parser
 	UTF8_BINARY_7BIT_STATE = 1,			// The 7 bit encoding for utf8 binary
 	UTF8_BINARY_11BIT_STATE = 2,		// The 11 bit encoding for utf8 binary
 	UTF8_BINARY_16BIT_STATE = 3,		// The 16 bit encoding for utf8 binary
 	UTF8_BINARY_21BIT_STATE = 4,		// The 21 bit encoding for utf8 binary
-};
+} utf8BinaryParserStates;
+
+
 
 /**
  * A function that returns the utf8 state associated with a control
@@ -151,6 +167,46 @@ int _lenUTF8Binary(const char * buffer){
 	}
 
 	return stringLength;
+}
+
+/**
+ * Return the UTF8 binary string length. The format of these escaped sequences are
+ * the following. At the moment, only ASCII escaping and certain ascii escape signatures
+ * are allowed
+ * {char in base encoding}{char * controlString in base encoding}[sequence length in sequencEncoding]{endString in base encoding}
+ * e.g Happy \u0069 Mildew
+ * 	buffer="Happy \u0069 Mildew\0"
+ *	baseEncoding=ASCII{utf8BinaryParserStates}
+ *	controlString= "\u\0"
+ *	sequenceEncoding=ASCII_HEX_ESCAPE
+ *	endString=NULL
+ * @param buffer The buffer that contains the string
+ * @param baseEncoding The base encoding of the string{
+ * @param controlString The control string in the base encoding
+ * @param sequenceEncoding The encoding of the sequence
+ * @param endString The end string of the sequence
+ */
+int lenEscaped(const char * buffer, int baseEncoding, const char * controlString,
+		int sequenceEncoding, const char * endString){
+	// Handle the incorrectly structured buffer
+	if(buffer == NULL){
+		return 0;
+	}
+
+	// Check that the base encoding is correct
+	if(baseEncoding != ASCII){
+		return -1;
+	}
+
+	// Check that the sequence encoding is correct
+	if(sequenceEncoding != ASCII_HEX_ESCAPE && != ASCII_DECIMAL_ESCAPE){
+		return -1;
+	}
+
+	const char * characterPointer = buffer;				// A pointer to the correct position in the buffer
+	while(*characterPointer != '\0'){
+
+	}
 }
 
 /**
