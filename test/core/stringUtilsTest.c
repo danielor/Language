@@ -14,6 +14,12 @@
 #include <stdio.h>
 #include "stringUtils.h"
 
+// Conversion test struct.
+struct ConvertTest{
+	char originalCharacter;			// The original character
+	char expectedCharacter;			// The new character
+};
+
 // A function that test the functionality associated with the utf8 state test.
 // This should handle all possible states of the UTF8 specification.
 int testGetUTF8State(){
@@ -78,6 +84,26 @@ int testGetUTF8State(){
 	return -1;
 }
 
+// Test the conversion of characters to hex.
+int testConvertHex(){
+	int r;
+	struct ConvertTest conversionTests[28] = {
+		{48, 0},{49, 1},{50, 2},{51, 3},{52, 4},
+		{53, 5},{54, 6},{55, 7},{56, 8},{57, 9},
+		{65, 10},{66, 11},{67, 12},{68, 13}, {69, 14},
+		{70, 15}, {97, 10}, {98, 11}, {99, 12}, {100, 13},
+		{101, 14}, {102, 15}, {47, -1}, {58, -1}, {64, -1},
+		{71, -1}, {96, -1}, {103, -1}
+	};
+	for(r = 0; r < 28; r++){
+		struct ConvertTest test = conversionTests[r];
+		if(convertHex(&test.originalCharacter, ASCII) != test.expectedCharacter){
+			return 0;
+		}
+	}
+	return -1;
+}
+
 // Test the string length in different encodings
 int testStringLength(){
 	// Test a few ascii strings
@@ -111,8 +137,7 @@ int testStringLength(){
 	char utf82[20] = {0xc2,0xbf,0x43,0xc3,0xb2,0x6d,0x6f,0x20,0x65,0x74,0xc3,0xa1,0x73,0x3f};
 	int utf8len = len(utf8, UTF8_BINARY);
 	int utf82len = len(utf82, UTF8_BINARY);
-	printf("%d\n", utf8len);
-	printf("%d\n", utf82len);
+
 	if(utf8len != 7){
 		return 0;
 	}
@@ -126,19 +151,35 @@ int testStringLength(){
 
 // A function that tests the main points of functionality associated with the
 int testStringUtils(){
+	// The success/failure count
+	int successCount = 0;
+	int failureCount = 0;
 
 	// Test the get UTF8 state
 	if(testGetUTF8State() == -1){
+		successCount++;
 		printf("*SUCCESS - UTF8State test passed\n");
 	}else{
+		failureCount++;
 		printf("*FAILURE - UTF8State test failed\n");
 	}
 
 	// Test the string length
 	if(testStringLength() == -1){
+		successCount++;
 		printf("*SUCCESS - String Length test passed\n");
 	}else{
+		failureCount++;
 		printf("*FAILURE - String length test failed\n");
+	}
+
+	// Test the covert hex function
+	if(testConvertHex() == -1){
+		successCount++;
+		printf("*SUCCESS - Convert hex test passed\n");
+	}else{
+		failureCount++;
+		printf("*FAILURE - Convert hex test failed\n");
 	}
 
 	return 0;

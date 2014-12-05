@@ -218,44 +218,56 @@ int convertToNumber(const char *charValue, int encoding){
 /**
  * Convert hex character into binary in a certain encoding(At the moment ASCII)
  * @param hexValue The hex value
+ * @param encoding The encoding of the hexValue
  */
-char convertHex(const char * hexValue){
-	if(*hexValue == 'a' || hexValue == 'A'){
-		return 10;
-	}else if(*hexValue == 'b' || *hexValue == 'B'){
-		return 11;
-	}else if(*hexValue == 'c' || *hexValue == 'C'){
-		return 12;
-	}else if(*hexValue == 'd' || *hexValue == 'D'){
-		return 13;
-	}else if(*hexValue == 'e' || *hexValue == 'E'){
-		return 14;
-	}else if(*hexValue == 'f' || *hexValue == 'F'){
-		return 15;
-	}else if(*hexValue == '0'){
-		return 0;
-	}else if(*hexValue == '1'){
-		return 1;
-	}else if(*hexValue == '2'){
-		return 2;
-	}else if(*hexValue == '3'){
-		return 3;
-	}else if(*hexValue == '4'){
-		return 4;
-	}else if(*hexValue == '5'){
-		return 5;
-	}else if(*hexValue == '6'){
-		return 6;
-	}else if(*hexValue == '7'){
-		return 7;
-	}else if(*hexValue == '8'){
-		return 8;
-	}else if(*hexValue == '9'){
-		return 9;
+char convertHex(const char * hexValue, int encoding){
+	if(encoding == UTF8_BINARY || encoding == ASCII || encoding == ISO_8859_1){
+		// Handle 0-9
+		if(*hexValue >= 48 && *hexValue <= 57){
+			return *hexValue - 48;
+		}
+
+		// Handle A-F
+		if(*hexValue >= 65 && *hexValue <= 70){
+			return *hexValue - 55; // ([70,65] - 10)
+		}
+
+		// Handle a-f
+		if(*hexValue >= 97 && *hexValue <= 102){
+			return *hexValue - 87; // ([102, 97] - 10)
+		}
+		return -1;
 	}else{
 		return -1;
 	}
 }
+
+/**
+ * A C-style string length that handles different encodings found
+ * in the wild. It analyzes the bytes in a char * and returns the
+ * string length irrespective of the encoding.
+ * @param buffer: The buffer that contains the string
+ * @param encoding: The encoding used to find the byte length
+ */
+int len(const char * buffer, int encoding){
+
+	// Handle an incorrectly structured buffer
+	if(buffer == NULL){
+		return 0;
+	}
+
+	// Deal with the simple ASCII/LATIN cases
+	if(encoding == ASCII){
+		return strlen(buffer);
+	}else if(encoding == ISO_8859_1){
+		return strlen(buffer);
+	}else if(encoding == UTF8_BINARY){
+		return _lenUTF8Binary(buffer);
+	}else{
+		return -1;
+	}
+}
+
 
 /**
  * Return the UTF8 binary string length. The format of these escaped sequences are
@@ -296,7 +308,7 @@ int lenEscaped(const char * buffer, int baseEncoding, const char * controlString
 		return len(buffer, baseEncoding);
 	}
 
-	int index;
+	int index = 0;
 	int escapedState = ENCODED_PARSE_STRING_START;
 	int controlCount = 0;								// The control string count
 	int lenEscapedCount = 0;							// Return the length of the escaped count
@@ -332,7 +344,7 @@ int lenEscaped(const char * buffer, int baseEncoding, const char * controlString
 					if(*characterPointer == '\0'){
 						return -1;
 					}
-					char convertedHex = convertHex(characterPointer);
+					char convertedHex = convertHex(characterPointer, ASCII);
 					if(convertedHex == -1){
 						return -1;
 					}
@@ -349,13 +361,13 @@ int lenEscaped(const char * buffer, int baseEncoding, const char * controlString
 
 				// Consume all of the numbers until we reach a character that
 				// is not a number
-				while(true){
+				while(1){
 					if(*characterPointer == '\0'){
 						break;
 					}
-					if(isNumber(characterPointer)){
+					if(isNumber(characterPointer, ASCII)){
 						codePoint *= 10;
-						codePoint += convertToNumber(characterPointer);
+						codePoint += convertToNumber(characterPointer, ASCII);
 						characterPointer++;
 					}else{
 						break;
@@ -376,31 +388,6 @@ int lenEscaped(const char * buffer, int baseEncoding, const char * controlString
 	return lenEscapedCount;
 }
 
-/**
- * A C-style string length that handles different encodings found
- * in the wild. It analyzes the bytes in a char * and returns the
- * string length irrespective of the encoding.
- * @param buffer: The buffer that contains the string
- * @param encoding: The encoding used to find the byte length
- */
-int len(const char * buffer, int encoding){
-
-	// Handle an incorrectly structured buffer
-	if(buffer == NULL){
-		return 0;
-	}
-
-	// Deal with the simple ASCII/LATIN cases
-	if(encoding == ASCII){
-		return strlen(buffer);
-	}else if(encoding == ISO_8859_1){
-		return strlen(buffer);
-	}else if(encoding == UTF8_BINARY){
-		return _lenUTF8Binary(buffer);
-	}else{
-		return -1;
-	}
-}
 
 #ifdef __cplusplus
 }
