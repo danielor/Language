@@ -38,8 +38,8 @@ typedef enum {
  * supported by different functionality in Language
  */
 typedef enum {
-	ASCII_HEX_ESCAPE = 0,
-	ASCII_DECIMAL_ESCAPE = 1
+	ASCII_HEX_UTF_ESCAPE = 0,
+	ASCII_DECIMAL_UTF_ESCAPE = 1
 } escapedEncodings;
 
 /**
@@ -55,7 +55,16 @@ typedef enum{
 	UTF8_BINARY_21BIT_STATE = 4,		// The 21 bit encoding for utf8 binary
 } utf8BinaryParserStates;
 
-
+/**
+ * An enum that encapsulates the different parsing states
+ * needed for parsing encoded strings
+ */
+typedef enum{
+	ENCODED_PARSE_STRING_START = -1, 		// The encoded parse string start state
+	ENCODED_PARSE_STRING_CONTROL = 0,		// The encoded parse string control state
+	ENCODED_PARSE_STRING_CODE_POINT = 1,	// The encoded parse string code point
+	ENCODED_PARSE_STRING_END = 2			// The encoded parse string end state
+} encodedParsedStringStates;
 
 /**
  * A function that returns the utf8 state associated with a control
@@ -75,6 +84,25 @@ int getUTF8State(const char controlChar){
 		return UTF8_BINARY_21BIT_STATE;
 	}else{
 		return UTF8_BINARY_ERROR_STATE;
+	}
+}
+
+/**
+ * A function that checks if a code point is a diacritical mark.
+ * @param codePoint A utf8 code point
+ * @returns {0 = false, 1 = true}
+ */
+int isDiacriticalMark(int codePoint){
+	if(codePoint >= 0x300 && codePoint <= 0x036f){
+		return 1;
+	}else if(codePoint >= 0x1ab0 && codePoint <=0x1aff){
+		return 1;
+	}else if(codePoint >= 0x20d0 && codePoint <=0x20ff){
+		return 1;
+	}else if(codePoint >= 0xfe20 && codePoint <=0xfe2f){
+		return 1;
+	}else{
+		return 0;
 	}
 }
 
@@ -115,9 +143,10 @@ int _lenUTF8Binary(const char * buffer){
 				return UTF8_BINARY_ERROR_STATE;
 			}
 			effectiveUTFValue = ((c & 0x1f) << 6) + (firstBit & 0x3f);
-			if(effectiveUTFValue < 0x0300 || effectiveUTFValue > 0x036f){
+			if(!isDiacriticalMark(effectiveUTFValue)){
 				stringLength++;
 			}
+
 			utf8ParseState = UTF8_BINARY_START_PARSE_STATE;
 		}else if(utf8ParseState == UTF8_BINARY_16BIT_STATE){
 			// This portion of UTF8 encodes the code points between 0x0800 and 0xffff
@@ -138,15 +167,9 @@ int _lenUTF8Binary(const char * buffer){
 			effectiveUTFValue = ((c & 0xf) << 10) + ((secondBit & 0x3f) << 6) + (firstBit & 0x3f);
 
 			// Preincrement and decrement if it is a diacritical mark
-			stringLength++;
-			if(effectiveUTFValue >= 0x1ab0 && effectiveUTFValue <=0x1aff){
-				stringLength--;
-			}else if(effectiveUTFValue >= 0x20d0 && effectiveUTFValue <=0x20ff){
-				stringLength--;
-			}else if(effectiveUTFValue >= 0xfe20 && effectiveUTFValue <=0xfe2f){
-				stringLength--;
+			if(!isDiacriticalMark(effectiveUTFValue)){
+				stringLength++;
 			}
-
 
 			utf8ParseState = UTF8_BINARY_START_PARSE_STATE;
 
@@ -170,6 +193,71 @@ int _lenUTF8Binary(const char * buffer){
 }
 
 /**
+ * Check if a character is a number in different encodings
+ * @param charValue The character to check
+ * @param encoding The encoding of the character
+ * @returns {0 = false, 1 = true}
+ */
+int isNumber(const char * charValue, int encoding){
+	if(encoding == UTF8_BINARY || encoding == ASCII || encoding == ISO_8859_1){
+		return *charValue >= 48 && *charValue <= 57;
+	}else{
+		return 0;
+	}
+}
+
+/**
+ * Convert character encoding to a number. At the moment, encoding is ignored
+ * @param charValue The character to convert
+ * @returns {0-9}
+ */
+int convertToNumber(const char *charValue, int encoding){
+	return *charValue - 48;
+}
+
+/**
+ * Convert hex character into binary in a certain encoding(At the moment ASCII)
+ * @param hexValue The hex value
+ */
+char convertHex(const char * hexValue){
+	if(*hexValue == 'a' || hexValue == 'A'){
+		return 10;
+	}else if(*hexValue == 'b' || *hexValue == 'B'){
+		return 11;
+	}else if(*hexValue == 'c' || *hexValue == 'C'){
+		return 12;
+	}else if(*hexValue == 'd' || *hexValue == 'D'){
+		return 13;
+	}else if(*hexValue == 'e' || *hexValue == 'E'){
+		return 14;
+	}else if(*hexValue == 'f' || *hexValue == 'F'){
+		return 15;
+	}else if(*hexValue == '0'){
+		return 0;
+	}else if(*hexValue == '1'){
+		return 1;
+	}else if(*hexValue == '2'){
+		return 2;
+	}else if(*hexValue == '3'){
+		return 3;
+	}else if(*hexValue == '4'){
+		return 4;
+	}else if(*hexValue == '5'){
+		return 5;
+	}else if(*hexValue == '6'){
+		return 6;
+	}else if(*hexValue == '7'){
+		return 7;
+	}else if(*hexValue == '8'){
+		return 8;
+	}else if(*hexValue == '9'){
+		return 9;
+	}else{
+		return -1;
+	}
+}
+
+/**
  * Return the UTF8 binary string length. The format of these escaped sequences are
  * the following. At the moment, only ASCII escaping and certain ascii escape signatures
  * are allowed
@@ -178,7 +266,7 @@ int _lenUTF8Binary(const char * buffer){
  * 	buffer="Happy \u0069 Mildew\0"
  *	baseEncoding=ASCII{utf8BinaryParserStates}
  *	controlString= "\u\0"
- *	sequenceEncoding=ASCII_HEX_ESCAPE
+ *	sequenceEncoding=ASCII_HEX_UTF_ESCAPE
  *	endString=NULL
  * @param buffer The buffer that contains the string
  * @param baseEncoding The base encoding of the string{
@@ -199,14 +287,93 @@ int lenEscaped(const char * buffer, int baseEncoding, const char * controlString
 	}
 
 	// Check that the sequence encoding is correct
-	if(sequenceEncoding != ASCII_HEX_ESCAPE && != ASCII_DECIMAL_ESCAPE){
+	if(sequenceEncoding != ASCII_HEX_UTF_ESCAPE && sequenceEncoding != ASCII_DECIMAL_UTF_ESCAPE){
 		return -1;
 	}
 
+	// If we have no control string return the
+	if(controlString == NULL){
+		return len(buffer, baseEncoding);
+	}
+
+	int index;
+	int escapedState = ENCODED_PARSE_STRING_START;
+	int controlCount = 0;								// The control string count
+	int lenEscapedCount = 0;							// Return the length of the escaped count
+	const char * controlPointer = controlString;		// Setup a pointer to the control string.
 	const char * characterPointer = buffer;				// A pointer to the correct position in the buffer
 	while(*characterPointer != '\0'){
+		if(escapedState == ENCODED_PARSE_STRING_START){
+			if(*controlPointer == *characterPointer){
+				escapedState = ENCODED_PARSE_STRING_CONTROL;
+			}else{
+				lenEscapedCount = lenEscapedCount + 1;
+			}
+		// Make sure that the entirety of the control string has been captured
+		}else if(escapedState == ENCODED_PARSE_STRING_CONTROL){
+			controlCount++;
 
+			// We have reached the E
+			if(*controlPointer == '\0'){
+				controlPointer = controlString;
+				escapedState = ENCODED_PARSE_STRING_CODE_POINT;
+				continue;
+			}
+			if(*controlPointer != *characterPointer){
+				controlPointer = controlString;
+				lenEscapedCount += controlCount;
+			}
+			controlPointer++;
+
+		}else if(escapedState == ENCODED_PARSE_STRING_CODE_POINT){
+			if(sequenceEncoding == ASCII_HEX_UTF_ESCAPE){
+				int codePoint = 0;
+				for(;index < 4; index++){
+					if(*characterPointer == '\0'){
+						return -1;
+					}
+					char convertedHex = convertHex(characterPointer);
+					if(convertedHex == -1){
+						return -1;
+					}
+
+					codePoint += convertedHex;
+					codePoint <<= 4;
+					characterPointer++;
+				}
+				if(!isDiacriticalMark(codePoint)){
+					lenEscapedCount++;
+				}
+			}else{
+				int codePoint = 0;
+
+				// Consume all of the numbers until we reach a character that
+				// is not a number
+				while(true){
+					if(*characterPointer == '\0'){
+						break;
+					}
+					if(isNumber(characterPointer)){
+						codePoint *= 10;
+						codePoint += convertToNumber(characterPointer);
+						characterPointer++;
+					}else{
+						break;
+					}
+
+				}
+				if(!isDiacriticalMark(codePoint)){
+					lenEscapedCount++;
+				}
+
+				if(*characterPointer == '\0'){
+					break;
+				}
+			}
+		}
+		characterPointer++;
 	}
+	return lenEscapedCount;
 }
 
 /**
