@@ -19,6 +19,7 @@ used by Language.
 """
 import unittest
 from Language.stringUtils import length
+from Language.stringUtils import lengthEscaped
 
 class StringUtilsTestCase(unittest.TestCase):
     """
@@ -29,6 +30,14 @@ class StringUtilsTestCase(unittest.TestCase):
         Test the string utils length
         """
         self.assertTrue(length("SixValue") == 8)
+        
+    def test_StringUtilsLengthEscaped(self):
+        """
+        Test the string utils length escaped
+        """
+        self.assertTrue(lengthEscaped("Healthy", 1, "YUM", 0) == 7)
+        self.assertTrue(lengthEscaped("HealthyYUM2345N", 1, "YUM", 0) == 9)
+        self.assertTrue(lengthEscaped("HealthyYUM2345NR", 1, "YUM", 0, "N") == 9)
         
 if __name__=='__main__':
     unittest.main()
