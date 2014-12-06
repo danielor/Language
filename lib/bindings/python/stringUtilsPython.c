@@ -1,9 +1,7 @@
 #include <Python.h>
 #include "bytesobject.h"
 #include "stringUtils.h"
-/**
- *
- */
+
 
 /**
  * A wrapper of the underlying stringUtils:length function that handles different
@@ -48,11 +46,68 @@ static PyObject * py_stringutils_length(PyObject * self, PyObject *args){
 }
 
 /**
+ * A wrapper of the underlying stringUtils:lengthEscaped function that handles
+ * different types of python strings
+ */
+static PyObject * py_stringutils_lengthescaped(PyObject * self, PyObject * args){
+	// The arguments for the length escaped functionality
+	PyObject * stringArg = NULL;
+	PyObject * encodingArg = NULL;
+	PyObject * escapedArg = NULL;
+	PyObject * escapedEncodingArg = NULL;
+	PyObject * endString = NULL;
+
+	// The C arguments associated with the function lengthEscaped
+	const char * buffer = NULL;
+	int encoding = ASCII;
+	const char * escapedChars = NULL;
+	int escapedEncoding = ASCII_HEX_UTF_ESCAPE;
+	const char * endChar = NULL;
+
+	// Check if the pyarg unpack tuple
+	if(!PyArg_UnpackTuple(args, "stringutils_lengthEscaped", 2, 5, &stringArg, &encodingArg,
+			&escapedArg, &escapedEncodingArg, &endString)){
+		return PyInt_FromLong(-1);
+	}
+
+	// Check that a string is being passed
+	if(PyObject_TypeCheck(stringArg, &PyString_Type)){
+		buffer = PyString_AS_STRING(stringArg);
+	}else{
+		PyErr_Format(PyExc_TypeError, "Py_stringutils_lengthEscaped expects an ASCII string");
+	}
+
+	// Ignore the different variables
+	if(PyObject_TypeCheck(encodingArg, &PyInt_Type)){
+		encoding =  PyInt_AsLong(encodingArg);
+	}
+	if(escapedArg != NULL){
+		if(PyObject_TypeCheck(escapedArg, &PyString_Type)){
+			escapedChars = PyString_AS_STRING(escapedArg);
+		}
+	}
+	if(escapedEncodingArg != NULL){
+		if(PyObject_TypeCheck(escapedEncodingArg, &PyInt_Type)){
+			escapedEncoding = PyInt_AsLong(escapedEncodingArg);
+		}
+	}
+	if(endString != NULL){
+		if(PyObject_TypeCheck(endString, &PyString_Type)){
+			endChar = PyString_AS_STRING(endString);
+		}
+	}
+
+	size_t ldist = lenEscaped(buffer, encoding, escapedChars, escapedEncoding, endChar);
+	return PyInt_FromLong((long)ldist);
+}
+
+/**
  * A list of all of the methods defined in this module. The
  * length module is defined as a python function that
  */
 static PyMethodDef stringutils_methods[] = {
 		{"length", py_stringutils_length, METH_VARARGS, "Calculate the length of a string with different encodings"},
+		{"lengthEscaped", py_stringutils_lengthescaped, METH_VARARGS, "Calculate the length of an escaped string with different encodings"},
 		{NULL, NULL}
 };
 
