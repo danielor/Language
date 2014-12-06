@@ -33,13 +33,18 @@ void StringUtils::Init(v8::Handle<v8::Object> exports){
 	// Prepare the constructor template
 	v8::Local<v8::FunctionTemplate> tpl = v8::FunctionTemplate::New(New);
 	tpl->SetClassName(v8::String::NewSymbol("StringUtils"));
-	tpl->InstanceTemplate()->SetInternalFieldCount(1);
+	tpl->InstanceTemplate()->SetInternalFieldCount(2);
 
 	// Prototype
+
+	// The length function
 	tpl->PrototypeTemplate()->Set(v8::String::NewSymbol("length"),
 			v8::FunctionTemplate::New(length)->GetFunction());
+	tpl->PrototypeTemplate()->Set(v8::String::NewSymbol("lengthEscaped"),
+			v8::FunctionTemplate::New(lengthEscaped)->GetFunction());
 	constructor = v8::Persistent<v8::Function>::New(tpl->GetFunction());
 	exports->Set(v8::String::NewSymbol("StringUtils"), constructor);
+
 }
 
 
@@ -82,8 +87,52 @@ v8::Handle<v8::Value> StringUtils::length(const v8::Arguments & args){
 	int result = 0;
 	if(isValid){
 		result = len(buffer, encoding);
+	}else{
+		result = -1;
 	}
 
 	// Return the string length
 	return scope.Close(v8::Number::New(result));
+}
+
+// Find the length of an escape string
+v8::Handle<v8::Value> StringUtils::lengthEscaped(const v8::Arguments & args){
+	v8::HandleScope scope;
+
+	// The information need to find the length of escaped characterså
+	const char * buffer = NULL;
+	v8::String::Utf8Value bufferStr(args[0]->ToString());
+	if(args[0]->IsString()){
+		buffer = *bufferStr;
+	}
+	int encoding = args[1]->IsNumber() ? args[1]->Uint32Value() : ASCII;
+	const char * controlString = NULL;
+	v8::String::Utf8Value controlStr(args[2]->ToString());
+	if(args[2]->IsString()){
+		controlString = *controlStr;
+	}
+
+	int escapeEncoding = args[3]->IsNumber() ? args[3]->Uint32Value() : ASCII_HEX_UTF_ESCAPE;
+	const char * endString = NULL;
+	v8::String::Utf8Value end(args[4]->ToString());
+	if(args[4]->IsString()){
+		endString = *end;
+	}
+
+	int result = lenEscaped(buffer, encoding, controlString, escapeEncoding, endString);
+	return scope.Close(v8::Number::New(result));
+}
+
+// Helper function used or parsing the arguments from javascript
+void StringUtils::_parseInt(const v8::Arguments & args, int index, int * value){
+	if(args[index]->IsNumber()){
+		*value = args[index]->Uint32Value();
+
+	}
+}
+
+void StringUtils::_parseString(const v8::Arguments & args, int index, const char * value){
+	if(args[index]->IsString()){
+		 value = *v8::String::Utf8Value(args[index]);
+	}
 }
