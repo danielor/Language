@@ -15,6 +15,23 @@ extern "C" {
 JNIEXPORT jint JNICALL Java_com_Language_LanguageStringUtils_length
   (JNIEnv *, jobject, jstring, jint);
 
+
+/*
+ * Class:     LanguageStringUtils
+ * Method:    length
+ * Signature: (Ljava/lang/String;I;java/lang/String;I)I
+ */
+JNIEXPORT jint JNICALL Java_com_Language_LanguageStringUtils_lengthEscaped
+  (JNIEnv *, jobject, jstring, jint, jstring, jint);
+
+/*
+ * Class:     LanguageStringUtils
+ * Method:    length
+ * Signature: (Ljava/lang/String;I;java/lang/String;I;java/lang/String)I
+ */
+JNIEXPORT jint JNICALL Java_com_Language_LanguageStringUtils_lengthEscapedWithEnd
+  (JNIEnv *, jobject, jstring, jint, jstring, jint);
+
 #ifdef __cplusplus
 }
 #endif
