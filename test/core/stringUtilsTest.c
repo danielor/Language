@@ -104,6 +104,23 @@ int testConvertHex(){
 	return -1;
 }
 
+// Test the isNumber function
+int testIsNumber(){
+	int r;
+	struct ConvertTest conversionTests[12] = {
+		{47, 0},{48, 1},{49, 1},{50, 1},{51, 1},
+		{52, 1},{53, 1},{54, 1},{55, 1},{56, 1},
+		{57, 1},{58, 0}
+	};
+	for(r=0; r < 12; r++){
+		struct ConvertTest test = conversionTests[r];
+		if(isNumber(&test.originalCharacter, ASCII) != test.expectedCharacter){
+			return 0;
+		}
+	}
+	return -1;
+}
+
 // Test the string length in different encodings
 int testStringLength(){
 	// Test a few ascii strings
@@ -155,31 +172,17 @@ int testStringUtils(){
 	int successCount = 0;
 	int failureCount = 0;
 
-	// Test the get UTF8 state
-	if(testGetUTF8State() == -1){
-		successCount++;
-		printf("*SUCCESS - UTF8State test passed\n");
-	}else{
-		failureCount++;
-		printf("*FAILURE - UTF8State test failed\n");
-	}
-
-	// Test the string length
-	if(testStringLength() == -1){
-		successCount++;
-		printf("*SUCCESS - String Length test passed\n");
-	}else{
-		failureCount++;
-		printf("*FAILURE - String length test failed\n");
-	}
-
-	// Test the covert hex function
-	if(testConvertHex() == -1){
-		successCount++;
-		printf("*SUCCESS - Convert hex test passed\n");
-	}else{
-		failureCount++;
-		printf("*FAILURE - Convert hex test failed\n");
+	int testIter = 0;
+	int numberOfTests = 4;
+	int (*test_Array[4])() = {testGetUTF8State, testStringLength, testConvertHex, testIsNumber};
+	const char * testNames[4] = {"UTF8State", "String Length test", "Convert hex test", "Is number test"};
+	for(testIter = 0; testIter < numberOfTests; testIter++){
+		const char * testName = testNames[testIter];
+		if(test_Array[testIter]() == -1){
+			printf("*SUCCESS - %s passed\n", testName);
+		}else{
+			printf("*FAILURE - %s failed\n", testName);
+		}
 	}
 
 	return 0;

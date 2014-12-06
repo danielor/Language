@@ -200,7 +200,11 @@ int _lenUTF8Binary(const char * buffer){
  */
 int isNumber(const char * charValue, int encoding){
 	if(encoding == UTF8_BINARY || encoding == ASCII || encoding == ISO_8859_1){
-		return *charValue >= 48 && *charValue <= 57;
+		if(*charValue >= 48 && *charValue <= 57){
+			return 1;
+		}else{
+			return 0;
+		}
 	}else{
 		return 0;
 	}
