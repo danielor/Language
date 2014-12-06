@@ -166,6 +166,35 @@ int testStringLength(){
 	return -1;
 }
 
+// Test the string length escaped functionality
+int testStringLengthEscaped(){
+
+	// Test incorrect formatting
+	if(lenEscaped(NULL, 0, NULL, 0, NULL) != -1){
+		return 0;
+	}
+	if(lenEscaped("H", 13, NULL, 0, NULL) != -1){
+		return 0;
+	}
+	if(lenEscaped("H", 1, NULL, 0, NULL) != 1){
+		return 0;
+	}
+	if(lenEscaped("H", 1, "H", 35, NULL) != -1){
+		return 0;
+	}
+	// Test the length with no escaped characters
+	if(lenEscaped("Healthy", ASCII, "YUM", ASCII_HEX_UTF_ESCAPE, NULL) != 7){
+		return 0;
+	}
+	if(lenEscaped("HealthyYUM2345N", ASCII, "YUM", ASCII_HEX_UTF_ESCAPE, NULL) != 9){
+		return 0;
+	}
+	if(lenEscaped("HealthyYUM2345NR", ASCII, "YUM", ASCII_HEX_UTF_ESCAPE, "N") != 9){
+		return 0;
+	}
+	return -1;
+}
+
 // A function that tests the main points of functionality associated with the
 int testStringUtils(){
 	// The success/failure count
@@ -173,12 +202,15 @@ int testStringUtils(){
 	int failureCount = 0;
 
 	int testIter = 0;
-	int numberOfTests = 4;
-	int (*test_Array[4])() = {testGetUTF8State, testStringLength, testConvertHex, testIsNumber};
-	const char * testNames[4] = {"UTF8State", "String Length test", "Convert hex test", "Is number test"};
+	int numberOfTests = 5;
+	int (*test_Array[5])() = {testGetUTF8State, testStringLength, testConvertHex, testIsNumber,
+			testStringLengthEscaped};
+	const char * testNames[5] = {"UTF8State test", "String Length test", "Convert hex test", "Is number test",
+			"String Length Unescaped test"};
 	for(testIter = 0; testIter < numberOfTests; testIter++){
 		const char * testName = testNames[testIter];
-		if(test_Array[testIter]() == -1){
+		int (*test)() = test_Array[testIter];
+		if(test() == -1){
 			printf("*SUCCESS - %s passed\n", testName);
 		}else{
 			printf("*FAILURE - %s failed\n", testName);

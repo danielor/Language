@@ -63,7 +63,8 @@ typedef enum{
 	ENCODED_PARSE_STRING_START = -1, 		// The encoded parse string start state
 	ENCODED_PARSE_STRING_CONTROL = 0,		// The encoded parse string control state
 	ENCODED_PARSE_STRING_CODE_POINT = 1,	// The encoded parse string code point
-	ENCODED_PARSE_STRING_END = 2			// The encoded parse string end state
+	ENCODED_PARSE_STRING_END_STRING = 2,
+	ENCODED_PARSE_STRING_END = 3			// The encoded parse string end state
 } encodedParsedStringStates;
 
 /**
@@ -294,7 +295,7 @@ int lenEscaped(const char * buffer, int baseEncoding, const char * controlString
 		int sequenceEncoding, const char * endString){
 	// Handle the incorrectly structured buffer
 	if(buffer == NULL){
-		return 0;
+		return -1;
 	}
 
 	// Check that the base encoding is correct
@@ -302,14 +303,14 @@ int lenEscaped(const char * buffer, int baseEncoding, const char * controlString
 		return -1;
 	}
 
+	// If we have no control string return the length of the unescaped buffer
+	if(controlString == NULL){
+		return len(buffer, baseEncoding);
+	}
+
 	// Check that the sequence encoding is correct
 	if(sequenceEncoding != ASCII_HEX_UTF_ESCAPE && sequenceEncoding != ASCII_DECIMAL_UTF_ESCAPE){
 		return -1;
-	}
-
-	// If we have no control string return the
-	if(controlString == NULL){
-		return len(buffer, baseEncoding);
 	}
 
 	int index = 0;
@@ -322,24 +323,29 @@ int lenEscaped(const char * buffer, int baseEncoding, const char * controlString
 		if(escapedState == ENCODED_PARSE_STRING_START){
 			if(*controlPointer == *characterPointer){
 				escapedState = ENCODED_PARSE_STRING_CONTROL;
+				continue;
 			}else{
 				lenEscapedCount = lenEscapedCount + 1;
 			}
 		// Make sure that the entirety of the control string has been captured
 		}else if(escapedState == ENCODED_PARSE_STRING_CONTROL){
-			controlCount++;
 
 			// We have reached the E
 			if(*controlPointer == '\0'){
 				controlPointer = controlString;
+				controlCount = 0;
 				escapedState = ENCODED_PARSE_STRING_CODE_POINT;
 				continue;
 			}
 			if(*controlPointer != *characterPointer){
 				controlPointer = controlString;
+				escapedState = ENCODED_PARSE_STRING_START;
 				lenEscapedCount += controlCount;
+				controlCount=0;
+				continue;
 			}
 			controlPointer++;
+			controlCount++;
 
 		}else if(escapedState == ENCODED_PARSE_STRING_CODE_POINT){
 			if(sequenceEncoding == ASCII_HEX_UTF_ESCAPE){
@@ -360,6 +366,7 @@ int lenEscaped(const char * buffer, int baseEncoding, const char * controlString
 				if(!isDiacriticalMark(codePoint)){
 					lenEscapedCount++;
 				}
+
 			}else{
 				int codePoint = 0;
 
@@ -386,6 +393,24 @@ int lenEscaped(const char * buffer, int baseEncoding, const char * controlString
 					break;
 				}
 			}
+			// Dependent on whether the end string is null continue to
+			// the start state
+			if(endString == NULL){
+				escapedState = ENCODED_PARSE_STRING_START;
+				continue;
+			}else{
+				escapedState = ENCODED_PARSE_STRING_END_STRING;
+				continue;
+			}
+
+		}else if(escapedState == ENCODED_PARSE_STRING_END_STRING){
+			const char * endStringPointer = endString;
+			while(*characterPointer == *endStringPointer){
+				characterPointer++;
+				endStringPointer++;
+			}
+			escapedState = ENCODED_PARSE_STRING_START;
+			continue;
 		}
 		characterPointer++;
 	}
