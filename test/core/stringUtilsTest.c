@@ -14,6 +14,12 @@
 #include <stdio.h>
 #include "stringUtils.h"
 
+// Conversion test struct.
+struct ConvertTest{
+	char originalCharacter;			// The original character
+	char expectedCharacter;			// The new character
+};
+
 // A function that test the functionality associated with the utf8 state test.
 // This should handle all possible states of the UTF8 specification.
 int testGetUTF8State(){
@@ -78,6 +84,43 @@ int testGetUTF8State(){
 	return -1;
 }
 
+// Test the conversion of characters to hex.
+int testConvertHex(){
+	int r;
+	struct ConvertTest conversionTests[28] = {
+		{48, 0},{49, 1},{50, 2},{51, 3},{52, 4},
+		{53, 5},{54, 6},{55, 7},{56, 8},{57, 9},
+		{65, 10},{66, 11},{67, 12},{68, 13}, {69, 14},
+		{70, 15}, {97, 10}, {98, 11}, {99, 12}, {100, 13},
+		{101, 14}, {102, 15}, {47, -1}, {58, -1}, {64, -1},
+		{71, -1}, {96, -1}, {103, -1}
+	};
+	for(r = 0; r < 28; r++){
+		struct ConvertTest test = conversionTests[r];
+		if(convertHex(&test.originalCharacter, ASCII) != test.expectedCharacter){
+			return 0;
+		}
+	}
+	return -1;
+}
+
+// Test the isNumber function
+int testIsNumber(){
+	int r;
+	struct ConvertTest conversionTests[12] = {
+		{47, 0},{48, 1},{49, 1},{50, 1},{51, 1},
+		{52, 1},{53, 1},{54, 1},{55, 1},{56, 1},
+		{57, 1},{58, 0}
+	};
+	for(r=0; r < 12; r++){
+		struct ConvertTest test = conversionTests[r];
+		if(isNumber(&test.originalCharacter, ASCII) != test.expectedCharacter){
+			return 0;
+		}
+	}
+	return -1;
+}
+
 // Test the string length in different encodings
 int testStringLength(){
 	// Test a few ascii strings
@@ -111,8 +154,7 @@ int testStringLength(){
 	char utf82[20] = {0xc2,0xbf,0x43,0xc3,0xb2,0x6d,0x6f,0x20,0x65,0x74,0xc3,0xa1,0x73,0x3f};
 	int utf8len = len(utf8, UTF8_BINARY);
 	int utf82len = len(utf82, UTF8_BINARY);
-	printf("%d\n", utf8len);
-	printf("%d\n", utf82len);
+
 	if(utf8len != 7){
 		return 0;
 	}
@@ -124,21 +166,55 @@ int testStringLength(){
 	return -1;
 }
 
+// Test the string length escaped functionality
+int testStringLengthEscaped(){
+
+	// Test incorrect formatting
+	if(lenEscaped(NULL, 0, NULL, 0, NULL) != -1){
+		return 0;
+	}
+	if(lenEscaped("H", 13, NULL, 0, NULL) != -1){
+		return 0;
+	}
+	if(lenEscaped("H", 1, NULL, 0, NULL) != 1){
+		return 0;
+	}
+	if(lenEscaped("H", 1, "H", 35, NULL) != -1){
+		return 0;
+	}
+	// Test the length with no escaped characters
+	if(lenEscaped("Healthy", ASCII, "YUM", ASCII_HEX_UTF_ESCAPE, NULL) != 7){
+		return 0;
+	}
+	if(lenEscaped("HealthyYUM2345N", ASCII, "YUM", ASCII_HEX_UTF_ESCAPE, NULL) != 9){
+		return 0;
+	}
+	if(lenEscaped("HealthyYUM2345NR", ASCII, "YUM", ASCII_HEX_UTF_ESCAPE, "N") != 9){
+		return 0;
+	}
+	return -1;
+}
+
 // A function that tests the main points of functionality associated with the
 int testStringUtils(){
+	// The success/failure count
+	int successCount = 0;
+	int failureCount = 0;
 
-	// Test the get UTF8 state
-	if(testGetUTF8State() == -1){
-		printf("*SUCCESS - UTF8State test passed\n");
-	}else{
-		printf("*FAILURE - UTF8State test failed\n");
-	}
-
-	// Test the string length
-	if(testStringLength() == -1){
-		printf("*SUCCESS - String Length test passed\n");
-	}else{
-		printf("*FAILURE - String length test failed\n");
+	int testIter = 0;
+	int numberOfTests = 5;
+	int (*test_Array[5])() = {testGetUTF8State, testStringLength, testConvertHex, testIsNumber,
+			testStringLengthEscaped};
+	const char * testNames[5] = {"UTF8State test", "String Length test", "Convert hex test", "Is number test",
+			"String Length Unescaped test"};
+	for(testIter = 0; testIter < numberOfTests; testIter++){
+		const char * testName = testNames[testIter];
+		int (*test)() = test_Array[testIter];
+		if(test() == -1){
+			printf("*SUCCESS - %s passed\n", testName);
+		}else{
+			printf("*FAILURE - %s failed\n", testName);
+		}
 	}
 
 	return 0;
