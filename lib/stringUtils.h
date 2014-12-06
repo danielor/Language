@@ -212,6 +212,23 @@ int isNumber(const char * charValue, int encoding){
 }
 
 /**
+ * Check if a sequence of characters is a number in a different encodings
+ * @param charSequence The character to check
+ * @param encoding The encoding of the character
+ * @returns {0 = false, 1 = true}
+ */
+int isNumberSequence(const char * charValueSequence, int encoding){
+	const char * characterPointer = charValueSequence;
+	while(*characterPointer != '\0'){
+		if(isNumber(characterPointer, encoding) == 0){
+			return 0;
+		}
+		characterPointer++;
+	}
+	return 1;
+}
+
+/**
  * Convert character encoding to a number. At the moment, encoding is ignored
  * @param charValue The character to convert
  * @returns {0-9}
