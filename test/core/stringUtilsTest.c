@@ -20,6 +20,12 @@ struct ConvertTest{
 	char expectedCharacter;			// The new character
 };
 
+// Type test struct
+struct TypeTest{
+	const char * buffer;			// The buffer string
+	char expectedResult;			// The expected result
+};
+
 // A function that test the functionality associated with the utf8 state test.
 // This should handle all possible states of the UTF8 specification.
 int testGetUTF8State(){
@@ -121,6 +127,23 @@ int testIsNumber(){
 	return -1;
 }
 
+// Test is number sequence
+int testIsNumberSequence(){
+	int r;
+	struct TypeTest typeTests[5] = {
+		{"567",1},{"n",0},{"3",1}, {"5gd3",0},
+		{"1de3g3dg3",0}
+	};
+	for(r=0; r < 5; r++){
+
+		struct TypeTest test = typeTests[r];
+		if(isNumberSequence(test.buffer, ASCII) != test.expectedResult){
+			return 0;
+		}
+	}
+	return -1;
+}
+
 // Test the string length in different encodings
 int testStringLength(){
 	// Test a few ascii strings
@@ -202,11 +225,11 @@ int testStringUtils(){
 	int failureCount = 0;
 
 	int testIter = 0;
-	int numberOfTests = 5;
-	int (*test_Array[5])() = {testGetUTF8State, testStringLength, testConvertHex, testIsNumber,
-			testStringLengthEscaped};
-	const char * testNames[5] = {"UTF8State test", "String Length test", "Convert hex test", "Is number test",
-			"String Length Unescaped test"};
+	int numberOfTests = 6;
+	int (*test_Array[6])() = {testGetUTF8State, testStringLength, testConvertHex, testIsNumber,
+			testStringLengthEscaped, testIsNumberSequence};
+	const char * testNames[6] = {"UTF8State test", "String Length test", "Convert hex test", "Is number test",
+			"String Length Unescaped test", "IsNumberSequence test"};
 	for(testIter = 0; testIter < numberOfTests; testIter++){
 		const char * testName = testNames[testIter];
 		int (*test)() = test_Array[testIter];

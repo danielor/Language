@@ -25,6 +25,8 @@ class StringUtils : public node::ObjectWrap{
 public:
 	// The tie in to the node module
 	static void Init(v8::Handle<v8::Object> exports);
+
+
 private:
 	// The constructor/destructor of the class
 	explicit StringUtils();
@@ -36,7 +38,11 @@ private:
 
 	// The interface functions for the string utilities
 	static v8::Handle<v8::Value> length(const v8::Arguments & args);
+	static v8::Handle<v8::Value> lengthEscaped(const v8::Arguments & args);
 
+	// Helper function to parse different variables
+	static void _parseInt(const v8::Arguments & args, int index,  int * value);
+	static void _parseString(const v8::Arguments & args, int index, const char * value);
 };
 
 #endif
