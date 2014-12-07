@@ -61,12 +61,31 @@ var JavascriptUtilsTest = (function(){
 	}
 	
 	/**
+	 * Test the string encoding functionality
+	 * @function testStringEncodings
+	 * @memberof JavascriptUtilsTest
+	 */
+	function testStringEncodings(){
+		var StringUtils = LanguageModule.StringUtils;
+		var stringUtils = new StringUtils();
+		var encodings = stringUtils.stringEncodings;
+		expect(_.isObject(encodings)).to.eql(true);
+		expect(_.has(encodings, "ASCII")).to.eql(true);
+		expect(_.has(encodings, "UTF8_BINARY")).to.eql(true);
+		expect(_.has(encodings, "ISO_8859_1")).to.eql(true);
+		expect(encodings.UTF8_BINARY).to.eql(0);
+		expect(encodings.ASCII).to.eql(1);
+		expect(encodings.ISO_8859_1).to.eql(2);
+	}
+	
+	/**
 	 * The public interface
 	 */
 	return {
 		testStringLength:testStringLength,
 		testStringLengthEscaped:testStringLengthEscaped,
-		testIsNaturalNumber:testIsNaturalNumber
+		testIsNaturalNumber:testIsNaturalNumber,
+		testStringEncodings:testStringEncodings
 	}
 })();
 
@@ -74,4 +93,5 @@ describe("Test the javascript utils", function(){
 	it('JavascriptUtils Length Test', JavascriptUtilsTest.testStringLength);
 	it('JavascriptUtils Length Escaped Test', JavascriptUtilsTest.testStringLengthEscaped);
 	it('JavascriptUtils Natural Number Test', JavascriptUtilsTest.testIsNaturalNumber);
+	it('JavascriptUtils String Encodings Test', JavascriptUtilsTest.testStringEncodings);
 });

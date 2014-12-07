@@ -44,6 +44,7 @@ void StringUtils::Init(v8::Handle<v8::Object> exports){
 			v8::FunctionTemplate::New(lengthEscaped)->GetFunction());
 	tpl->PrototypeTemplate()->Set(v8::String::NewSymbol("isNaturalNumber"),
 				v8::FunctionTemplate::New(isNaturalNumber)->GetFunction());
+	tpl->InstanceTemplate()->SetAccessor(v8::String::New("stringEncodings"), getStringEncodings);
 	constructor = v8::Persistent<v8::Function>::New(tpl->GetFunction());
 	exports->Set(v8::String::NewSymbol("StringUtils"), constructor);
 
@@ -149,6 +150,18 @@ v8::Handle<v8::Value> StringUtils::isNaturalNumber(const v8::Arguments & args){
 	}
 
 	return scope.Close(v8::Boolean::New(result == 1));
+}
+
+// Getters and setters
+v8::Handle<v8::Value> StringUtils::getStringEncodings(v8::Local<v8::String> name, const v8::AccessorInfo & info){
+	v8::HandleScope scope;
+	v8::Local<v8::Object> obj = v8::Object::New();
+
+	// Set the different string encodings
+	obj->Set(v8::String::New("ASCII"), v8::Integer::New(ASCII));
+	obj->Set(v8::String::New("UTF8_BINARY"), v8::Integer::New(UTF8_BINARY));
+	obj->Set(v8::String::New("ISO_8859_1"), v8::Integer::New(ISO_8859_1));
+	return scope.Close(obj);
 }
 
 // Helper function used or parsing the arguments from javascript

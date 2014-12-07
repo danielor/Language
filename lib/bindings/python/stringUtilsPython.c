@@ -102,6 +102,11 @@ static PyObject * py_stringutils_lengthescaped(PyObject * self, PyObject * args)
 }
 
 /**
+ * A python function that checks if a sequence of characters is a natural number
+ * in different encodings
+ */
+
+/**
  * A list of all of the methods defined in this module. The
  * length module is defined as a python function that
  */
