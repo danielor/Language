@@ -39,6 +39,7 @@ private:
 	// The interface functions for the string utilities
 	static v8::Handle<v8::Value> length(const v8::Arguments & args);
 	static v8::Handle<v8::Value> lengthEscaped(const v8::Arguments & args);
+	static v8::Handle<v8::Value> isNaturalNumber(const v8::Arguments & args);
 
 	// Helper function to parse different variables
 	static void _parseInt(const v8::Arguments & args, int index,  int * value);

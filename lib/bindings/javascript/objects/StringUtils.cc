@@ -42,6 +42,8 @@ void StringUtils::Init(v8::Handle<v8::Object> exports){
 			v8::FunctionTemplate::New(length)->GetFunction());
 	tpl->PrototypeTemplate()->Set(v8::String::NewSymbol("lengthEscaped"),
 			v8::FunctionTemplate::New(lengthEscaped)->GetFunction());
+	tpl->PrototypeTemplate()->Set(v8::String::NewSymbol("isNaturalNumber"),
+				v8::FunctionTemplate::New(isNaturalNumber)->GetFunction());
 	constructor = v8::Persistent<v8::Function>::New(tpl->GetFunction());
 	exports->Set(v8::String::NewSymbol("StringUtils"), constructor);
 
@@ -121,6 +123,32 @@ v8::Handle<v8::Value> StringUtils::lengthEscaped(const v8::Arguments & args){
 
 	int result = lenEscaped(buffer, encoding, controlString, escapeEncoding, endString);
 	return scope.Close(v8::Number::New(result));
+}
+
+v8::Handle<v8::Value> StringUtils::isNaturalNumber(const v8::Arguments & args){
+	v8::HandleScope scope;
+
+	// The base encoding
+	int encoding = UTF8_BINARY;
+	const char * buffer;
+	bool isValid = false;
+
+	// Get the variables from the arguments
+	if(args[0]->IsString()){
+		buffer = *v8::String::Utf8Value(args[0]);
+		isValid = true;
+	}
+	if(args[1]->IsNumber()){
+		encoding = args[1]->Uint32Value();
+	}
+
+	// Find the length if we have a valid call. If not return 0
+	int result = 0;
+	if(isValid){
+		result = isNumberSequence(buffer, encoding);
+	}
+
+	return scope.Close(v8::Boolean::New(result == 1));
 }
 
 // Helper function used or parsing the arguments from javascript

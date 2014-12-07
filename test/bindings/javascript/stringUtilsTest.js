@@ -41,15 +41,37 @@ var JavascriptUtilsTest = (function(){
 	}
 	
 	/**
+	 * Test the isNumber sequence functionality
+	 * @function testIsNumberSequence
+	 * @memberof JavascriptUtilsTest
+	 */
+	function testIsNaturalNumber(){
+		var StringUtils = LanguageModule.StringUtils;
+		var stringUtils = new StringUtils();
+		
+		// Test the isNumberSequence
+		var numberSequenceTest1 = stringUtils.isNaturalNumber("567", 1);
+		var numberSequenceTest2 = stringUtils.isNaturalNumber("n", 0);
+		var numberSequenceTest3 = stringUtils.isNaturalNumber("5gd3", 2);
+		var numberSequenceTest4 = stringUtils.isNaturalNumber("1de3g3dg3", 0);
+		expect(numberSequenceTest1).to.eql(true);
+		expect(numberSequenceTest2).to.eql(false);
+		expect(numberSequenceTest3).to.eql(false);
+		expect(numberSequenceTest4).to.eql(false);
+	}
+	
+	/**
 	 * The public interface
 	 */
 	return {
 		testStringLength:testStringLength,
-		testStringLengthEscaped:testStringLengthEscaped
+		testStringLengthEscaped:testStringLengthEscaped,
+		testIsNaturalNumber:testIsNaturalNumber
 	}
 })();
 
 describe("Test the javascript utils", function(){
 	it('JavascriptUtils Length Test', JavascriptUtilsTest.testStringLength);
 	it('JavascriptUtils Length Escaped Test', JavascriptUtilsTest.testStringLengthEscaped);
+	it('JavascriptUtils Natural Number Test', JavascriptUtilsTest.testIsNaturalNumber);
 });
