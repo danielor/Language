@@ -35,4 +35,24 @@ public class StringUtilsTest{
 		assertEquals("'HealthyYUM2345N' with YUM escaped has string length 9", stringLengthSecond, 9);
 		assertEquals("'HealthyYUM2345NR' with 'YUM' escaped and end string 'N'", stringLengthThird, 9);
 	}
+	
+	/**
+	 * Test if the sequence is a natural number
+	 */
+	@Test
+	public void testIsNaturalNumber(){
+		LanguageStringUtils stringUtil = new LanguageStringUtils();
+		boolean isNaturalNumber1 = stringUtil.isNaturalNumber("567", 1);
+		boolean isNaturalNumber2 = stringUtil.isNaturalNumber("n", 1);
+		boolean isNaturalNumber3 = stringUtil.isNaturalNumber("3", 1);
+		boolean isNaturalNumber4 = stringUtil.isNaturalNumber("5gd3", 1);
+		boolean isNaturalNumber5 = stringUtil.isNaturalNumber("1de3g3dg3", 1);
+		
+		// Assert equality
+		assertEquals("'567' is a natural number", isNaturalNumber1, true);
+		assertEquals("'n' is not a natural number", isNaturalNumber2, false);
+		assertEquals("'3' is a natural number", isNaturalNumber1, true);
+		assertEquals("'5gd3' is not a natural number", isNaturalNumber2, false);
+		assertEquals("'1de3g3dg3' is not a natural number", isNaturalNumber2, false);
+	}
 }

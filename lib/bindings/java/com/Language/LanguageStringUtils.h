@@ -18,7 +18,7 @@ JNIEXPORT jint JNICALL Java_com_Language_LanguageStringUtils_length
 
 /*
  * Class:     LanguageStringUtils
- * Method:    length
+ * Method:    lengthEscaped
  * Signature: (Ljava/lang/String;I;java/lang/String;I)I
  */
 JNIEXPORT jint JNICALL Java_com_Language_LanguageStringUtils_lengthEscaped
@@ -26,11 +26,19 @@ JNIEXPORT jint JNICALL Java_com_Language_LanguageStringUtils_lengthEscaped
 
 /*
  * Class:     LanguageStringUtils
- * Method:    length
+ * Method:    lengthEscapedEnd
  * Signature: (Ljava/lang/String;I;java/lang/String;I;java/lang/String)I
  */
 JNIEXPORT jint JNICALL Java_com_Language_LanguageStringUtils_lengthEscapedWithEnd
   (JNIEnv *, jobject, jstring, jint, jstring, jint);
+
+/*
+ * Class:     LanguageStringUtils
+ * Method:    isNaturalNumber
+ * Signature: (Ljava/lang/String;I)B
+ */
+JNIEXPORT jboolean JNICALL Java_com_Language_LanguageStringUtils_isNaturalNumber
+(JNIEnv *, jobject, jstring, jint);
 
 #ifdef __cplusplus
 }

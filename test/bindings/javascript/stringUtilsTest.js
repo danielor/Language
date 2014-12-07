@@ -41,15 +41,57 @@ var JavascriptUtilsTest = (function(){
 	}
 	
 	/**
+	 * Test the isNumber sequence functionality
+	 * @function testIsNumberSequence
+	 * @memberof JavascriptUtilsTest
+	 */
+	function testIsNaturalNumber(){
+		var StringUtils = LanguageModule.StringUtils;
+		var stringUtils = new StringUtils();
+		
+		// Test the isNumberSequence
+		var numberSequenceTest1 = stringUtils.isNaturalNumber("567", 1);
+		var numberSequenceTest2 = stringUtils.isNaturalNumber("n", 0);
+		var numberSequenceTest3 = stringUtils.isNaturalNumber("5gd3", 2);
+		var numberSequenceTest4 = stringUtils.isNaturalNumber("1de3g3dg3", 0);
+		expect(numberSequenceTest1).to.eql(true);
+		expect(numberSequenceTest2).to.eql(false);
+		expect(numberSequenceTest3).to.eql(false);
+		expect(numberSequenceTest4).to.eql(false);
+	}
+	
+	/**
+	 * Test the string encoding functionality
+	 * @function testStringEncodings
+	 * @memberof JavascriptUtilsTest
+	 */
+	function testStringEncodings(){
+		var StringUtils = LanguageModule.StringUtils;
+		var stringUtils = new StringUtils();
+		var encodings = stringUtils.stringEncodings;
+		expect(_.isObject(encodings)).to.eql(true);
+		expect(_.has(encodings, "ASCII")).to.eql(true);
+		expect(_.has(encodings, "UTF8_BINARY")).to.eql(true);
+		expect(_.has(encodings, "ISO_8859_1")).to.eql(true);
+		expect(encodings.UTF8_BINARY).to.eql(0);
+		expect(encodings.ASCII).to.eql(1);
+		expect(encodings.ISO_8859_1).to.eql(2);
+	}
+	
+	/**
 	 * The public interface
 	 */
 	return {
 		testStringLength:testStringLength,
-		testStringLengthEscaped:testStringLengthEscaped
+		testStringLengthEscaped:testStringLengthEscaped,
+		testIsNaturalNumber:testIsNaturalNumber,
+		testStringEncodings:testStringEncodings
 	}
 })();
 
 describe("Test the javascript utils", function(){
 	it('JavascriptUtils Length Test', JavascriptUtilsTest.testStringLength);
 	it('JavascriptUtils Length Escaped Test', JavascriptUtilsTest.testStringLengthEscaped);
+	it('JavascriptUtils Natural Number Test', JavascriptUtilsTest.testIsNaturalNumber);
+	it('JavascriptUtils String Encodings Test', JavascriptUtilsTest.testStringEncodings);
 });
