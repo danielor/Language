@@ -72,7 +72,9 @@ def setupPythonLanguagePackage():
             "Programming Language :: Python :: 2.7"
         ],                                              # The classifiers associated with the package
        keywords='Generics Language',                    # Keywords associated with the package
-        ext_modules = [languageExtension]
+       ext_modules = [languageExtension],
+       package_dir = {"LanguageUtils": "lib/bindings/python"},
+       packages = ['LanguageUtils']
     )
 if __name__ == '__main__':
     setupPythonLanguagePackage()
