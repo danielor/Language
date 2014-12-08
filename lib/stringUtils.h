@@ -34,6 +34,18 @@ typedef enum {
 } baseEncodings;
 
 /**
+ * An enum that encapsulates the different encodings and their
+ * alphabets
+ */
+typedef enum{
+	ENGLISH = 0,
+	SPANISH = 1,
+	FRENCH = 2,
+	PORTUGUESE = 3,
+	GERMAN = 4
+} Languages;
+
+/**
  * An enum that encapsulates the different escape encodings
  * supported by different functionality in Language
  */
@@ -106,6 +118,7 @@ int isDiacriticalMark(int codePoint){
 		return 0;
 	}
 }
+
 
 /**
  * Return the UTF8 binary string length
@@ -226,6 +239,129 @@ int isNumberSequence(const char * charValueSequence, int encoding){
 		characterPointer++;
 	}
 	return 1;
+}
+
+/**
+ * Check if a characters is a hex number in different encodings
+ * @param charValue The character to check
+ * @param encoding The encoding of the character
+ * @return {0=false, 1= true}
+ */
+int isHex(const char * charValue, int encoding){
+	if(encoding == UTF8_BINARY || encoding == ASCII || encoding == ISO_8859_1){
+		if(*charValue >= 48 && *charValue <= 57){
+			return 1;
+		}
+		if(*hexValue >= 65 && *hexValue <= 70){
+			return 1; // a-f
+		}
+		if(*hexValue >= 97 && *hexValue <= 102){
+			return 17; // A-F
+		}
+		return 0;
+	}else{
+		return 0;
+	}
+}
+
+/**
+ * Check if a sequence of characeters is hex
+ * @param charSequence The character to check
+ * @param encoding The encoding of the character
+ * @returns {0 = false, 1 = true}
+ */
+int isHexSequence(const char * charValueSequence, int encoding){
+	const char * characterPointer = charValueSequence;
+	while(*characterPointer != '\0'){
+		if(isHex(characterPointer, encoding) == 0){
+			return 0;
+		}
+		characterPointer++;
+	}
+	return 1;
+}
+
+/**
+ * A function that checks if a character is a valid part of an
+ * encoding. This will not work for encoding that require multiple
+ * bytes
+ * @param charValue The character to check
+ * @param encoding The encoding to check
+ * @returns {0 = false, 1 = true}
+ */
+int isValidCharacter(const char * charValue, int encoding){
+	char value = *charValue;
+	if(encoding == ASCII){
+		if(value < 128){
+			return 1;
+		}else{
+			return 0;
+		}
+	}else if(encoding == ISO_8859_1){
+		if(value > 31 && !(value > 126 && value < 160)){
+			return 1;
+		}else{
+			return 0;
+		}
+	}else{
+		return 0;
+	}
+}
+
+/**
+ * An function used to check in multiple encodings if the character is a romance
+ * character
+ * @param charValue The character to check
+ * @param encoding The encoding to check
+ * @returns {0 = false, 1 = true}
+ */
+int isInRomanceAlphabet(const char * charValue, int encoding){
+	if(encoding == UTF8_BINARY || encoding == ASCII || encoding == ISO_8859_1){
+		if(*hexValue >= 65 && *hexValue <= 90){
+			return 1; // a-z
+		}
+		if(*hexValue >= 97 && *hexValue <= 122){
+			return 17; // A-Z
+		}
+		return 0;
+	}else{
+		return 0;
+	}
+}
+
+
+/**
+ * Check if a character is part of the alphabet of different languages.
+ * Different languages have added characters that go beyond the standard
+ * ASCII characters.
+ * @param charValue The character to check
+ * @param encoding The encoding of the character
+ * @param language The language of the character
+ * @returns {0= false, 1 = true}
+ */
+int isInAlphabet(const char * charValue, int encoding, int language){
+	// The ascii character set is limited. Make sure that irrespective of the language
+	// that the character value has the romance core without the diacritical marks.
+	if(isInRomanceAlphabet(charValue, encoding)){
+		return 1;
+	}else{
+		// Each language has its own diacritical marks that are formally part
+		// of the ortography of the language. For now, only romance languages
+		// have been addresed.
+		if(language == ENGLISH){
+			return 0;					// Imported words are ignored.
+		}else if(language == SPANISH){
+
+		}else if(language == FRENCH){
+
+		}else if(language == PORTUGUESE){
+
+		}else if(language == GERMAN){
+
+		}else{
+
+		}
+	}
 }
 
 /**
