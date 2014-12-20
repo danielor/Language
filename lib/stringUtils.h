@@ -40,9 +40,7 @@ typedef enum {
 typedef enum{
 	ENGLISH = 0,
 	SPANISH = 1,
-	FRENCH = 2,
-	PORTUGUESE = 3,
-	GERMAN = 4
+	FRENCH = 2
 } Languages;
 
 /**
@@ -79,45 +77,156 @@ typedef enum{
 	ENCODED_PARSE_STRING_END = 3			// The encoded parse string end state
 } encodedParsedStringStates;
 
-/**
- * A function that returns the utf8 state associated with a control
- * character. The control character is the first character after
- * a utf8 encoded string has ended
- * @param controlChar The control char to check
- */
-int getUTF8State(const char controlChar){
-	// Check the control character is
-	if(!(controlChar & ((0x01) << 7))){
-		return UTF8_BINARY_7BIT_STATE;
-	}else if(controlChar & ((0x03) << 6) && !(controlChar & ((0x01) << 5))){
-		return UTF8_BINARY_11BIT_STATE;
-	}else if(controlChar & ((0x07) << 5) && !(controlChar & ((0x01) << 4))){
-		return UTF8_BINARY_16BIT_STATE;
-	}else if(controlChar & ((0x0f) << 4) && !(controlChar & ((0x01) << 3))){
-		return UTF8_BINARY_21BIT_STATE;
-	}else{
-		return UTF8_BINARY_ERROR_STATE;
-	}
-}
+
 
 /**
- * A function that checks if a code point is a diacritical mark.
- * @param codePoint A utf8 code point
+ * A structure that encapsulates the behavior needed to properly handle utf8.
+ * The structure contains a collection of functions needed for parsing and
+ * general handling of UT8 encoded characters
+ */
+struct UTF8{
+	/**
+	 * A function that returns the utf8 state associated with a control
+	 * character. The control character is the first character after
+	 * a utf8 encoded string has ended
+	 * @param controlChar The control char to check
+	 */
+	int getUTF8State(const char controlChar){
+		// Check the control character is
+		if(!(controlChar & ((0x01) << 7))){
+			return UTF8_BINARY_7BIT_STATE;
+		}else if(controlChar & ((0x03) << 6) && !(controlChar & ((0x01) << 5))){
+			return UTF8_BINARY_11BIT_STATE;
+		}else if(controlChar & ((0x07) << 5) && !(controlChar & ((0x01) << 4))){
+			return UTF8_BINARY_16BIT_STATE;
+		}else if(controlChar & ((0x0f) << 4) && !(controlChar & ((0x01) << 3))){
+			return UTF8_BINARY_21BIT_STATE;
+		}else{
+			return UTF8_BINARY_ERROR_STATE;
+		}
+	}
+
+	/**
+	 * A function that checks if a code point is a diacritical mark.
+	 * @param codePoint A utf8 code point
+	 * @returns {0 = false, 1 = true}
+	 */
+	int isDiacriticalMark(int codePoint){
+		if(codePoint >= 0x300 && codePoint <= 0x036f){
+			return 1;
+		}else if(codePoint >= 0x1ab0 && codePoint <=0x1aff){
+			return 1;
+		}else if(codePoint >= 0x20d0 && codePoint <=0x20ff){
+			return 1;
+		}else if(codePoint >= 0xfe20 && codePoint <=0xfe2f){
+			return 1;
+		}else{
+			return 0;
+		}
+	}
+
+	/**
+	 * Check if a charcter is part of a set of unicode characters
+	 * @param charValue The character value to check
+	 * @param codePoints An array of code points
+	 * @param numberOfCodePoints The number of code points in the array
+	 * @returns {0=false, 1=true}
+	 */
+	int isUTF8BinaryCharacterInUTFSet(const char * charValue, int *codePoints, int numberOfCodePoints){
+		int j;
+		int * codePointer = codePoints;
+		for(j=0; j < numberOfCodePoints; j++){
+			int codePoint = *codePointer;
+			if(isUTF8BinaryCodePoint(charValue, codePoint) == 1){
+				return 1;
+			}
+		}
+		return 0;
+	}
+
+	/**
+	 * Check if a utf8 binary character is equal to a code point.
+	 * A ut8 binary code point is passed in an integer.
+	 * @param charValue The first character associated with the character pointer
+	 * @param codePoint The code point to check
+	 * @returns {0 = false, 1 = true}
+	 */
+	int isUTF8BinaryCodePoint(const char * charValue, int codePoint){
+		const char * characterPointer = charValue;
+		char c = *charValue;
+		int effectiveUtf8Value = 0;
+		int utf8ParseState = getUTF8State(c);
+		if(utf8ParseState == UTF8_BINARY_7BIT_STATE){
+			return c == codePoint;
+		}else if(utf8ParseState == UTF8_BINARY_11BIT_STATE){
+			characterPointer++;
+			if(characterPointer == '/0'){
+				return 0;
+			}
+			char firstBit = *characterPointer;
+			effectiveUTFValue = ((c & 0x1f) << 6) + (firstBit & 0x3f);
+			return effectiveUtf8Value == codePoint;
+		}else if(utf8ParseState == UTF8_BINARY_16BIT_STATE){
+			characterPointer++;
+			if(characterPointer == '\0'){
+				return 0;
+			}
+			char secondBit = *characterPointer;
+
+			characterPointer++;
+			if(characterPointer == '\0'){
+				return 0;
+			}
+			char firstBit = *characterPointer;
+			effectiveUTFValue = ((c & 0xf) << 12) + ((secondBit & 0x3f) << 6) + (firstBit & 0x3f);
+			return effectiveUtf8Value == codePoint;
+		}else if(utf8ParseState == UTF8_BINARY_21BIT_STATE){
+			characterPointer++;
+			if(characterPointer == '\0'){
+				return 0;
+			}
+			char thirdBit = *characterPointer;
+
+			characterPointer++;
+			if(characterPointer == '\0'){
+				return 0;
+			}
+			char secondBit = *characterPointer;
+
+			characterPointer++;
+			if(characterPointer == '\0'){
+				return 0;
+			}
+			char firstBit = *characterPointer;
+			effectiveUTFValue = ((c & 0x7) << 18) + ((thirdBit & 0x3f) << 12) + ((secondBit & 0x3f) << 6) + (firstBit & 0x3f);
+			return effectiveUtf8Value == codePoint;
+		}else{
+			return 0;
+		}
+	}
+};
+
+/**
+ * An function used to check in multiple encodings if the character is a romance
+ * character
+ * @param charValue The character to check
+ * @param encoding The encoding to check
  * @returns {0 = false, 1 = true}
  */
-int isDiacriticalMark(int codePoint){
-	if(codePoint >= 0x300 && codePoint <= 0x036f){
-		return 1;
-	}else if(codePoint >= 0x1ab0 && codePoint <=0x1aff){
-		return 1;
-	}else if(codePoint >= 0x20d0 && codePoint <=0x20ff){
-		return 1;
-	}else if(codePoint >= 0xfe20 && codePoint <=0xfe2f){
-		return 1;
+int isInRomanceAlphabet(const char * charValue, int encoding){
+	if(encoding == UTF8_BINARY || encoding == ASCII || encoding == ISO_8859_1){
+		if(*hexValue >= 65 && *hexValue <= 90){
+			return 1; // a-z
+		}
+		if(*hexValue >= 97 && *hexValue <= 122){
+			return 17; // A-Z
+		}
+		return 0;
 	}else{
 		return 0;
 	}
 }
+
 
 
 /**
@@ -130,6 +239,7 @@ int _lenUTF8Binary(const char * buffer){
 	int effectiveUTFValue = 0;							// The effective utf8 value as an integer
 	int utf8ParseState = UTF8_BINARY_START_PARSE_STATE;	// The utf8 parser state
 	const char * characterPointer = buffer;				// A pointer to the correct position in the buffer
+	UTF8 utf;
 	while(*characterPointer != '\0'){
 
 		// Grab our character
@@ -138,7 +248,7 @@ int _lenUTF8Binary(const char * buffer){
 		// Enter the UTF8 character state machine. The first portion of the
 		// state machine is the extraction of the
 		if(utf8ParseState == UTF8_BINARY_START_PARSE_STATE){
-			utf8ParseState = getUTF8State(c);
+			utf8ParseState = utf.getUTF8State(c);
 		}
 		// Switch between all of the different binary states for the UTF8
 		// standard
@@ -152,12 +262,13 @@ int _lenUTF8Binary(const char * buffer){
 			// This portion of the UTF8 contains the combining diacritical marks specified
 			// in unicode version 1.0(0x0300 - 0x036f)
 			characterPointer++;
-			char firstBit = *characterPointer;
-			if(firstBit == '\0'){
+			if(characterPointer == '\0'){
 				return UTF8_BINARY_ERROR_STATE;
 			}
+			char firstBit = *characterPointer;
+
 			effectiveUTFValue = ((c & 0x1f) << 6) + (firstBit & 0x3f);
-			if(!isDiacriticalMark(effectiveUTFValue)){
+			if(!utf.isDiacriticalMark(effectiveUTFValue)){
 				stringLength++;
 			}
 
@@ -167,21 +278,23 @@ int _lenUTF8Binary(const char * buffer){
 			// This portion of the UTF8 contains the combining diacritical marks specified
 			// in unicode version 7.0(0x1ab0-0x1aff), 1.0(0x20d0-0x20ff), 1.0(0xfe20-0xfe2f)
 			characterPointer++;
+			if(characterPointer == '\0'){
+				return UTF8_BINARY_ERROR_STATE;
+			}
 			char secondBit = *characterPointer;
-			if(secondBit == '\0'){
-				return UTF8_BINARY_ERROR_STATE;
-			}
+
 			characterPointer++;
-			char firstBit = *characterPointer;
-			if(firstBit == '\0'){
+			if(characterPointer == '\0'){
 				return UTF8_BINARY_ERROR_STATE;
 			}
+			char firstBit = *characterPointer;
+
 
 			// Get the effective utf8 value to check
 			effectiveUTFValue = ((c & 0xf) << 10) + ((secondBit & 0x3f) << 6) + (firstBit & 0x3f);
 
 			// Preincrement and decrement if it is a diacritical mark
-			if(!isDiacriticalMark(effectiveUTFValue)){
+			if(!utf.isDiacriticalMark(effectiveUTFValue)){
 				stringLength++;
 			}
 
@@ -309,26 +422,95 @@ int isValidCharacter(const char * charValue, int encoding){
 }
 
 /**
- * An function used to check in multiple encodings if the character is a romance
- * character
- * @param charValue The character to check
- * @param encoding The encoding to check
- * @returns {0 = false, 1 = true}
+ * Check if a character is part of the extended set of characters
+ * that are observed in Spanish in a specific encoding
+ * @param charValue The character associated with
+ * @param encoding The encoding to check for
+ * @return {0 = false, 1 = true}
  */
-int isInRomanceAlphabet(const char * charValue, int encoding){
-	if(encoding == UTF8_BINARY || encoding == ASCII || encoding == ISO_8859_1){
-		if(*hexValue >= 65 && *hexValue <= 90){
-			return 1; // a-z
-		}
-		if(*hexValue >= 97 && *hexValue <= 122){
-			return 17; // A-Z
-		}
+int isSpanishExtendedCharacter(const char * charValue, int encoding){
+	if(encoding == ASCII){
 		return 0;
+	}else if(encoding == ISO_8859_1){
+		char value = *charValue;
+		// c1 = A(acute), e1 = a(acute), c9 = E(acute), e9 = e(acute),
+		// cd = I(acute), ed = i(acute), d3 = O(acute), f3 = o(acute),
+		// da = U(acute), fa = u(acute), fc = u(diaresis), d1 = N(tilde)
+		// f1 = n(tilde)
+		if(value == 0xc1 || value == 0xe1 || value == 0xc9 || value = 0xe9 ||
+				value == 0xcd || value == 0xed || value == 0xd3 || value == 0xf3  ||
+				value == 0xda || value == 0xfa || value = 0xfc || value == 0xd1 ||
+				value == 0xf1){
+			return 1;
+		}else{
+			return 0;
+		}
+	}else if(encoding == UTF8_BINARY){
+		UTF8 utf;
+		int i;
+		// 0xc381 = A(acute), 0xc3a1 = a(acute), 0xc389 = E(acute), 0xc3a9 = e(acute)
+		// 0xc38d = I(acute), 0xc3ad = i(acute), 0xc393 = O(acute), 0xc3b3 = o(acute)
+		// 0xc39a = U(acute), 0xc3ba = u(acute), 0xc3bc = u(diaresis), 0xc3b1 = n(tilde)
+		// 0xc391
+		int spanishCodePointList[13] = {
+			0xc381,0xc3a1,0xc389,0xc3a9,0xc38d,0xc3ad,0xc393,0xc3b3,
+			0xc39a,0xc3ba,0xc3bc,0xc3b1,0xc391
+		};
+		return utf.isUTF8BinaryCharacterInUTFSet(charValue, spanishCodePointList, 13);
 	}else{
 		return 0;
 	}
 }
 
+/**
+ * Check if a character is pat of the extended set of characters
+ * that are observed in French for a specific encoding
+ * @param charValue The character to check
+ * @param encoding The encoding to check in
+ * @return {0 = false, 1 = true}
+ */
+int isFrenchExtendedCharacter(const char * charValue, int encoding){
+	if(encoding == ASCII){
+		return 0;
+	}else if(encoding == ISO_8859_1){
+		// c9 = E(acute), e9 = e(acute), c0 = A(grave), e0 = a(grave)
+		// c8 = E(grave), e8 = e(grave), d9 = U(grave), f9 = u(grave)
+		// c2 = A(circumflex), e2 = a(circumflex), ca = E(circumflex), ea = e(circumflex)
+		// ce = I(circumflex), ee = i(circumflex), d4 = O(circumflex), f4 = o(circumflex)
+		// db = U(circumflex), fb = u(circumflex), cb = E(diaresis), eb = e(diaresis)
+		// cc = I(diaresis), ec = i(diaresis), dc = U(diaresis), fc = u(diaresis)
+		// ff = y(diaresis), c7 = cedilla, e7 = cedilla
+		if(value == 0xc9 || value == 0xe9 || value == 0xc0 || value == 0xe0 ||
+				value == 0xc8 || value == 0xe8 || value == 0xd9 || value == 0xf9 ||
+				value == 0xc2 || value == 0xe2 || value == 0xca || value == 0xe1 ||
+				value == 0xd4 || value == 0xf4 || value == 0xce || value = 0xee ||
+				value == 0xdb || value == 0xfb || value == 0xcb || value == 0xeb ||
+				value == 0xcc || value == 0xec || value == 0xdc || value == 0xfc ||
+				value == 0xff || value == 0xc7 || value == 0xe7){
+			return 1;
+		}else{
+			return 0;
+		}
+	}else if(encoding == UTF8_BINARY){
+		UTF8 utf;
+		// 0xc3a9 = e(acute), 0xc389 = E(acute), 0xc380 = A(grave), 0xc3a0 = a(grave)
+		// 0xc388 = E(grave), 0xc3a8 = e(grave), 0xc399 = U(grave), 0xc3b9 = u(grave)
+		// 0xc382 = A(circumflex), 0xc3a2 = a(circumflex), 0xc38a = E(circumflex), 0xc3aa = e(circumflex)
+		// 0xc38e = I(circumflex), 0xc3ae = i(circumflex),  0xc394 = O(circumflex), 0xc3b4 = 0(circumflex)
+		// 0xc39b = U(circumflex), 0xc3bb = u(circumflex), 0xc38b = E(diaresis), 0xc3ab = e(diaresis)
+		// 0xc38f = I(diaresis), 0xc3af = i(diaresis), 0xc39c = U(diaresis), 0xc3bc = u(diaresis)
+		// 0xc3bf = y(diaresis), 0xc387 = cedilla capital, 0xc3a7 cedilla lower
+		int frenchCodePointList[26] = {
+				0xc3a9,0xc389,0xc380,0xc3a0,0xc388,0xc3a8,0xc399,0xc3b9,
+				0xc382,0xc3a2,0xc38a,0xc3aa,0xc38e,0xc3ae,0xc394,0xc3b4,
+				0xc39b,0xc3bb,0xc38b,0xc3ab,0xc38f,0xc3af,0xc39c,0xc3bc,
+				0xc387,0xc3a7
+				};
+		return utf.isUTF8BinaryCharacterInUTFSet(charValue, frenchCodePointList, 26);
+	}else{
+		return 0;
+	}
+}
 
 /**
  * Check if a character is part of the alphabet of different languages.
@@ -351,15 +533,11 @@ int isInAlphabet(const char * charValue, int encoding, int language){
 		if(language == ENGLISH){
 			return 0;					// Imported words are ignored.
 		}else if(language == SPANISH){
-
+			return isSpanishExtendedCharacter(charValue, encoding);
 		}else if(language == FRENCH){
-
-		}else if(language == PORTUGUESE){
-
-		}else if(language == GERMAN){
-
+			return isFrenchExtendedCharacter(charValue, encoding);
 		}else{
-
+			return 0;
 		}
 	}
 }
@@ -472,6 +650,7 @@ int lenEscaped(const char * buffer, int baseEncoding, const char * controlString
 	int lenEscapedCount = 0;							// Return the length of the escaped count
 	const char * controlPointer = controlString;		// Setup a pointer to the control string.
 	const char * characterPointer = buffer;				// A pointer to the correct position in the buffer
+	UTF8 utf;
 	while(*characterPointer != '\0'){
 		if(escapedState == ENCODED_PARSE_STRING_START){
 			if(*controlPointer == *characterPointer){
@@ -516,7 +695,7 @@ int lenEscaped(const char * buffer, int baseEncoding, const char * controlString
 					codePoint <<= 4;
 					characterPointer++;
 				}
-				if(!isDiacriticalMark(codePoint)){
+				if(!iutf.sDiacriticalMark(codePoint)){
 					lenEscapedCount++;
 				}
 
@@ -538,7 +717,7 @@ int lenEscaped(const char * buffer, int baseEncoding, const char * controlString
 					}
 
 				}
-				if(!isDiacriticalMark(codePoint)){
+				if(!utf.isDiacriticalMark(codePoint)){
 					lenEscapedCount++;
 				}
 
