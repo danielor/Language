@@ -26,6 +26,13 @@ struct TypeTest{
 	char expectedResult;			// The expected result
 };
 
+// Type test encoding struct
+struct TypeEncodingTest{
+	const char * buffer;			// The buffer string
+	int encoding;					// The encoding of the buffer
+	char expectedResult;			// The expected result of the buffer
+};
+
 // Test the code point
 struct UTFTypeTest{
 	int codePoint;					// The code point to test
@@ -279,6 +286,7 @@ int testIsUTF8BinaryCodePoint(){
 // A function that checks if a utf8 binary character is in a utf set
 // of code points
 int testIsUTFBinaryCharacterInUTFSet(){
+
 	return -1;
 }
 
@@ -316,6 +324,58 @@ int testIsHex(){
 	return -1;
 }
 
+// A function that checks if a sequence of characters satisfy the hexadecimal
+// range of characters
+int testIsHexSequence(){
+	int r;
+	struct TypeTest typeTests[5] = {
+		{"abcdef",1},{"ABCDEF",1},{"0123456789",1}, {"g",0},
+		{"G",0}
+	};
+	for(r=0; r < 5; r++){
+
+		struct TypeTest test = typeTests[r];
+		if(isHexSequence(test.buffer, ASCII) != test.expectedResult){
+			return 0;
+		}
+	}
+	return -1;
+}
+
+// A function that checks if a character is a valid character in an encoding
+int testIsValidCharacter(){
+	int r;
+	const unsigned char buffer[] = {0x0,'\0'};
+	const unsigned char buffer2[] = {0x3f,'\0'};
+	const unsigned char buffer3[] = {0x7e,'\0'};
+	const unsigned char buffer4[] = {0x7f,'\0'};
+	const unsigned char buffer5[] = {0x1f,'\0'};
+	const unsigned char buffer6[] = {0x20,'\0'};
+	const unsigned char buffer7[] = {0x5f,'\0'};
+	const unsigned char buffer8[] = {0x7e,'\0'};
+	const unsigned char buffer9[] = {0x7f,'\0'};
+	const unsigned char buffer10[] = {0x9e,'\0'};
+	const unsigned char buffer11[] = {0x9f,'\0'};
+	const unsigned char buffer12[] = {0xff,'\0'};
+	struct TypeEncodingTest typeTests[12] = {
+		{(const char *)buffer, ASCII, 1},{(const char*)buffer2, ASCII, 1},{(const char *)buffer3,ASCII, 1}, {(const char *)buffer4, ASCII, 0},
+		{(const char *)buffer5,ISO_8859_1,1},{(const char *)buffer6,ISO_8859_1,1},{(const char*)buffer7,ISO_8859_1,1},{(const char *)buffer8,ISO_8859_1,1},
+		{(const char *)buffer9,ISO_8859_1,0},{(const char *)buffer10,ISO_8859_1,0},{(const char *)buffer11,ISO_8859_1,1},{(const char *)buffer12,ISO_8859_1,1}
+	};
+	for(r=0; r < 12; r++){
+		struct TypeEncodingTest test = typeTests[r];
+		if(isValidCharacter(test.buffer, test.encoding) != test.expectedResult){
+			return 0;
+		}
+	}
+	return -1;
+}
+
+// A function that checks if a character is a spanish diacritical mark
+int testIsSpanishExtendCharacter(){
+	return -1;
+}
+
 // A function that tests the main points of functionality associated with the
 int testStringUtils(){
 	// The success/failure count
@@ -323,13 +383,15 @@ int testStringUtils(){
 	int failureCount = 0;
 
 	int testIter = 0;
-	int numberOfTests = 11;
-	int (*test_Array[11])() = {testGetUTF8State, testStringLength, testConvertHex, testIsNumber,
+	int numberOfTests = 13;
+	int (*test_Array[13])() = {testGetUTF8State, testStringLength, testConvertHex, testIsNumber,
 			testStringLengthEscaped, testIsNumberSequence,testIsDiacriticalMarkUTF8, testIsUTF8BinaryCodePoint,
-			testIsUTFBinaryCharacterInUTFSet, testIsInRomanceAlphabet, testIsHex};
-	const char * testNames[11] = {"UTF8State test", "String Length test", "Convert hex test", "Is number test",
+			testIsUTFBinaryCharacterInUTFSet, testIsInRomanceAlphabet, testIsHex, testIsHexSequence,
+			testIsSpanishExtendCharacter};
+	const char * testNames[13] = {"UTF8State test", "String Length test", "Convert hex test", "Is number test",
 			"String Length Unescaped test", "IsNumberSequence test", "TestIsDiacriticalMarkUTF8 test", "IsUTF8BinaryCodePoint test",
-			"Is UTF8 Character in Code Point Set test", "Is Romance Character test", "Is Hex Character Test"};
+			"Is UTF8 Character in Code Point Set test", "Is Romance Character test", "Is Hex Character test", "Is Hex Sequence test",
+			"Is Spanish Extended Character Test"};
 	for(testIter = 0; testIter < numberOfTests; testIter++){
 		const char * testName = testNames[testIter];
 		int (*test)() = test_Array[testIter];
