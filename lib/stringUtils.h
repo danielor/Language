@@ -121,6 +121,108 @@ int isDiacriticalMark(int codePoint){
 }
 
 /**
+ * Convert a code point to a utf8 binary character
+ * @param codePoint The UTF8 code point
+ */
+const char * convertCodePointToUTF8Binary(int codePoint){
+	if(codePoint < 0){
+		return NULL;
+	}else if(codePoint < 128){
+
+		// Get the ascii range of utf8
+		char c =  (char)codePoint;
+		char buffer[] = {0x0,'\0'};
+		buffer[0] = c;
+		return buffer;
+	}else if(codePoint < 2048){
+		char firstByte = 0x000007c0 & codePoint;
+		char secondByte = 0x0000003f & codePoint;
+		char buffer[] = {0x0,0x0,'\0'};
+		buffer[0] = (char)(firstByte >> 6);
+		buffer[1] = (char)(secondByte);
+		return buffer;
+	}else if(codePoint < 65536){
+		// Setup the first 3 bytes
+		char firstByte = 0x0000f000 & codePoint;
+		char secondByte = 0x00000fc0 & codePoint;
+		char thirdByte = 0x0000003f & codePoint;
+		char buffer[] = {0x0,0x0,0x0,'\0'};
+		buffer[0] = (char)(firstByte >> 12);
+		buffer[1] = (char)(secondByte >> 6);
+		buffer[2] = (char)(thirdByte);
+		return buffer;
+	}else if(codePoint < 0x200000){
+		char firstByte = 0x001c0000 & codePoint;
+		char secondByte = 0x0003f000 & codePoint;
+		char thirdByte = 0x00000fc0 & codePoint;
+		char fourthByte = 0x0000003f & codePoint;
+		char buffer[] = {0x0,0x0,0x0,0x0,'\0'};
+		buffer[0] = (char)(firstByte >> 18);
+		buffer[1] = (char)(secondByte >> 12);
+		buffer[2] = (char)(thirdByte >> 6);
+		buffer[4] = (char)fourthByte;
+		return buffer;
+	}else{
+		return NULL;
+	}
+}
+
+/**
+ * Covert a utf binary character into a code point
+ * @param charValue The first character of a buffer to convert into a codepoint
+ * @returns {A utf8 code point, or -1 for error}
+ */
+int convertUTF8BinaryToCodePoint(const char * charValue){
+	char c = *charValue;
+	const char * characterPointer = charValue;
+	int utf8ParseState = getUTF8State(c);
+	if(utf8ParseState == UTF8_BINARY_7BIT_STATE){
+		return c;
+	}else if(utf8ParseState == UTF8_BINARY_11BIT_STATE){
+		characterPointer++;
+		if(characterPointer == '\0'){
+			return -1;
+		}
+		char firstBit = *characterPointer;
+		return ((c & 0x1f) << 6) + (firstBit & 0x3f);
+	}else if(utf8ParseState == UTF8_BINARY_16BIT_STATE){
+		characterPointer++;
+		if(characterPointer == '\0'){
+			return -1;
+		}
+		char secondBit = *characterPointer;
+
+		characterPointer++;
+		if(characterPointer == '\0'){
+			return -1;
+		}
+		char firstBit = *characterPointer;
+		return ((c & 0xf) << 12) + ((secondBit & 0x3f) << 6) + (firstBit & 0x3f);
+	}else if(utf8ParseState == UTF8_BINARY_21BIT_STATE){
+		characterPointer++;
+		if(characterPointer == '\0'){
+			return -1;
+		}
+		char thirdBit = *characterPointer;
+
+		characterPointer++;
+		if(characterPointer == '\0'){
+			return -1;
+		}
+		char secondBit = *characterPointer;
+
+		characterPointer++;
+		if(characterPointer == '\0'){
+			return -1;
+		}
+		char firstBit = *characterPointer;
+		return ((c & 0x7) << 18) + ((thirdBit & 0x3f) << 12) + ((secondBit & 0x3f) << 6) + (firstBit & 0x3f);
+	}else{
+		return -1;
+	}
+}
+
+/**
  * Check if a utf8 binary character is equal to a code point.
  * A ut8 binary code point is passed in an integer.
  * @param charValue The first character associated with the character pointer
@@ -128,56 +230,12 @@ int isDiacriticalMark(int codePoint){
  * @returns {0 = false, 1 = true}
  */
 int isUTF8BinaryCodePoint(const char * charValue, int codePoint){
-	const char * characterPointer = charValue;
-	char c = *charValue;
-	int effectiveUtf8Value = 0;
-	int utf8ParseState = getUTF8State(c);
-	if(utf8ParseState == UTF8_BINARY_7BIT_STATE){
-		return c == codePoint;
-	}else if(utf8ParseState == UTF8_BINARY_11BIT_STATE){
-		characterPointer++;
-		if(characterPointer == '\0'){
-			return 0;
-		}
-		char firstBit = *characterPointer;
-		effectiveUtf8Value = ((c & 0x1f) << 6) + (firstBit & 0x3f);
-		return effectiveUtf8Value == codePoint;
-	}else if(utf8ParseState == UTF8_BINARY_16BIT_STATE){
-		characterPointer++;
-		if(characterPointer == '\0'){
-			return 0;
-		}
-		char secondBit = *characterPointer;
+	int convertedCodePoint = convertUTF8BinaryToCodePoint(charValue);
 
-		characterPointer++;
-		if(characterPointer == '\0'){
-			return 0;
-		}
-		char firstBit = *characterPointer;
-		effectiveUtf8Value = ((c & 0xf) << 12) + ((secondBit & 0x3f) << 6) + (firstBit & 0x3f);
-		return effectiveUtf8Value == codePoint;
-	}else if(utf8ParseState == UTF8_BINARY_21BIT_STATE){
-		characterPointer++;
-		if(characterPointer == '\0'){
-			return 0;
-		}
-		char thirdBit = *characterPointer;
-
-		characterPointer++;
-		if(characterPointer == '\0'){
-			return 0;
-		}
-		char secondBit = *characterPointer;
-
-		characterPointer++;
-		if(characterPointer == '\0'){
-			return 0;
-		}
-		char firstBit = *characterPointer;
-		effectiveUtf8Value = ((c & 0x7) << 18) + ((thirdBit & 0x3f) << 12) + ((secondBit & 0x3f) << 6) + (firstBit & 0x3f);
-		return effectiveUtf8Value == codePoint;
-	}else{
+	if(convertedCodePoint == -1){
 		return 0;
+	}else{
+		return codePoint == convertedCodePoint;
 	}
 }
 
@@ -194,9 +252,11 @@ int isUTF8BinaryCharacterInUTFSet(const char * charValue, int *codePoints, int n
 	int * codePointer = codePoints;
 	for(j=0; j < numberOfCodePoints; j++){
 		int codePoint = *codePointer;
+		int nCodePoint = convertUTF8BinaryToCodePoint(charValue);
 		if(isUTF8BinaryCodePoint(charValue, codePoint) == 1){
 			return 1;
 		}
+		codePointer++;
 	}
 	return 0;
 }

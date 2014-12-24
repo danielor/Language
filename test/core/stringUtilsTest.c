@@ -26,6 +26,12 @@ struct TypeTest{
 	char expectedResult;			// The expected result
 };
 
+// Type test utf struct
+struct TypeUTFTest{
+	const char * buffer;			// The buffer string
+	int expectedResult;				// The expected result
+};
+
 // Type test encoding struct
 struct TypeEncodingTest{
 	const char * buffer;			// The buffer string
@@ -44,6 +50,13 @@ struct UTFConvertTest{
 	const char * buffer;			// The buffer to test
 	int codePoint;					// The code point to check
 	char expectedResult;			// The expected result of the test
+};
+
+// Test a utf set test
+struct UTFSetTest{
+	const char * buffer;			// The buffer to test
+	const int * codePoints;			// The code points in the set
+	char expectedResult;			// The expected result
 };
 
 // A function that test the functionality associated with the utf8 state test.
@@ -268,11 +281,11 @@ int testIsUTF8BinaryCodePoint(){
 	const unsigned char buffer2[] = {0xc3,0x80,'\0'};
 	const unsigned char xbuffer2[] = {0xc3,0x81,'\0'};
 	const unsigned char buffer3[] = {0xe0,0xa0,0x80,'\0'};
-	const unsigned char xbuffer3[] = {0xe0,0xa0,0x80,'\0'};
+	const unsigned char xbuffer3[] = {0xe0,0xa0,0x81,'\0'};
 	struct UTFConvertTest convertTest[9] = {
 		{(const char *)buffer,86,1},{(const char *)buffer,87,0},{(const char *)xbuffer,86,0},
 		{(const char *)buffer2,192,1},{(const char *)buffer2,193,0},{(const char *)xbuffer2,192,0},
-		{(const char *)buffer3,2048,1},{(const char *)buffer3,2049,0},{(const char *)xbuffer3,2048,1}
+		{(const char *)buffer3,2048,1},{(const char *)buffer3,2049,0},{(const char *)xbuffer3,2048,0}
 	};
 	for(r=0; r < 9; r++){
 		struct UTFConvertTest test = convertTest[r];
@@ -283,9 +296,59 @@ int testIsUTF8BinaryCodePoint(){
 	return -1;
 }
 
+// A function that checks the conversion between utf8 binary and a utf code
+// point functions correctly
+int testConvertUTF8BinaryToCodePoint(){
+	int r;
+
+	// The buffers to test
+	const unsigned char buffer[] = {0x56,'\0'};
+	const unsigned char xbuffer[] = {0x57,'\0'};
+	const unsigned char buffer2[] = {0xc3,0x80,'\0'};
+	const unsigned char xbuffer2[] = {0xc3,0x81,'\0'};
+	const unsigned char buffer3[] = {0xe0,0xa0,0x80,'\0'};
+	const unsigned char xbuffer3[] = {0xe0,0xa0,0x81,'\0'};
+	struct TypeUTFTest typeTests[6] = {
+			{(const char *)buffer,86},{(const char *)xbuffer,87},
+			{(const char *)buffer2,192},{(const char *)xbuffer2,193},
+			{(const char *)buffer3,2048},{(const char *)xbuffer3,2049}
+	};
+	for(r=0; r < 6; r++){
+		struct TypeUTFTest test = typeTests[r];
+		if(convertUTF8BinaryToCodePoint(test.buffer) != test.expectedResult){
+			return 0;
+		}
+	}
+	return -1;
+}
+
 // A function that checks if a utf8 binary character is in a utf set
 // of code points
 int testIsUTFBinaryCharacterInUTFSet(){
+	int r;
+	const unsigned char buffer[] = {0x56,'\0'};
+	const unsigned char buffer2[] = {0x57,'\0'};
+	const unsigned char buffer3[] = {0xc3,0x80,'\0'};
+	const unsigned char buffer4[] = {0xc3,0x81,'\0'};
+	const unsigned char buffer5[] = {0xe0,0xa0,0x80,'\0'};
+	const unsigned char buffer6[] = {0xe0,0xa0,0x81,'\0'};
+	const unsigned char xbuffer[] = {0x58,'\0'};
+	const unsigned char xbuffer2[] = {0xc3,0x82,'\0'};
+	const unsigned char xbuffer3[] = {0xe0,0xa0,0x82,'\0'};
+	const int codePointList[] = {86,87,192,193,2048,2049};
+	struct UTFSetTest typeTests[9] = {
+			{(const char *)buffer,codePointList,1},{(const char *)buffer2,codePointList,1},
+			{(const char *)buffer3,codePointList,1},{(const char *)buffer4,codePointList,1},
+			{(const char *)buffer5,codePointList,1},{(const char *)buffer6,codePointList,1},
+			{(const char *)xbuffer,codePointList,0},{(const char *)xbuffer2,codePointList, 0},
+			{(const char *)xbuffer3,codePointList,0}
+	};
+	for(int r = 0; r < 9; r++){
+		struct UTFSetTest test = typeTests[r];
+		if(isUTF8BinaryCharacterInUTFSet(test.buffer,(int*)test.codePoints, 6) != test.expectedResult){
+			return 0;
+		}
+	}
 
 	return -1;
 }
@@ -373,6 +436,16 @@ int testIsValidCharacter(){
 
 // A function that checks if a character is a spanish diacritical mark
 int testIsSpanishExtendCharacter(){
+	int r;
+	struct ConvertTest conversionTests[10] = {
+		{0xc1, 0},{0xe1, 1},{0xc9, 1},{0x90, 0},{0xe9, 1},
+		{0xcd, 1},{0xed, 1},{0xda, 1},{0xfa, 1},{0xfc, 0}};
+	for(r=0; r < 10; r++){
+		struct ConvertTest test = conversionTests[r];
+		if(isInRomanceAlphabet(&test.originalCharacter, ASCII) != test.expectedCharacter){
+			return 0;
+		}
+	}
 	return -1;
 }
 
@@ -383,15 +456,15 @@ int testStringUtils(){
 	int failureCount = 0;
 
 	int testIter = 0;
-	int numberOfTests = 13;
-	int (*test_Array[13])() = {testGetUTF8State, testStringLength, testConvertHex, testIsNumber,
+	int numberOfTests = 14;
+	int (*test_Array[14])() = {testGetUTF8State, testStringLength, testConvertHex, testIsNumber,
 			testStringLengthEscaped, testIsNumberSequence,testIsDiacriticalMarkUTF8, testIsUTF8BinaryCodePoint,
 			testIsUTFBinaryCharacterInUTFSet, testIsInRomanceAlphabet, testIsHex, testIsHexSequence,
-			testIsSpanishExtendCharacter};
-	const char * testNames[13] = {"UTF8State test", "String Length test", "Convert hex test", "Is number test",
+			testIsSpanishExtendCharacter,testConvertUTF8BinaryToCodePoint};
+	const char * testNames[14] = {"UTF8State test", "String Length test", "Convert hex test", "Is number test",
 			"String Length Unescaped test", "IsNumberSequence test", "TestIsDiacriticalMarkUTF8 test", "IsUTF8BinaryCodePoint test",
 			"Is UTF8 Character in Code Point Set test", "Is Romance Character test", "Is Hex Character test", "Is Hex Sequence test",
-			"Is Spanish Extended Character Test"};
+			"Is Spanish Extended Character Test", "Convert UTF8 Binary To Code Point Test"};
 	for(testIter = 0; testIter < numberOfTests; testIter++){
 		const char * testName = testNames[testIter];
 		int (*test)() = test_Array[testIter];
