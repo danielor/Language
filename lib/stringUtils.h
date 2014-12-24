@@ -13,6 +13,7 @@
 //limitations under the License.
 
 #include <string.h>
+#include <stdlib.h>
 
 #ifndef STRINGUTILS_H
 #define STRINGUTILS_H
@@ -131,36 +132,40 @@ const char * convertCodePointToUTF8Binary(int codePoint){
 
 		// Get the ascii range of utf8
 		char c =  (char)codePoint;
-		char buffer[] = {0x0,'\0'};
+		char * buffer = (char*)(malloc(2 * sizeof(char)));
 		buffer[0] = c;
+		buffer[1] = '\0';
 		return buffer;
 	}else if(codePoint < 2048){
-		char firstByte = 0x000007c0 & codePoint;
-		char secondByte = 0x0000003f & codePoint;
-		char buffer[] = {0x0,0x0,'\0'};
-		buffer[0] = (char)(firstByte >> 6);
-		buffer[1] = (char)(secondByte);
+		int firstByte = 0x000007c0 & codePoint;
+		int secondByte = 0x0000003f & codePoint;
+		char * buffer = (char*)(malloc(3 * sizeof(char)));
+		buffer[0] = (char)(0xc0 | (firstByte >> 6));
+		buffer[1] = (char)(0x80 | secondByte);
+		buffer[2] = '\0';
 		return buffer;
 	}else if(codePoint < 65536){
 		// Setup the first 3 bytes
-		char firstByte = 0x0000f000 & codePoint;
-		char secondByte = 0x00000fc0 & codePoint;
-		char thirdByte = 0x0000003f & codePoint;
-		char buffer[] = {0x0,0x0,0x0,'\0'};
-		buffer[0] = (char)(firstByte >> 12);
-		buffer[1] = (char)(secondByte >> 6);
-		buffer[2] = (char)(thirdByte);
+		int firstByte = 0x0000f000 & codePoint;
+		int secondByte = 0x00000fc0 & codePoint;
+		int thirdByte = 0x0000003f & codePoint;
+		char * buffer = (char*)(malloc(4 * sizeof(char)));
+		buffer[0] = (char)(0xe0 | (firstByte >> 12));
+		buffer[1] = (char)(0x80 | (secondByte >> 6));
+		buffer[2] = (char)(0x80 | thirdByte);
+		buffer[3] = '\0';
 		return buffer;
 	}else if(codePoint < 0x200000){
-		char firstByte = 0x001c0000 & codePoint;
-		char secondByte = 0x0003f000 & codePoint;
-		char thirdByte = 0x00000fc0 & codePoint;
-		char fourthByte = 0x0000003f & codePoint;
-		char buffer[] = {0x0,0x0,0x0,0x0,'\0'};
-		buffer[0] = (char)(firstByte >> 18);
-		buffer[1] = (char)(secondByte >> 12);
-		buffer[2] = (char)(thirdByte >> 6);
-		buffer[4] = (char)fourthByte;
+		int firstByte = 0x001c0000 & codePoint;
+		int secondByte = 0x0003f000 & codePoint;
+		int thirdByte = 0x00000fc0 & codePoint;
+		int fourthByte = 0x0000003f & codePoint;
+		char * buffer = (char*)(malloc(5 * sizeof(char)));
+		buffer[0] = (char)(0xf0 | (firstByte >> 18));
+		buffer[1] = (char)(0x80 | (secondByte >> 12));
+		buffer[2] = (char)(0x80 | (thirdByte >> 6));
+		buffer[4] = (char)(0x80 | fourthByte);
+		buffer[5] = '\0';
 		return buffer;
 	}else{
 		return NULL;
@@ -503,13 +508,13 @@ int isSpanishExtendedCharacter(const char * charValue, int encoding){
 		}
 	}else if(encoding == UTF8_BINARY){
 		int i;
-		// 0xc381 = A(acute), 0xc3a1 = a(acute), 0xc389 = E(acute), 0xc3a9 = e(acute)
-		// 0xc38d = I(acute), 0xc3ad = i(acute), 0xc393 = O(acute), 0xc3b3 = o(acute)
-		// 0xc39a = U(acute), 0xc3ba = u(acute), 0xc3bc = u(diaresis), 0xc3b1 = n(tilde)
-		// 0xc391
+		// 193 = A(acute), 225 = a(acute), 201 = E(acute), 233 = e(acute)
+		// 205 = I(acute), 237 = i(acute), 211 = O(acute), 243 = o(acute)
+		// 218 = U(acute), 250 = u(acute), 252 = u(diaresis), 241 = n(tilde)
+		// 209 = N(tilde)
 		int spanishCodePointList[13] = {
-			0xc381,0xc3a1,0xc389,0xc3a9,0xc38d,0xc3ad,0xc393,0xc3b3,
-			0xc39a,0xc3ba,0xc3bc,0xc3b1,0xc391
+			193,225,201,233,205,237,211,243,
+			218,250,252,241,209
 		};
 		return isUTF8BinaryCharacterInUTFSet(charValue, spanishCodePointList, 13);
 	}else{
@@ -548,20 +553,20 @@ int isFrenchExtendedCharacter(const char * charValue, int encoding){
 			return 0;
 		}
 	}else if(encoding == UTF8_BINARY){
-		// 0xc3a9 = e(acute), 0xc389 = E(acute), 0xc380 = A(grave), 0xc3a0 = a(grave)
-		// 0xc388 = E(grave), 0xc3a8 = e(grave), 0xc399 = U(grave), 0xc3b9 = u(grave)
-		// 0xc382 = A(circumflex), 0xc3a2 = a(circumflex), 0xc38a = E(circumflex), 0xc3aa = e(circumflex)
-		// 0xc38e = I(circumflex), 0xc3ae = i(circumflex),  0xc394 = O(circumflex), 0xc3b4 = 0(circumflex)
-		// 0xc39b = U(circumflex), 0xc3bb = u(circumflex), 0xc38b = E(diaresis), 0xc3ab = e(diaresis)
-		// 0xc38f = I(diaresis), 0xc3af = i(diaresis), 0xc39c = U(diaresis), 0xc3bc = u(diaresis)
-		// 0xc3bf = y(diaresis), 0xc387 = cedilla capital, 0xc3a7 cedilla lower
-		int frenchCodePointList[26] = {
-				0xc3a9,0xc389,0xc380,0xc3a0,0xc388,0xc3a8,0xc399,0xc3b9,
-				0xc382,0xc3a2,0xc38a,0xc3aa,0xc38e,0xc3ae,0xc394,0xc3b4,
-				0xc39b,0xc3bb,0xc38b,0xc3ab,0xc38f,0xc3af,0xc39c,0xc3bc,
-				0xc387,0xc3a7
+		// 201 = e(acute), 233 = E(acute), 192 = A(grave), 224 = a(grave)
+		// 200 = E(grave), 232 = e(grave), 217 = U(grave), 249 = u(grave)
+		// 194 = A(circumflex), 226 = a(circumflex), 202 = E(circumflex), 234 = e(circumflex)
+		// 206 = I(circumflex), 238 = i(circumflex),  212 = O(circumflex), 244 = o(circumflex)
+		// 219 = U(circumflex), 251 = u(circumflex), 203 = E(diaresis), 235 = e(diaresis)
+		// 207 = I(diaresis), 239 = i(diaresis), 220 = U(diaresis), 252 = u(diaresis)
+		// 255 = y(diaresis), 199 = cedilla capital, 231 cedilla lower
+		int frenchCodePointList[27] = {
+				201,233,192,224,200,232,217,249,
+				194,226,202,234,206,238,212,244,
+				219,251,203,235,207,239,220,252,
+				255,199,231
 				};
-		return isUTF8BinaryCharacterInUTFSet(charValue, frenchCodePointList, 26);
+		return isUTF8BinaryCharacterInUTFSet(charValue, frenchCodePointList, 27);
 	}else{
 		return 0;
 	}

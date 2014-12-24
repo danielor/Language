@@ -59,6 +59,14 @@ struct UTFSetTest{
 	char expectedResult;			// The expected result
 };
 
+// Test language specific functionality
+struct LanguageTest{
+	const char * buffer;			// The buffer to test
+	int encoding;					// The encoding of the string
+	int language;					// The language to test
+	char expectedResult;			// The expected result of the test
+};
+
 // A function that test the functionality associated with the utf8 state test.
 // This should handle all possible states of the UTF8 specification.
 int testGetUTF8State(){
@@ -322,6 +330,33 @@ int testConvertUTF8BinaryToCodePoint(){
 	return -1;
 }
 
+// A function that checks the conversion between a utf8 code point
+// and utf8 binary is done correctly
+int testConvertCodePointToUTF8Binary(){
+	int r;
+	int numberOfTests = 6;
+	const unsigned char buffer[] = {0x56,'\0'};
+	const unsigned char buffer2[] = {0x57,'\0'};
+	const unsigned char buffer3[] = {0xc3,0x80,'\0'};
+	const unsigned char buffer4[] = {0xc3,0x81,'\0'};
+	const unsigned char buffer5[] = {0xe0,0xa0,0x80,'\0'};
+	const unsigned char buffer6[] = {0xe0,0xa0,0x81,'\0'};
+	const char * bufferResults[] = {(const char *)buffer,(const char*)buffer2,(const char*)buffer3,
+			(const char*)buffer4,(const char*)buffer5, (const char*)buffer6
+	};
+	const int codePoints[] = {86,87,192,193,2048,2049};
+	for(r = 0; r < numberOfTests; r++){
+		const char * bufferResult = bufferResults[r];
+		int codePoint = codePoints[r];
+		const char * buffer  = convertCodePointToUTF8Binary(codePoint);
+		if(strcmp(buffer, bufferResult) != 0){
+			return 0;
+		}
+		free((void*)buffer);
+	}
+	return -1;
+}
+
 // A function that checks if a utf8 binary character is in a utf set
 // of code points
 int testIsUTFBinaryCharacterInUTFSet(){
@@ -437,12 +472,141 @@ int testIsValidCharacter(){
 // A function that checks if a character is a spanish diacritical mark
 int testIsSpanishExtendCharacter(){
 	int r;
-	struct ConvertTest conversionTests[10] = {
-		{0xc1, 0},{0xe1, 1},{0xc9, 1},{0x90, 0},{0xe9, 1},
-		{0xcd, 1},{0xed, 1},{0xda, 1},{0xfa, 1},{0xfc, 0}};
-	for(r=0; r < 10; r++){
+
+	// Check the ISO_8859_1 encoding
+	struct ConvertTest conversionTests[15] = {
+		{0xc1, 1},{0xe1, 1},{0xc9, 1},{0xe9, 1},{0xcd, 1},
+		{0xed, 1},{0xd3, 1},{0xf3, 1},{0xda, 1},{0xfa, 1},
+		{0xfc, 1},{0xd1, 1},{0xc2, 0},{0xe2, 0},{0xf2, 0}
+	};
+	for(r=0; r < 15; r++){
 		struct ConvertTest test = conversionTests[r];
-		if(isInRomanceAlphabet(&test.originalCharacter, ASCII) != test.expectedCharacter){
+		if(isSpanishExtendedCharacter(&test.originalCharacter, ISO_8859_1) != test.expectedCharacter){
+			return 0;
+		}
+	}
+
+	// Check the uf8 binary encoding
+	int bufferTestCount = 16;
+	const char * buffer = convertCodePointToUTF8Binary(193);
+	const char * buffer2 = convertCodePointToUTF8Binary(225);
+	const char * buffer3 = convertCodePointToUTF8Binary(201);
+	const char * buffer4 = convertCodePointToUTF8Binary(233);
+	const char * buffer5 = convertCodePointToUTF8Binary(205);
+	const char * buffer6 = convertCodePointToUTF8Binary(237);
+	const char * buffer7 = convertCodePointToUTF8Binary(211);
+	const char * buffer8 = convertCodePointToUTF8Binary(243);
+	const char * buffer9 = convertCodePointToUTF8Binary(218);
+	const char * buffer10 = convertCodePointToUTF8Binary(250);
+	const char * buffer11 = convertCodePointToUTF8Binary(252);
+	const char * buffer12 = convertCodePointToUTF8Binary(241);
+	const char * buffer13 = convertCodePointToUTF8Binary(209);
+	const char * xbuffer = convertCodePointToUTF8Binary(194);
+	const char * xbuffer2 = convertCodePointToUTF8Binary(195);
+	const char * xbuffer3 = convertCodePointToUTF8Binary(196);
+	struct TypeUTFTest typeTests[16] = {{buffer,1},{buffer2,1},{buffer3,1},
+			{buffer4,1},{buffer5,1},{buffer6,1},{buffer7,1},
+			{buffer8,1},{buffer9,1},{buffer10,1},{buffer11,1},
+			{buffer12,1},{buffer13,1},{xbuffer, 0}, {xbuffer2,0},
+			{xbuffer3,0}
+	};
+	for(r =0; r < 16; r++){
+		struct TypeUTFTest test = typeTests[r];
+		if(isSpanishExtendedCharacter(test.buffer,UTF8_BINARY) != test.expectedResult){
+			return 0;
+		}
+
+		free((void*)test.buffer);
+	}
+
+	return -1;
+}
+
+// A function that checks if a character is a french diacrtical mark
+int testIsFrenchExtendCharacter(){
+	int r;
+
+	// Check the ISO_8859_1 encoding
+	struct ConvertTest conversionTests[30] = {
+		{0xc9, 1},{0xe9, 1},{0xc0, 1},{0xe0, 1},{0xc8, 1},
+		{0xe8, 1},{0xd9, 1},{0xf9, 1},{0xc2, 1},{0xe2, 1},
+		{0xca, 1},{0xe1, 1},{0xd4, 1},{0xf4, 1},{0xce, 1},
+		{0xee, 1},{0xdb, 1},{0xfb, 1},{0xcb, 1},{0xeb, 1},
+		{0xcc, 1},{0xec, 1},{0xdc, 1},{0xfc, 1},{0xff, 1},
+		{0xc7, 1},{0xe7, 1},{0xd0, 0},{0xb0, 0},{0xd1, 0}
+	};
+	for(r=0; r < 30; r++){
+		struct ConvertTest test = conversionTests[r];
+
+		if(isFrenchExtendedCharacter(&test.originalCharacter, ISO_8859_1) != test.expectedCharacter){
+			return 0;
+		}
+	}
+	const char * buffer = convertCodePointToUTF8Binary(201);
+	const char * buffer2 = convertCodePointToUTF8Binary(233);
+	const char * buffer3 = convertCodePointToUTF8Binary(192);
+	const char * buffer4 = convertCodePointToUTF8Binary(224);
+	const char * buffer5 = convertCodePointToUTF8Binary(200);
+	const char * buffer6 = convertCodePointToUTF8Binary(232);
+	const char * buffer7 = convertCodePointToUTF8Binary(217);
+	const char * buffer8 = convertCodePointToUTF8Binary(249);
+	const char * buffer9 = convertCodePointToUTF8Binary(194);
+	const char * buffer10 = convertCodePointToUTF8Binary(226);
+	const char * buffer11 = convertCodePointToUTF8Binary(202);
+	const char * buffer12 = convertCodePointToUTF8Binary(234);
+	const char * buffer13 = convertCodePointToUTF8Binary(206);
+	const char * buffer14 = convertCodePointToUTF8Binary(238);
+	const char * buffer15 = convertCodePointToUTF8Binary(212);
+	const char * buffer16 = convertCodePointToUTF8Binary(244);
+	const char * buffer17 = convertCodePointToUTF8Binary(219);
+	const char * buffer18 = convertCodePointToUTF8Binary(251);
+	const char * buffer19 = convertCodePointToUTF8Binary(203);
+	const char * buffer20 = convertCodePointToUTF8Binary(235);
+	const char * buffer21 = convertCodePointToUTF8Binary(207);
+	const char * buffer22 = convertCodePointToUTF8Binary(239);
+	const char * buffer23 = convertCodePointToUTF8Binary(220);
+	const char * buffer24 = convertCodePointToUTF8Binary(252);
+	const char * buffer25 = convertCodePointToUTF8Binary(255);
+	const char * buffer26 = convertCodePointToUTF8Binary(199);
+	const char * buffer27 = convertCodePointToUTF8Binary(231);
+	const char * xbuffer = convertCodePointToUTF8Binary(1000);
+	const char * xbuffer2 = convertCodePointToUTF8Binary(300);
+	const char * xbuffer3 = convertCodePointToUTF8Binary(1200);
+	struct TypeUTFTest typeTests[30] = {{buffer,1},{buffer2,1},{buffer3,1},
+			{buffer4,1},{buffer5,1},{buffer6,1},{buffer7,1},
+			{buffer8,1},{buffer9,1},{buffer10,1},{buffer11,1},
+			{buffer12,1},{buffer13,1},{buffer14,1},{buffer15,1},
+			{buffer16,1},{buffer17,1},{buffer18,1},{buffer19,1},
+			{buffer20,1},{buffer21,1},{buffer22,1},{buffer23,1},
+			{buffer24,1},{buffer25,1},{buffer26,1},{buffer27,1},
+			{xbuffer, 0}, {xbuffer2,0},{xbuffer3,0}
+	};
+	for(r =0; r < 30; r++){
+		struct TypeUTFTest test = typeTests[r];
+		if(isFrenchExtendedCharacter(test.buffer,UTF8_BINARY) != test.expectedResult){
+			return 0;
+		}
+
+		free((void*)test.buffer);
+	}
+
+	return -1;
+}
+
+// A function that checks if a character is part of the alphabet of
+// different languages
+int testIsInAlphabet(){
+	int r;
+	const char * buffer = convertCodePointToUTF8Binary(201);
+	const unsigned char buffer2[] = {0xc1,'\0'};
+	struct LanguageTest languageTests[] = {
+			{"a",ASCII,SPANISH,1},{"b",UTF8_BINARY,FRENCH,1},{"c",ISO_8859_1,ENGLISH,1},
+			{buffer,UTF8_BINARY,FRENCH,1},{(const char*)buffer2,ISO_8859_1,SPANISH,1},
+			{"0",ISO_8859_1,ENGLISH,0}
+	};
+	for(r = 0; r< 6; r++){
+		struct LanguageTest test = languageTests[r];
+		if(isInAlphabet(test.buffer, test.encoding, test.language) != test.expectedResult){
 			return 0;
 		}
 	}
@@ -456,15 +620,17 @@ int testStringUtils(){
 	int failureCount = 0;
 
 	int testIter = 0;
-	int numberOfTests = 14;
-	int (*test_Array[14])() = {testGetUTF8State, testStringLength, testConvertHex, testIsNumber,
+	int numberOfTests = 17;
+	int (*test_Array[17])() = {testGetUTF8State, testStringLength, testConvertHex, testIsNumber,
 			testStringLengthEscaped, testIsNumberSequence,testIsDiacriticalMarkUTF8, testIsUTF8BinaryCodePoint,
 			testIsUTFBinaryCharacterInUTFSet, testIsInRomanceAlphabet, testIsHex, testIsHexSequence,
-			testIsSpanishExtendCharacter,testConvertUTF8BinaryToCodePoint};
-	const char * testNames[14] = {"UTF8State test", "String Length test", "Convert hex test", "Is number test",
+			testIsSpanishExtendCharacter, testIsFrenchExtendCharacter, testConvertUTF8BinaryToCodePoint,testConvertCodePointToUTF8Binary,
+			testIsInAlphabet};
+	const char * testNames[17] = {"UTF8State test", "String Length test", "Convert hex test", "Is number test",
 			"String Length Unescaped test", "IsNumberSequence test", "TestIsDiacriticalMarkUTF8 test", "IsUTF8BinaryCodePoint test",
 			"Is UTF8 Character in Code Point Set test", "Is Romance Character test", "Is Hex Character test", "Is Hex Sequence test",
-			"Is Spanish Extended Character Test", "Convert UTF8 Binary To Code Point Test"};
+			"Is Spanish Extended Character Test","Is French Extend Character Set", "Convert UTF8 Binary To Code Point Test","Convert Code Point to UTF8 binary",
+			"Is In Alphabet Test"};
 	for(testIter = 0; testIter < numberOfTests; testIter++){
 		const char * testName = testNames[testIter];
 		int (*test)() = test_Array[testIter];
