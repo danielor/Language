@@ -79,13 +79,37 @@ var JavascriptUtilsTest = (function(){
 	}
 	
 	/**
+	 * Test the hex number functionality
+	 * @function testIsHexNumber
+	 * @memberof JavascriptUtilsTest
+	 */
+	function testIsHexNumber(){
+		var StringUtils = LanguageModule.StringUtils;
+		var stringUtils = new StringUtils();
+		var encodings = stringUtils.stringEncodings;
+		
+		// Get the hex number
+		var hexSequenceTest1 = stringUtils.isHexNumber("abcdef", encodings.ASCII);
+		var hexSequenceTest2 = stringUtils.isHexNumber("ABCDEF", encodings.ASCII);
+		var hexSequenceTest3 = stringUtils.isHexNumber("0123456789", encodings.ASCII);
+		var hexSequenceTest4 = stringUtils.isHexNumber("g", encodings.ASCII);
+		var hexSequenceTest5 = stringUtils.isHexNumber("G", encoding.ASCII);
+		expect(hexSequenceTest1).to.eql(true);
+		expect(hexSequenceTest2).to.eql(true);
+		expect(hexSequenceTest3).to.eql(true);
+		expect(hexSequenceTest4).to.eql(false);
+		expect(hexSequenceTest5).to.eql(false);
+	}
+	
+	/**
 	 * The public interface
 	 */
 	return {
 		testStringLength:testStringLength,
 		testStringLengthEscaped:testStringLengthEscaped,
 		testIsNaturalNumber:testIsNaturalNumber,
-		testStringEncodings:testStringEncodings
+		testStringEncodings:testStringEncodings,
+		textIsHexNumber:testIsHexNumber
 	}
 })();
 
@@ -94,4 +118,6 @@ describe("Test the javascript utils", function(){
 	it('JavascriptUtils Length Escaped Test', JavascriptUtilsTest.testStringLengthEscaped);
 	it('JavascriptUtils Natural Number Test', JavascriptUtilsTest.testIsNaturalNumber);
 	it('JavascriptUtils String Encodings Test', JavascriptUtilsTest.testStringEncodings);
+	it('JavascriptUtils Is Hex Number Test', JavascriptUtilsTest.testIsHexNumber);
 });
+

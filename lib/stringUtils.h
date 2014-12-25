@@ -12,11 +12,11 @@
 //See the License for the specific language governing permissions and
 //limitations under the License.
 
+#ifndef __LANGUAGE_STRINGUTILS_H__
+#define __LANGUAGE_STRINGUTILS_H__
+
 #include <string.h>
 #include <stdlib.h>
-
-#ifndef STRINGUTILS_H
-#define STRINGUTILS_H
 
 #ifdef __cplusplus
 extern "C"{
@@ -257,7 +257,6 @@ int isUTF8BinaryCharacterInUTFSet(const char * charValue, int *codePoints, int n
 	int * codePointer = codePoints;
 	for(j=0; j < numberOfCodePoints; j++){
 		int codePoint = *codePointer;
-		int nCodePoint = convertUTF8BinaryToCodePoint(charValue);
 		if(isUTF8BinaryCodePoint(charValue, codePoint) == 1){
 			return 1;
 		}
@@ -507,7 +506,6 @@ int isSpanishExtendedCharacter(const char * charValue, int encoding){
 			return 0;
 		}
 	}else if(encoding == UTF8_BINARY){
-		int i;
 		// 193 = A(acute), 225 = a(acute), 201 = E(acute), 233 = e(acute)
 		// 205 = I(acute), 237 = i(acute), 211 = O(acute), 243 = o(acute)
 		// 218 = U(acute), 250 = u(acute), 252 = u(diaresis), 241 = n(tilde)
