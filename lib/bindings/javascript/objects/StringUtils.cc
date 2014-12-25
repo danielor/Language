@@ -43,6 +43,8 @@ void StringUtils::Init(v8::Handle<v8::Object> exports){
 			v8::FunctionTemplate::New(lengthEscaped)->GetFunction());
 	tpl->PrototypeTemplate()->Set(v8::String::NewSymbol("isNaturalNumber"),
 				v8::FunctionTemplate::New(isNaturalNumber)->GetFunction());
+	tpl->PrototypeTemplate()->Set(v8::String::NewSymbol("isHexNumber"),
+			v8::FunctionTemplate::New(isHexNumber)->GetFunction());
 	tpl->InstanceTemplate()->SetAccessor(v8::String::New("stringEncodings"), getStringEncodings);
 	constructor = v8::Persistent<v8::Function>::New(tpl->GetFunction());
 	exports->Set(v8::String::NewSymbol("StringUtils"), constructor);

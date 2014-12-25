@@ -93,7 +93,7 @@ var JavascriptUtilsTest = (function(){
 		var hexSequenceTest2 = stringUtils.isHexNumber("ABCDEF", encodings.ASCII);
 		var hexSequenceTest3 = stringUtils.isHexNumber("0123456789", encodings.ASCII);
 		var hexSequenceTest4 = stringUtils.isHexNumber("g", encodings.ASCII);
-		var hexSequenceTest5 = stringUtils.isHexNumber("G", encoding.ASCII);
+		var hexSequenceTest5 = stringUtils.isHexNumber("G", encodings.ASCII);
 		expect(hexSequenceTest1).to.eql(true);
 		expect(hexSequenceTest2).to.eql(true);
 		expect(hexSequenceTest3).to.eql(true);
@@ -109,7 +109,7 @@ var JavascriptUtilsTest = (function(){
 		testStringLengthEscaped:testStringLengthEscaped,
 		testIsNaturalNumber:testIsNaturalNumber,
 		testStringEncodings:testStringEncodings,
-		textIsHexNumber:testIsHexNumber
+		testIsHexNumber:testIsHexNumber
 	}
 })();
 
