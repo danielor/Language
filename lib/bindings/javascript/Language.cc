@@ -16,11 +16,13 @@
 #define BUILDING_NODE_EXTENSION 1
 #include <node.h>
 #include "objects/StringUtils.h"
+#include "objects/CharUtils.h"
 
 
 // Setup the initialization of the node.js bindings.
 void InitAll(v8::Handle<v8::Object> exports){
 	StringUtils::Init(exports);
+	CharUtils::Init(exports);
 }
 
 // Setup the Node module

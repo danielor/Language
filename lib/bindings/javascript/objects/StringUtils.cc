@@ -11,7 +11,6 @@
 //WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //See the License for the specific language governing permissions and
 //limitations under the License.
-#define BUILDING_NODE_EXTENSION 1
 #include <node.h>
 #include "StringUtils.h"
 #include "../../../stringUtils.h"
@@ -44,6 +43,8 @@ void StringUtils::Init(v8::Handle<v8::Object> exports){
 			v8::FunctionTemplate::New(lengthEscaped)->GetFunction());
 	tpl->PrototypeTemplate()->Set(v8::String::NewSymbol("isNaturalNumber"),
 				v8::FunctionTemplate::New(isNaturalNumber)->GetFunction());
+	tpl->PrototypeTemplate()->Set(v8::String::NewSymbol("isHexNumber"),
+			v8::FunctionTemplate::New(isHexNumber)->GetFunction());
 	tpl->InstanceTemplate()->SetAccessor(v8::String::New("stringEncodings"), getStringEncodings);
 	constructor = v8::Persistent<v8::Function>::New(tpl->GetFunction());
 	exports->Set(v8::String::NewSymbol("StringUtils"), constructor);
@@ -147,6 +148,32 @@ v8::Handle<v8::Value> StringUtils::isNaturalNumber(const v8::Arguments & args){
 	int result = 0;
 	if(isValid){
 		result = isNumberSequence(buffer, encoding);
+	}
+
+	return scope.Close(v8::Boolean::New(result == 1));
+}
+
+v8::Handle<v8::Value> StringUtils::isHexNumber(const v8::Arguments & args){
+	v8::HandleScope scope;
+
+	// The base encoding
+	int encoding = UTF8_BINARY;
+	const char * buffer;
+	bool isValid = false;
+
+	// Get the variables from the arguments
+	if(args[0]->IsString()){
+		buffer = *v8::String::Utf8Value(args[0]);
+		isValid = true;
+	}
+	if(args[1]->IsNumber()){
+		encoding = args[1]->Uint32Value();
+	}
+
+	// Find the length if we have a valid call. If not return 0
+	int result = 0;
+	if(isValid){
+		result = isHexSequence(buffer, encoding);
 	}
 
 	return scope.Close(v8::Boolean::New(result == 1));
