@@ -9,7 +9,7 @@ var LanguageModule = require("../../..");
  * @author Daniel Ortiz
  * @version 0.01
  */
-var JavascriptUtilsTest = (function(){
+var JavascriptStringUtilsTest = (function(){
 	/**
 	 * Test the string length function
 	 * @function testStringLength
@@ -113,11 +113,11 @@ var JavascriptUtilsTest = (function(){
 	}
 })();
 
-describe("Test the javascript utils", function(){
-	it('JavascriptUtils Length Test', JavascriptUtilsTest.testStringLength);
-	it('JavascriptUtils Length Escaped Test', JavascriptUtilsTest.testStringLengthEscaped);
-	it('JavascriptUtils Natural Number Test', JavascriptUtilsTest.testIsNaturalNumber);
-	it('JavascriptUtils String Encodings Test', JavascriptUtilsTest.testStringEncodings);
-	it('JavascriptUtils Is Hex Number Test', JavascriptUtilsTest.testIsHexNumber);
+describe("Test the javascript string utils", function(){
+	it('JavascriptStringUtils Length Test', JavascriptStringUtilsTest.testStringLength);
+	it('JavascriptStringUtils Length Escaped Test', JavascriptStringUtilsTest.testStringLengthEscaped);
+	it('JavascriptStringUtils Natural Number Test', JavascriptStringUtilsTest.testIsNaturalNumber);
+	it('JavascriptStringUtils String Encodings Test', JavascriptStringUtilsTest.testStringEncodings);
+	it('JavascriptStringUtils Is Hex Number Test', JavascriptStringUtilsTest.testIsHexNumber);
 });
 

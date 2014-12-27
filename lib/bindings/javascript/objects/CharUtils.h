@@ -35,6 +35,17 @@ private:
 	// The basic interface of a wrapped object
 	static v8::Handle<v8::Value> New(const v8::Arguments & args);
 	static v8::Persistent<v8::Function> constructor;
+
+	// Getters and setters
+	static v8::Handle<v8::Value> getStringEncodings(v8::Local<v8::String> name, const v8::AccessorInfo & info);
+	static v8::Handle<v8::Value> getLanguageEncodings(v8::Local<v8::String> name, const v8::AccessorInfo & info);
+
+	// The character utils interface
+	static v8::Handle<v8::Value> isHexNumberChar(const v8::Arguments & args);
+	static v8::Handle<v8::Value> isNaturalNumberChar(const v8::Arguments & args);
+	static v8::Handle<v8::Value> isValidChar(const v8::Arguments & args);
+	static v8::Handle<v8::Value> isInAlphabetChar(const v8::Arguments & args);
+	static v8::Handle<v8::Value> isInRomanceAlphabetChar(const v8::Arguments & args);
 };
 
 #endif
