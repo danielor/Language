@@ -19,6 +19,7 @@ A string utils class that wraps the Language C bindngs
 from Language.stringUtils import length
 from Language.stringUtils import lengthEscaped
 from Language.stringUtils import isNaturalNumber
+from Language.stringUtils import isHexNumber
 
 class StringUtils(object):
     """
@@ -38,6 +39,28 @@ class StringUtils(object):
         """
         return length(self.str, self.encoding)
     
+    @classmethod
+    def stringEncodings(cls):
+        """
+        Get the string encoding associated with the utilities
+        """
+        return {
+            "UTF8_BINARY":0,
+            "ASCII":1,
+            "ISO_8859_1":2
+        }
+        
+    @classmethod
+    def languageEncodings(cls):
+        """
+        Get the language encodings associated with the utilities
+        """
+        return {
+            'ENGLISH':0,
+            'SPANISH':1,
+            'FRENCH':2
+        }
+    
     def lenEscaped(self, escapedString = '\u', escapedEncoding = 0,
                    endString = ''):
         """
@@ -55,3 +78,9 @@ class StringUtils(object):
         Return true if the string is a natural number
         """
         return isNaturalNumber(self.str, self.encoding)
+    
+    def isHexNumber(self):
+        """
+        Return true if the string is a hex Number
+        """
+        return isHexNumber(self.str, self.encoding)
