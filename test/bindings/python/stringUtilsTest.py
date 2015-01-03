@@ -21,6 +21,7 @@ import unittest
 from Language.stringUtils import length
 from Language.stringUtils import lengthEscaped
 from Language.stringUtils import isNaturalNumber
+from Language.stringUtils import isHexNumber
 from LanguageUtils.StringUtils import StringUtils
 
 class StringUtilsTestCase(unittest.TestCase):
@@ -50,7 +51,18 @@ class StringUtilsTestCase(unittest.TestCase):
         self.assertTrue(isNaturalNumber("3", 1) == True)
         self.assertTrue(isNaturalNumber("5gd3", 1) == False)
         self.assertTrue(isNaturalNumber("1de3g3dg3", 1) == False)
-        
+    
+    def test_isHexNumber(self):
+        """
+        Test the string utils hex number
+        """
+        sEncodings = StringUtils.stringEncodings()
+        self.assertTrue(isHexNumber("abcdef", sEncodings['ASCII']))
+        self.assertTrue(isHexNumber("ABCDEF", sEncodings['ASCII']))
+        self.assertTrue(isHexNumber("0123456789", sEncodings['ASCII']))
+        self.assertFalse(isHexNumber("g", sEncodings['ASCII']))
+        self.assertFalse(isHexNumber("G", sEncodings['ASCII']))
+    
     def test_stringUtils(self):
         """
         Test the string utils around the Language functional interface
@@ -59,6 +71,7 @@ class StringUtilsTestCase(unittest.TestCase):
         self.assertTrue(len(s) == 3)
         self.assertTrue(s.lenEscaped() == 3)
         self.assertTrue(s.isNaturalNumber() == True)
-      
+        self.assertTrue(s.isHexNumber() == True)
+        
 if __name__=='__main__':
     unittest.main()

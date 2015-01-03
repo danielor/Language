@@ -19,8 +19,10 @@ A string utils class that wraps the Language C bindngs
 from Language.stringUtils import length
 from Language.stringUtils import lengthEscaped
 from Language.stringUtils import isNaturalNumber
+from Language.stringUtils import isHexNumber
+from BaseUtils import BaseUtils
 
-class StringUtils(object):
+class StringUtils(BaseUtils):
     """
     An object that encapsulates the string Utils
     """
@@ -37,6 +39,7 @@ class StringUtils(object):
         Get the length of the string
         """
         return length(self.str, self.encoding)
+    
     
     def lenEscaped(self, escapedString = '\u', escapedEncoding = 0,
                    endString = ''):
@@ -55,3 +58,9 @@ class StringUtils(object):
         Return true if the string is a natural number
         """
         return isNaturalNumber(self.str, self.encoding)
+    
+    def isHexNumber(self):
+        """
+        Return true if the string is a hex Number
+        """
+        return isHexNumber(self.str, self.encoding)
