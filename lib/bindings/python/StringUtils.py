@@ -20,8 +20,9 @@ from Language.stringUtils import length
 from Language.stringUtils import lengthEscaped
 from Language.stringUtils import isNaturalNumber
 from Language.stringUtils import isHexNumber
+from BaseUtils import BaseUtils
 
-class StringUtils(object):
+class StringUtils(BaseUtils):
     """
     An object that encapsulates the string Utils
     """
@@ -39,27 +40,6 @@ class StringUtils(object):
         """
         return length(self.str, self.encoding)
     
-    @classmethod
-    def stringEncodings(cls):
-        """
-        Get the string encoding associated with the utilities
-        """
-        return {
-            "UTF8_BINARY":0,
-            "ASCII":1,
-            "ISO_8859_1":2
-        }
-        
-    @classmethod
-    def languageEncodings(cls):
-        """
-        Get the language encodings associated with the utilities
-        """
-        return {
-            'ENGLISH':0,
-            'SPANISH':1,
-            'FRENCH':2
-        }
     
     def lenEscaped(self, escapedString = '\u', escapedEncoding = 0,
                    endString = ''):

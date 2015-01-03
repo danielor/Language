@@ -219,6 +219,7 @@ static PyObject * py_charutils_charCheck(PyObject * self, PyObject * args, int (
 		buffer = PyUnicode_AS_DATA(stringArg);
 	}else{
 		PyErr_Format(PyExc_TypeError, "%s",errorString);
+		Py_RETURN_FALSE;
 	}
 	// Check for different types of encoding parameters to assert what state the length
 	// parameter should be analyzed with different constraints
@@ -243,7 +244,7 @@ static PyObject * py_charutils_charCheck(PyObject * self, PyObject * args, int (
  * A python function to check if a character is a hex number
  */
 static PyObject * py_charutils_isHexNumber(PyObject * self, PyObject * args){
-	return py_charutils_charCheck(self, args, isHex,"charutils_isHexNumber", ""
+	return py_charutils_charCheck(self, args, isHex,"charutils_isHexNumber",
 			"Py_charutils_isHexNumber expects a string");
 }
 
@@ -271,6 +272,62 @@ static PyObject * py_charutils_isValidCharacter(PyObject * self, PyObject * args
 			"Py_charutils_isValidCharacter");
 }
 
+/**
+ * A python function that checks if a character is part of a language alphabet
+ */
+static PyObject * py_charutils_isInAlphabet(PyObject * self, PyObject * args){
+	// The string argument for the string utils
+	PyObject * stringArg = NULL;
+	PyObject * encodingArg = NULL;
+	PyObject * languageArg = NULL;
+
+	// The main buffere of the py utils
+	const char * buffer = NULL;
+	int encoding = UTF8_BINARY;
+	int language = ENGLISH;
+
+	// Check if the pyarg unpack tuple
+	if(!PyArg_UnpackTuple(args, "charutils_isInAlphabet", 2, 3, &stringArg, &encodingArg, &languageArg)){
+		Py_RETURN_FALSE;
+	}
+
+	// Check if the argument is a unicode string or an ascii string. For the ascii
+	// utf-8 can be encoded into the string.
+	if(PyObject_TypeCheck(stringArg, &PyString_Type)){
+		buffer = PyString_AS_STRING(stringArg);
+	}else if(PyObject_TypeCheck(stringArg, &PyUnicode_Type)){
+		buffer = PyUnicode_AS_DATA(stringArg);
+	}else{
+		PyErr_Format(PyExc_TypeError, "Py_charutils_isInAlphabet expects a string");
+		Py_RETURN_FALSE;
+	}
+	// Check for different types of encoding parameters to assert what state the length
+	// parameter should be analyzed with different constraints
+	if(encodingArg != NULL){
+		if(PyObject_TypeCheck(encodingArg, &PyInt_Type)){
+			int potentialEncoding = PyInt_AsLong(encodingArg);
+			if(potentialEncoding >= UTF8_BINARY && potentialEncoding <= ISO_8859_1){
+				encoding = potentialEncoding;
+			}
+		}
+	}
+
+	if(languageArg != NULL){
+		if(PyObject_TypeCheck(languageArg, &PyInt_Type)){
+			int potentialLanguage = PyInt_AsLong(languageArg);
+			if(potentialLanguage >= UTF8_BINARY && potentialLanguage <= ISO_8859_1){
+				language = potentialLanguage;
+			}
+		}
+	}
+
+	size_t ldist = isInAlphabet(buffer, encoding, language);
+	if(ldist == 0){
+		Py_RETURN_FALSE;
+	}else{
+		Py_RETURN_TRUE;
+	}
+}
 
 
 /**
@@ -289,10 +346,11 @@ static PyMethodDef stringutils_methods[] = {
  * A list of all of the methods defined in the char utils module.
  */
 static PyMethodDef charutils_methods[] = {
-		{"isHexNumber",py_charutils_isHexNumber, METH_VARARGS, "Is the character of text a hex number?"},
-		{"isNaturalNumber",py_charutils_isNaturalNumber, METH_VARARGS, "Is the character of text a natural number?"},
-		{"isRomanceCharacter",py_charutils_isInRomanceAlphabet, METH_VARARGS, "Is the character part of the base romance alphabet?"},
-		{"isValidCharacter",py_charutils_isValidCharacter, METH_VARARGS, "Is the character a valid character in the encoding?"},
+		{"isHexChar",py_charutils_isHexNumber, METH_VARARGS, "Is the character of text a hex number?"},
+		{"isNaturalChar",py_charutils_isNaturalNumber, METH_VARARGS, "Is the character of text a natural number?"},
+		{"isRomanceChar",py_charutils_isInRomanceAlphabet, METH_VARARGS, "Is the character part of the base romance alphabet?"},
+		{"isValidChar",py_charutils_isValidCharacter, METH_VARARGS, "Is the character a valid character in the encoding?"},
+		{"isInAlphabetChar",py_charutils_isInAlphabet, METH_VARARGS, "Is the character part of an alphabet?"},
 		{NULL, NULL}
 };
 

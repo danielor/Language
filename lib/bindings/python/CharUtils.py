@@ -16,3 +16,53 @@ A char utils class that wraps the Language C bindngs
 @author: Daniel Ortiz
 @version: 0.01
 """
+from Language.charUtils import isHexChar
+from Language.charUtils import isNaturalChar
+from Language.charUtils import isRomanceChar
+from Language.charUtils import isValidChar
+from Language.charUtils import isInAlphabetChar
+from BaseUtils import BaseUtils
+
+class CharUtils(BaseUtils):
+    """
+    An object that encapsulates the char utils 
+    """
+    def __init__(self, char, encoding, language = 0):
+        """
+        @param char The char to check 
+        @param encoding: The encoding of the char 
+        @param language: The language set of the char 
+        """
+        self.char = char 
+        self.encoding = encoding
+        self.language = language 
+        
+    def isHexNumberChar(self):
+        """
+        Return true if the string is a hex character
+        """
+        return isHexChar(self.char, self.encoding)
+    
+    def isNaturalNumberChar(self):
+        """
+        Return true if the string is a natural character 
+        """
+        return isNaturalChar(self.char, self.encoding)
+    
+    def isInRomanceAlphabetChar(self):
+        """
+        Return true if the string is a romance character
+        """
+        return isRomanceChar(self.char, self.encoding)
+    
+    def isValidChar(self):
+        """
+        Return true if the string is a valid character
+        """
+        return isValidChar(self.char, self.encoding)
+    
+    def isInAlphabetChar(self):
+        """
+        Return true if the string is in an alphabet character
+        """
+        return isInAlphabetChar(self.char, self.encoding, self.language)
