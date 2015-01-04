@@ -357,6 +357,43 @@ int testConvertCodePointToUTF8Binary(){
 	return -1;
 }
 
+// A function that checks the conversion between a set of utf8 code points
+// and utf8 binary
+int testConvertCodePointListToUTF8Binary(){
+	int r;
+	int numberOfTests = 6;
+	const int codePointLength[] = {1,2,2,3,3,4};
+	const int codePoint[] = {86};
+	const int codePoint2[] = {86,87};
+	const int codePoint3[] = {192,86};
+	const int codePoint4[] = {193,192,87};
+	const int codePoint5[] = {2048,86,193};
+	const int codePoint6[] = {2049,2048,192,87};
+	const unsigned char buffer[] = {0x56,'\0'};
+	const unsigned char buffer2[] = {0x56,0x57,'\0'};
+	const unsigned char buffer3[] =  {0xc3,0x80,0x56,'\0'};
+	const unsigned char buffer4[] = {0xc3,0x81,0xc3,0x80,0x57,'\0'};
+	const unsigned char buffer5[] = {0xe0,0xa0,0x80,0x56,0xc3,0x81,'\0'};
+	const unsigned char buffer6[] = {0xe0,0xa0,0x81,0xe0,0xa0,0x80,0xc3,0x80,0x57,'\0'};
+	const char * bufferResults[] = {(const char *)buffer,(const char*)buffer2,(const char*)buffer3,
+			(const char*)buffer4,(const char*)buffer5, (const char*)buffer6
+	};
+	const int * codePoints[] = {(const int*)codePoint,(const int*)codePoint2,
+			(const int*)codePoint3,(const int*) codePoint4, (const int*) codePoint5,
+			(const int*)codePoint6};
+	for(r = 0; r < numberOfTests; r++){
+		const char * bufferResult = bufferResults[r];
+		int length = codePointLength[r];
+		const int * codePoint = codePoints[r];
+		const char * buffer  = converListOfCodePointsToUTF8Binary(codePoint, length);
+		if(strcmp(buffer, bufferResult) != 0){
+			return 0;
+		}
+		free((void*)buffer);
+	}
+	return -1;
+}
+
 // A function that checks if a utf8 binary character is in a utf set
 // of code points
 int testIsUTFBinaryCharacterInUTFSet(){
@@ -613,6 +650,8 @@ int testIsInAlphabet(){
 	return -1;
 }
 
+
+
 // A function that tests the main points of functionality associated with the
 int testStringUtils(){
 	// The success/failure count
@@ -620,17 +659,17 @@ int testStringUtils(){
 	int failureCount = 0;
 
 	int testIter = 0;
-	int numberOfTests = 17;
-	int (*test_Array[17])() = {testGetUTF8State, testStringLength, testConvertHex, testIsNumber,
+	int numberOfTests = 18;
+	int (*test_Array[18])() = {testGetUTF8State, testStringLength, testConvertHex, testIsNumber,
 			testStringLengthEscaped, testIsNumberSequence,testIsDiacriticalMarkUTF8, testIsUTF8BinaryCodePoint,
 			testIsUTFBinaryCharacterInUTFSet, testIsInRomanceAlphabet, testIsHex, testIsHexSequence,
 			testIsSpanishExtendCharacter, testIsFrenchExtendCharacter, testConvertUTF8BinaryToCodePoint,testConvertCodePointToUTF8Binary,
-			testIsInAlphabet};
-	const char * testNames[17] = {"UTF8State test", "String Length test", "Convert hex test", "Is number test",
+			testIsInAlphabet,testConvertCodePointListToUTF8Binary};
+	const char * testNames[18] = {"UTF8State test", "String Length test", "Convert hex test", "Is number test",
 			"String Length Unescaped test", "IsNumberSequence test", "TestIsDiacriticalMarkUTF8 test", "IsUTF8BinaryCodePoint test",
 			"Is UTF8 Character in Code Point Set test", "Is Romance Character test", "Is Hex Character test", "Is Hex Sequence test",
 			"Is Spanish Extended Character Test","Is French Extend Character Set", "Convert UTF8 Binary To Code Point Test","Convert Code Point to UTF8 binary",
-			"Is In Alphabet Test"};
+			"Is In Alphabet Test", "Convert Code Points to UTF8 binary"};
 	for(testIter = 0; testIter < numberOfTests; testIter++){
 		const char * testName = testNames[testIter];
 		int (*test)() = test_Array[testIter];
