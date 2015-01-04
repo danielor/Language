@@ -50,3 +50,20 @@ JNIEXPORT jboolean JNICALL Java_com_Language_LanguageStringUtils_isNaturalNumber
 	}
 
 }
+
+/**
+ * Check if a sequence is a hex number
+ */
+JNIEXPORT jboolean JNICALL Java_com_Language_LanguageStringUtils_isHexNumber(JNIEnv * env, jobject thisObj, jstring str, jint encoding){
+	const char * buffer = (*env)->GetStringUTFChars(env, str, NULL);
+	if(buffer == NULL){
+		return JNI_FALSE;
+	}
+	int result = isHexSequence(buffer, encoding);
+	if(result == 0){
+		return JNI_FALSE;
+	}else{
+		return JNI_TRUE;
+	}
+
+}

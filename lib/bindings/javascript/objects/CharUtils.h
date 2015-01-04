@@ -12,42 +12,40 @@
 //See the License for the specific language governing permissions and
 //limitations under the License.
 
-#ifndef NODE_STRING_UTILS_H
-#define NODE_STRING_UTILS_H
+#ifndef NODE_CHAR_UTILS_H
+#define NODE_CHAR_UTILS_H
 
 #include <node.h>
 
 /**
- * The StringUtils class provide an interface to the Language
- * library through the V8 bindings provide by Node.js
+ * The CharUtils class provide an interface to character transforms
+ * provided by Language. These V8 bindings will only analyze the first
+ * character of a string.
  */
-class StringUtils : public node::ObjectWrap{
+class CharUtils : public node::ObjectWrap{
 public:
 	// The tie in to the node module
 	static void Init(v8::Handle<v8::Object> exports);
 
-
 private:
 	// The constructor/destructor of the class
-	explicit StringUtils();
-	~StringUtils();
+	explicit CharUtils();
+	~CharUtils();
 
-	// The interface to the utils
+	// The basic interface of a wrapped object
 	static v8::Handle<v8::Value> New(const v8::Arguments & args);
 	static v8::Persistent<v8::Function> constructor;
 
-	// The interface functions for the string utilities
-	static v8::Handle<v8::Value> length(const v8::Arguments & args);
-	static v8::Handle<v8::Value> lengthEscaped(const v8::Arguments & args);
-	static v8::Handle<v8::Value> isNaturalNumber(const v8::Arguments & args);
-	static v8::Handle<v8::Value> isHexNumber(const v8::Arguments & args);
-
 	// Getters and setters
 	static v8::Handle<v8::Value> getStringEncodings(v8::Local<v8::String> name, const v8::AccessorInfo & info);
+	static v8::Handle<v8::Value> getLanguageEncodings(v8::Local<v8::String> name, const v8::AccessorInfo & info);
 
-	// Helper function to parse different variables
-	static void _parseInt(const v8::Arguments & args, int index,  int * value);
-	static void _parseString(const v8::Arguments & args, int index, const char * value);
+	// The character utils interface
+	static v8::Handle<v8::Value> isHexNumberChar(const v8::Arguments & args);
+	static v8::Handle<v8::Value> isNaturalNumberChar(const v8::Arguments & args);
+	static v8::Handle<v8::Value> isValidChar(const v8::Arguments & args);
+	static v8::Handle<v8::Value> isInAlphabetChar(const v8::Arguments & args);
+	static v8::Handle<v8::Value> isInRomanceAlphabetChar(const v8::Arguments & args);
 };
 
 #endif

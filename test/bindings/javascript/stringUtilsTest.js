@@ -9,7 +9,7 @@ var LanguageModule = require("../../..");
  * @author Daniel Ortiz
  * @version 0.01
  */
-var JavascriptUtilsTest = (function(){
+var JavascriptStringUtilsTest = (function(){
 	/**
 	 * Test the string length function
 	 * @function testStringLength
@@ -79,19 +79,45 @@ var JavascriptUtilsTest = (function(){
 	}
 	
 	/**
+	 * Test the hex number functionality
+	 * @function testIsHexNumber
+	 * @memberof JavascriptUtilsTest
+	 */
+	function testIsHexNumber(){
+		var StringUtils = LanguageModule.StringUtils;
+		var stringUtils = new StringUtils();
+		var encodings = stringUtils.stringEncodings;
+		
+		// Get the hex number
+		var hexSequenceTest1 = stringUtils.isHexNumber("abcdef", encodings.ASCII);
+		var hexSequenceTest2 = stringUtils.isHexNumber("ABCDEF", encodings.ASCII);
+		var hexSequenceTest3 = stringUtils.isHexNumber("0123456789", encodings.ASCII);
+		var hexSequenceTest4 = stringUtils.isHexNumber("g", encodings.ASCII);
+		var hexSequenceTest5 = stringUtils.isHexNumber("G", encodings.ASCII);
+		expect(hexSequenceTest1).to.eql(true);
+		expect(hexSequenceTest2).to.eql(true);
+		expect(hexSequenceTest3).to.eql(true);
+		expect(hexSequenceTest4).to.eql(false);
+		expect(hexSequenceTest5).to.eql(false);
+	}
+	
+	/**
 	 * The public interface
 	 */
 	return {
 		testStringLength:testStringLength,
 		testStringLengthEscaped:testStringLengthEscaped,
 		testIsNaturalNumber:testIsNaturalNumber,
-		testStringEncodings:testStringEncodings
+		testStringEncodings:testStringEncodings,
+		testIsHexNumber:testIsHexNumber
 	}
 })();
 
-describe("Test the javascript utils", function(){
-	it('JavascriptUtils Length Test', JavascriptUtilsTest.testStringLength);
-	it('JavascriptUtils Length Escaped Test', JavascriptUtilsTest.testStringLengthEscaped);
-	it('JavascriptUtils Natural Number Test', JavascriptUtilsTest.testIsNaturalNumber);
-	it('JavascriptUtils String Encodings Test', JavascriptUtilsTest.testStringEncodings);
+describe("Test the javascript string utils", function(){
+	it('JavascriptStringUtils Length Test', JavascriptStringUtilsTest.testStringLength);
+	it('JavascriptStringUtils Length Escaped Test', JavascriptStringUtilsTest.testStringLengthEscaped);
+	it('JavascriptStringUtils Natural Number Test', JavascriptStringUtilsTest.testIsNaturalNumber);
+	it('JavascriptStringUtils String Encodings Test', JavascriptStringUtilsTest.testStringEncodings);
+	it('JavascriptStringUtils Is Hex Number Test', JavascriptStringUtilsTest.testIsHexNumber);
 });
+
