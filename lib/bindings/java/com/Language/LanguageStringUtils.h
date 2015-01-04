@@ -40,6 +40,14 @@ JNIEXPORT jint JNICALL Java_com_Language_LanguageStringUtils_lengthEscapedWithEn
 JNIEXPORT jboolean JNICALL Java_com_Language_LanguageStringUtils_isNaturalNumber
 (JNIEnv *, jobject, jstring, jint);
 
+/*
+ * Class:     LanguageStringUtils
+ * Method:    isHexNumber
+ * Signature: (Ljava/lang/String;I)B
+ */
+JNIEXPORT jboolean JNICALL Java_com_Language_LanguageStringUtils_isHexNumber
+(JNIEnv *, jobject, jstring, jint);
+
 #ifdef __cplusplus
 }
 #endif

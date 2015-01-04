@@ -4,8 +4,9 @@ INCLUDES = -I. -I../../../.. -I$(J_HOME)/include -I$(J_HOME)/include/linux -I$(J
 all: shared
 
 shared:
-	cc $(INCLUDES) -fPIC -c -g -Wall  LanguageStringUtils.c
-	libtool -dynamic -lSystem LanguageStringUtils.o -o libLanguage.dylib
+	cc $(INCLUDES) -fPIC -c  LanguageStringUtils.c
+	cc $(INCLUDES) -fPIC -c  LanguageCharUtils.c
+	libtool -dynamic -lSystem LanguageStringUtils.o LanguageCharUtils.o -o libLanguage.dylib
 	
 clean:
 	rm -f *.o *.so *.class 
