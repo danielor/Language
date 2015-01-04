@@ -61,7 +61,7 @@ JNIEXPORT jboolean JNICALL Java_com_Language_LanguageCharUtils_isValidChar
 	if(buffer == NULL){
 		return JNI_FALSE;
 	}
-	int result = isInRomanceAlphabet(buffer, encoding);
+	int result = isValidCharacter(buffer, encoding);
 	if(result == 0){
 		return JNI_FALSE;
 	}else{

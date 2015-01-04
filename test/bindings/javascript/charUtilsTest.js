@@ -111,14 +111,14 @@ var JavascriptCharUtilsTest = (function(){
 		var charUtils = new CharUtils();
 		var encodings = charUtils.stringEncodings;
 		var lencodings = charUtils.languageEncodings;
-		var isNumberChar = charUtils.isValidChar("0",encodings.ASCII, lencodings.FRENCH);
-		var isNumberChar2 = charUtils.isValidChar("5", encodings.ISO_8859_1, lencodings.SPANISH);
-		var isNumberChar3 = charUtils.isValidChar("9", encodings.ASCII, lencodings.ENGLISH);
-		var isNumberChar4 = charUtils.isValidChar("Z", encodings.UTF8_BINARY, lencodings.ENGLISH);
-		expect(isNumberChar).to.eql(true);
-		expect(isNumberChar2).to.eql(true);
+		var isNumberChar = charUtils.isInAlphabetChar("0",encodings.ASCII, lencodings.FRENCH);
+		var isNumberChar2 = charUtils.isInAlphabetChar("5", encodings.ISO_8859_1, lencodings.SPANISH);
+		var isNumberChar3 = charUtils.isInAlphabetChar("a", encodings.ASCII, lencodings.ENGLISH);
+		var isNumberChar4 = charUtils.isInAlphabetChar("Z", encodings.UTF8_BINARY, lencodings.ENGLISH);
+		expect(isNumberChar).to.eql(false);
+		expect(isNumberChar2).to.eql(false);
 		expect(isNumberChar3).to.eql(true);
-		expect(isNumberChar4).to.eql(false);
+		expect(isNumberChar4).to.eql(true);
 	}
 	
 	/**
