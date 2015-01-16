@@ -687,7 +687,26 @@ int testIsInAlphabet(){
 	return -1;
 }
 
-
+// A function that checks if a character is part of an alphabet
+// sequence
+int testInAphabetSequence(){
+	int r;
+	const unsigned char buffer2[] = {0x0,0x3f,0x7e,'\0'};
+	const unsigned char buffer3[] = {0x1f,0x20,0x5f,0x7e,'\0'};
+	const unsigned char xbuffer[] = {0x0,0x3f,0x7e,0x7f,'\0'};
+	const unsigned char xbuffer2[] = {0x1f,0x20,0x5f,0x7e,0x7f,'\0'};
+	struct TypeEncodingTest typeTests[5] = {
+		{"YES", ASCII, 1},{(const char*)buffer2, ASCII, 1},{(const char *)buffer3,ISO_8859_1, 0},
+		{(const char *)xbuffer, ISO_8859_1, 1},{(const char *)xbuffer2,ISO_8859_1,0}
+	};
+	for(r=0; r < 5; r++){
+		struct TypeEncodingTest test = typeTests[r];;
+		if(isValidCharacterSequence(test.buffer, test.encoding) != test.expectedResult){
+			return 0;
+		}
+	}
+	return -1;
+}
 
 // A function that tests the main points of functionality associated with the
 int testStringUtils(){
@@ -696,17 +715,19 @@ int testStringUtils(){
 	int failureCount = 0;
 
 	int testIter = 0;
-	int numberOfTests = 20;
-	int (*test_Array[20])() = {testGetUTF8State, testStringLength, testConvertHex, testIsNumber,
+	int numberOfTests = 21;
+	int (*test_Array[21])() = {testGetUTF8State, testStringLength, testConvertHex, testIsNumber,
 			testStringLengthEscaped, testIsNumberSequence,testIsDiacriticalMarkUTF8, testIsUTF8BinaryCodePoint,
 			testIsUTFBinaryCharacterInUTFSet, testIsInRomanceAlphabet, testIsHex, testIsHexSequence,
 			testIsSpanishExtendCharacter, testIsFrenchExtendCharacter, testConvertUTF8BinaryToCodePoint,testConvertCodePointToUTF8Binary,
-			testIsInAlphabet,testConvertCodePointListToUTF8Binary,testIsValidCharacterSequence, testInRomanceAlphabetSequence};
-	const char * testNames[20] = {"UTF8State test", "String Length test", "Convert hex test", "Is number test",
+			testIsInAlphabet,testConvertCodePointListToUTF8Binary,testIsValidCharacterSequence, testInRomanceAlphabetSequence,
+			testInAphabetSequence};
+	const char * testNames[21] = {"UTF8State test", "String Length test", "Convert hex test", "Is number test",
 			"String Length Unescaped test", "IsNumberSequence test", "TestIsDiacriticalMarkUTF8 test", "IsUTF8BinaryCodePoint test",
 			"Is UTF8 Character in Code Point Set test", "Is Romance Character test", "Is Hex Character test", "Is Hex Sequence test",
 			"Is Spanish Extended Character Test","Is French Extend Character Set", "Convert UTF8 Binary To Code Point Test","Convert Code Point to UTF8 binary",
-			"Is In Alphabet Test", "Convert Code Points to UTF8 binary","Test is valid Character sequence", "Test is In Romance Alphabet Sequence"};
+			"Is In Alphabet Test", "Convert Code Points to UTF8 binary","Test is valid Character sequence", "Test is In Romance Alphabet Sequence",
+			"Test Is In Aphabet Sequence"};
 	for(testIter = 0; testIter < numberOfTests; testIter++){
 		const char * testName = testNames[testIter];
 		int (*test)() = test_Array[testIter];
