@@ -357,6 +357,43 @@ int testConvertCodePointToUTF8Binary(){
 	return -1;
 }
 
+// A function that checks the conversion between a set of utf8 code points
+// and utf8 binary
+int testConvertCodePointListToUTF8Binary(){
+	int r;
+	int numberOfTests = 6;
+	const int codePointLength[] = {1,2,2,3,3,4};
+	const int codePoint[] = {86};
+	const int codePoint2[] = {86,87};
+	const int codePoint3[] = {192,86};
+	const int codePoint4[] = {193,192,87};
+	const int codePoint5[] = {2048,86,193};
+	const int codePoint6[] = {2049,2048,192,87};
+	const unsigned char buffer[] = {0x56,'\0'};
+	const unsigned char buffer2[] = {0x56,0x57,'\0'};
+	const unsigned char buffer3[] =  {0xc3,0x80,0x56,'\0'};
+	const unsigned char buffer4[] = {0xc3,0x81,0xc3,0x80,0x57,'\0'};
+	const unsigned char buffer5[] = {0xe0,0xa0,0x80,0x56,0xc3,0x81,'\0'};
+	const unsigned char buffer6[] = {0xe0,0xa0,0x81,0xe0,0xa0,0x80,0xc3,0x80,0x57,'\0'};
+	const char * bufferResults[] = {(const char *)buffer,(const char*)buffer2,(const char*)buffer3,
+			(const char*)buffer4,(const char*)buffer5, (const char*)buffer6
+	};
+	const int * codePoints[] = {(const int*)codePoint,(const int*)codePoint2,
+			(const int*)codePoint3,(const int*) codePoint4, (const int*) codePoint5,
+			(const int*)codePoint6};
+	for(r = 0; r < numberOfTests; r++){
+		const char * bufferResult = bufferResults[r];
+		int length = codePointLength[r];
+		const int * codePoint = codePoints[r];
+		const char * buffer  = converListOfCodePointsToUTF8Binary(codePoint, length);
+		if(strcmp(buffer, bufferResult) != 0){
+			return 0;
+		}
+		free((void*)buffer);
+	}
+	return -1;
+}
+
 // A function that checks if a utf8 binary character is in a utf set
 // of code points
 int testIsUTFBinaryCharacterInUTFSet(){
@@ -398,6 +435,23 @@ int testIsInRomanceAlphabet(){
 	for(r=0; r < 10; r++){
 		struct ConvertTest test = conversionTests[r];
 		if(isInRomanceAlphabet(&test.originalCharacter, ASCII) != test.expectedCharacter){
+			return 0;
+		}
+	}
+	return -1;
+}
+
+// A function that checks if an entire character sequence of characters
+// is in the romance alphabet
+int testInRomanceAlphabetSequence(){
+	int r;
+	struct TypeTest typeTests[5] = {
+		{"abcdef",1},{"ABCDEF",1},{"0123456789",0}, {"g",1},
+		{"G",1}
+	};
+	for(r=0; r < 5; r++){
+		struct TypeTest test = typeTests[r];
+		if(isInRomanceAlphabetSequence(test.buffer, ASCII) != test.expectedResult){
 			return 0;
 		}
 	}
@@ -463,6 +517,26 @@ int testIsValidCharacter(){
 	for(r=0; r < 12; r++){
 		struct TypeEncodingTest test = typeTests[r];
 		if(isValidCharacter(test.buffer, test.encoding) != test.expectedResult){
+			return 0;
+		}
+	}
+	return -1;
+}
+
+// A function that checks if a string is a valid character in an encoding
+int testIsValidCharacterSequence(){
+	int r;
+	const unsigned char buffer2[] = {0x0,0x3f,0x7e,'\0'};
+	const unsigned char buffer3[] = {0x1f,0x20,0x5f,0x7e,'\0'};
+	const unsigned char xbuffer[] = {0x0,0x3f,0x7e,0x7f,'\0'};
+	const unsigned char xbuffer2[] = {0x1f,0x20,0x5f,0x7e,0x7f,'\0'};
+	struct TypeEncodingTest typeTests[5] = {
+		{"YES", ASCII, 1},{(const char*)buffer2, ASCII, 1},{(const char *)buffer3,ISO_8859_1, 0},
+		{(const char *)xbuffer, ISO_8859_1, 1},{(const char *)xbuffer2,ISO_8859_1,0}
+	};
+	for(r=0; r < 5; r++){
+		struct TypeEncodingTest test = typeTests[r];;
+		if(isValidCharacterSequence(test.buffer, test.encoding) != test.expectedResult){
 			return 0;
 		}
 	}
@@ -613,6 +687,27 @@ int testIsInAlphabet(){
 	return -1;
 }
 
+// A function that checks if a character is part of an alphabet
+// sequence
+int testInAphabetSequence(){
+	int r;
+	const unsigned char buffer2[] = {0x0,0x3f,0x7e,'\0'};
+	const unsigned char buffer3[] = {0x1f,0x20,0x5f,0x7e,'\0'};
+	const unsigned char xbuffer[] = {0x0,0x3f,0x7e,0x7f,'\0'};
+	const unsigned char xbuffer2[] = {0x1f,0x20,0x5f,0x7e,0x7f,'\0'};
+	struct TypeEncodingTest typeTests[5] = {
+		{"YES", ASCII, 1},{(const char*)buffer2, ASCII, 1},{(const char *)buffer3,ISO_8859_1, 0},
+		{(const char *)xbuffer, ISO_8859_1, 1},{(const char *)xbuffer2,ISO_8859_1,0}
+	};
+	for(r=0; r < 5; r++){
+		struct TypeEncodingTest test = typeTests[r];;
+		if(isValidCharacterSequence(test.buffer, test.encoding) != test.expectedResult){
+			return 0;
+		}
+	}
+	return -1;
+}
+
 // A function that tests the main points of functionality associated with the
 int testStringUtils(){
 	// The success/failure count
@@ -620,17 +715,19 @@ int testStringUtils(){
 	int failureCount = 0;
 
 	int testIter = 0;
-	int numberOfTests = 17;
-	int (*test_Array[17])() = {testGetUTF8State, testStringLength, testConvertHex, testIsNumber,
+	int numberOfTests = 21;
+	int (*test_Array[21])() = {testGetUTF8State, testStringLength, testConvertHex, testIsNumber,
 			testStringLengthEscaped, testIsNumberSequence,testIsDiacriticalMarkUTF8, testIsUTF8BinaryCodePoint,
 			testIsUTFBinaryCharacterInUTFSet, testIsInRomanceAlphabet, testIsHex, testIsHexSequence,
 			testIsSpanishExtendCharacter, testIsFrenchExtendCharacter, testConvertUTF8BinaryToCodePoint,testConvertCodePointToUTF8Binary,
-			testIsInAlphabet};
-	const char * testNames[17] = {"UTF8State test", "String Length test", "Convert hex test", "Is number test",
+			testIsInAlphabet,testConvertCodePointListToUTF8Binary,testIsValidCharacterSequence, testInRomanceAlphabetSequence,
+			testInAphabetSequence};
+	const char * testNames[21] = {"UTF8State test", "String Length test", "Convert hex test", "Is number test",
 			"String Length Unescaped test", "IsNumberSequence test", "TestIsDiacriticalMarkUTF8 test", "IsUTF8BinaryCodePoint test",
 			"Is UTF8 Character in Code Point Set test", "Is Romance Character test", "Is Hex Character test", "Is Hex Sequence test",
 			"Is Spanish Extended Character Test","Is French Extend Character Set", "Convert UTF8 Binary To Code Point Test","Convert Code Point to UTF8 binary",
-			"Is In Alphabet Test"};
+			"Is In Alphabet Test", "Convert Code Points to UTF8 binary","Test is valid Character sequence", "Test is In Romance Alphabet Sequence",
+			"Test Is In Aphabet Sequence"};
 	for(testIter = 0; testIter < numberOfTests; testIter++){
 		const char * testName = testNames[testIter];
 		int (*test)() = test_Array[testIter];

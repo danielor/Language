@@ -66,7 +66,11 @@ def runTests(compile):
             p.wait()
             
         # Setup the python bindings
-        listOfCommands = [['python ../setup.py build'], ['python ../setup.py install']]
+        listOfCommands = [['python','../setup.py', 'build'], ['python', '../setup.py', 'install']]
+        runListOfCommands(listOfCommands)
+        
+        # Setup the java bindings
+        listOfCommands = [['make','-C','../lib/bindings/java/com/Language']]
         runListOfCommands(listOfCommands)
         
 
