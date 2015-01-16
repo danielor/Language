@@ -122,6 +122,83 @@ static int isDiacriticalMark(int codePoint){
 }
 
 /**
+ * Convert a sequence of code points to a utf8 binary character. If there
+ * are any invalid code points NULL is returned.
+ * @param codePoints A list of utf8 code points
+ * @param numberOfCodePoints The number of code points in the list
+ */
+static const char * converListOfCodePointsToUTF8Binary(const int * codePoints, int numberOfCodePoints){
+	int r;
+
+	// Find out how large the array needs to be to contain the
+	// information
+	const int * codePointIndex = codePoints;
+	int numberOfCharacters = 0;
+	for(r = 0; r < numberOfCodePoints; r++){
+		int codePoint = *codePointIndex;
+		if(codePoint < 0){
+			return NULL;
+		}else if(codePoint < 128){
+			numberOfCharacters++;
+		}else if(codePoint < 2048){
+			numberOfCharacters+= 2;
+		}else if(codePoint < 65536){
+			numberOfCharacters+= 3;
+		}else if(codePoint < 0x200000){
+			numberOfCharacters += 4;
+		}
+		codePointIndex++;
+	}
+
+	// Assign memory for the character array
+	numberOfCharacters++;		// For the end of the C-style string
+	char * buffer = (char*)(malloc(numberOfCharacters * sizeof(char)));
+
+	// Iterateve through the array
+	codePointIndex = codePoints;
+	int charCount = 0;
+	for(r = 0; r < numberOfCodePoints; r++){
+		int codePoint = *codePointIndex;
+		if(codePoint < 0){
+			return NULL;
+		}else if(codePoint < 128){
+			char c =  (char)codePoint;
+			buffer[charCount] = c;
+			charCount++;
+		}else if(codePoint < 2048){
+			int firstByte = 0x000007c0 & codePoint;
+			int secondByte = 0x0000003f & codePoint;
+			buffer[charCount] = (char)(0xc0 | (firstByte >> 6));
+			buffer[charCount + 1] = (char)(0x80 | secondByte);
+
+			charCount+= 2;
+		}else if(codePoint < 65536){
+			int firstByte = 0x0000f000 & codePoint;
+			int secondByte = 0x00000fc0 & codePoint;
+			int thirdByte = 0x0000003f & codePoint;
+			buffer[charCount] = (char)(0xe0 | (firstByte >> 12));
+			buffer[charCount + 1] = (char)(0x80 | (secondByte >> 6));
+			buffer[charCount + 2] = (char)(0x80 | thirdByte);
+			charCount+= 3;
+		}else if(codePoint < 0x200000){
+			int firstByte = 0x001c0000 & codePoint;
+			int secondByte = 0x0003f000 & codePoint;
+			int thirdByte = 0x00000fc0 & codePoint;
+			int fourthByte = 0x0000003f & codePoint;
+			buffer[charCount] = (char)(0xf0 | (firstByte >> 18));
+			buffer[charCount + 1] = (char)(0x80 | (secondByte >> 12));
+			buffer[charCount + 2] = (char)(0x80 | (thirdByte >> 6));
+			buffer[charCount + 3] = (char)(0x80 | fourthByte);
+			charCount += 4;
+		}
+		codePointIndex++;
+	}
+	buffer[numberOfCharacters - 1] = '\0';
+	return buffer;
+}
+
+
+/**
  * Convert a code point to a utf8 binary character
  * @param codePoint The UTF8 code point
  */
@@ -398,20 +475,32 @@ static int isNumber(const char * charValue, int encoding){
 }
 
 /**
+ * Check if a sequence of characters conforms to different character
+ * checks
+ * @param func The function used to check
+ * @param charSequence The string to check
+ * @param encoding The encoding of the character
+ * @returns {0 = false, 1 = true}
+ */
+static int _isSequenceOf(int (*func)(const char *, int), const char * charSequence, int encoding){
+	const char * characterPointer = charSequence;
+	while(*characterPointer != '\0'){
+		if(func(characterPointer, encoding) == 0){
+			return 0;
+		}
+		characterPointer++;
+	}
+	return 1;
+}
+
+/**
  * Check if a sequence of characters is a number in a different encodings
  * @param charSequence The character to check
  * @param encoding The encoding of the character
  * @returns {0 = false, 1 = true}
  */
 static int isNumberSequence(const char * charValueSequence, int encoding){
-	const char * characterPointer = charValueSequence;
-	while(*characterPointer != '\0'){
-		if(isNumber(characterPointer, encoding) == 0){
-			return 0;
-		}
-		characterPointer++;
-	}
-	return 1;
+	return _isSequenceOf(isNumber, charValueSequence, encoding);
 }
 
 /**
@@ -444,14 +533,7 @@ static int isHex(const char * charValue, int encoding){
  * @returns {0 = false, 1 = true}
  */
 static int isHexSequence(const char * charValueSequence, int encoding){
-	const char * characterPointer = charValueSequence;
-	while(*characterPointer != '\0'){
-		if(isHex(characterPointer, encoding) == 0){
-			return 0;
-		}
-		characterPointer++;
-	}
-	return 1;
+	return _isSequenceOf(isHex, charValueSequence, encoding);
 }
 
 /**
@@ -479,6 +561,29 @@ static int isValidCharacter(const char * charValue, int encoding){
 	}else{
 		return 0;
 	}
+}
+
+/**
+ * A function that checks if a string is filled with valid characters
+ * in an encoding. This will not work for encodings that require multiple
+ * bytes
+ * @param charSequence The character to check
+ * @param encoding The encoding of the character
+ * @returns {0 = false, 1 = true}
+ */
+static int isValidCharacterSequence(const char * charSequence, int encoding){
+	return _isSequenceOf(isValidCharacter, charSequence, encoding);
+}
+
+/**
+ * A function that checks if a string is filled with the romance
+ * alphabet(a-z, A-Z) in different encodings
+ * @param charSequence The character to check
+ * @param encoding The encoding of the character
+ * @returns {0 = false, 1 = true}
+ */
+static int isInRomanceAlphabetSequence(const char * charSequence, int encoding){
+	return _isSequenceOf(isInRomanceAlphabet, charSequence, encoding);
 }
 
 /**
@@ -598,6 +703,24 @@ static int isInAlphabet(const char * charValue, int encoding, int language){
 			return 0;
 		}
 	}
+}
+
+/**
+ * A function that checks if an entire sequence is part of different languages
+ * @param charSequence The character sequence to check
+ * @param encoding The encoding of the character
+ * @param language The language of the character
+ * @returns {0=false, 1=true}
+ */
+static int isInAlphabetSequence(const char * charSequence, int encoding, int language){
+	const char * characterPointer = charSequence;
+	while(*characterPointer != '\0'){
+		if(isInAlphabet(characterPointer, encoding, language) == 0){
+			return 0;
+		}
+		characterPointer++;
+	}
+	return 1;
 }
 
 /**
