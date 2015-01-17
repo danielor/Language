@@ -77,4 +77,71 @@ public class StringUtilsTest{
 		assertEquals("'g' is not a hex number", isHexNumber4, false);
 		assertEquals("'G' is not a hex number", isHexNumber5, false);
 	}
+	
+	/**
+	 * Test if a sequence is a valid sequence
+	 */
+	@Test
+	public void testIsValid(){
+		LanguageStringUtils stringUtils = new LanguageStringUtils();
+		int asciiEncoding = StringEncodings.ASCII.getEncodingValue();
+		int iso8859Encoding = StringEncodings.ISO_8859_1.getEncodingValue();
+		String invalidString = new String(new char[]{0x19,0x78});
+		boolean isValid1 = stringUtils.isValid("Howdy", asciiEncoding);
+		boolean isValid2 = stringUtils.isValid("First", asciiEncoding);
+		boolean isValid3 = stringUtils.isValid("0123456789", asciiEncoding);
+		boolean isValid4 = stringUtils.isValid("g", asciiEncoding);
+		boolean isValid5 = stringUtils.isValid(invalidString, iso8859Encoding);
+		
+		assertEquals("'Howdy' is a valid english string", isValid1, true);
+		assertEquals("'First' is a valid english string", isValid2, true);
+		assertEquals("'0123456789' is not a valid english string", isValid3, true);
+		assertEquals("'g' is a valid english string", isValid4, true);
+		assertEquals("'Añoro' is not a valid english string", isValid5, false);
+	}
+	
+	/**
+	 * Test if is a romance alphabet sequence
+	 */
+	@Test
+	public void testIsRomanceAlphabet(){
+		LanguageStringUtils stringUtils = new LanguageStringUtils();
+		int asciiEncoding = StringEncodings.ASCII.getEncodingValue();
+		int iso8859Encoding = StringEncodings.ISO_8859_1.getEncodingValue();
+		String invalidString = new String(new char[]{0x19,0x78});
+		boolean isValid1 = stringUtils.isInRomanceAlphabet("Howdy", asciiEncoding);
+		boolean isValid2 = stringUtils.isInRomanceAlphabet("First", asciiEncoding);
+		boolean isValid3 = stringUtils.isInRomanceAlphabet("0123456789", asciiEncoding);
+		boolean isValid4 = stringUtils.isInRomanceAlphabet("g", asciiEncoding);
+		boolean isValid5 = stringUtils.isInRomanceAlphabet(invalidString, iso8859Encoding);
+		
+		assertEquals("'Howdy' is a valid romance string", isValid1, true);
+		assertEquals("'First' is a valid romance string", isValid2, true);
+		assertEquals("'0123456789' is not a valid romance string", isValid3, false);
+		assertEquals("'g' is a valid romance string", isValid4, true);
+		assertEquals("'Añoro' is not a valid romance string", isValid5, false);
+	}
+	
+	/**
+	 * Test if an alphabet sequence
+	 */
+	@Test
+	public void testIsInAlphabet(){
+		LanguageStringUtils stringUtils = new LanguageStringUtils();
+		int asciiEncoding = StringEncodings.ASCII.getEncodingValue();
+		int iso8859Encoding = StringEncodings.ISO_8859_1.getEncodingValue();
+		int englishLanguage = LanguageEncodings.ENGLISH.getEncodingValue();
+		String invalidString = "Añoro";
+		boolean isValid1 = stringUtils.isInAlphabet("Howdy", asciiEncoding,englishLanguage);
+		boolean isValid2 = stringUtils.isInAlphabet("First", asciiEncoding, englishLanguage);
+		boolean isValid3 = stringUtils.isInAlphabet("0123456789", asciiEncoding, englishLanguage);
+		boolean isValid4 = stringUtils.isInAlphabet("g", asciiEncoding, englishLanguage);
+		boolean isValid5 = stringUtils.isInAlphabet(invalidString, iso8859Encoding, englishLanguage);
+		
+		assertEquals("'Howdy' is a valid english string", isValid1, true);
+		assertEquals("'First' is a valid english string", isValid2, true);
+		assertEquals("'0123456789' is not a valid english string", isValid3, false);
+		assertEquals("'g' is a valid english string", isValid4, true);
+		assertEquals("'Añoro' is not a valid english string", isValid5, false);
+	}
 }
