@@ -41,9 +41,13 @@ private:
 	static v8::Handle<v8::Value> lengthEscaped(const v8::Arguments & args);
 	static v8::Handle<v8::Value> isNaturalNumber(const v8::Arguments & args);
 	static v8::Handle<v8::Value> isHexNumber(const v8::Arguments & args);
+	static v8::Handle<v8::Value> isValid(const v8::Arguments & args);
+	static v8::Handle<v8::Value> isInRomanceAlphabet(const v8::Arguments & args);
+	static v8::Handle<v8::Value> isInAlphabet(const v8::Arguments & args);
 
 	// Getters and setters
 	static v8::Handle<v8::Value> getStringEncodings(v8::Local<v8::String> name, const v8::AccessorInfo & info);
+	static v8::Handle<v8::Value> getLanguageEncodings(v8::Local<v8::String> name, const v8::AccessorInfo & info);
 
 	// Helper function to parse different variables
 	static void _parseInt(const v8::Arguments & args, int index,  int * value);
