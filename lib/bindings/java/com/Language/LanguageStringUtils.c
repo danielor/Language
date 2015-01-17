@@ -65,5 +65,55 @@ JNIEXPORT jboolean JNICALL Java_com_Language_LanguageStringUtils_isHexNumber(JNI
 	}else{
 		return JNI_TRUE;
 	}
-
 }
+
+/**
+ * Check if a sequence is a valid character
+ */
+JNIEXPORT jboolean JNICALL Java_com_Language_LanguageStringUtils_isValid(JNIEnv * env, jobject thisObj, jstring str, jint encoding){
+	const char * buffer = (*env)->GetStringUTFChars(env, str, NULL);
+	if(buffer == NULL){
+		return JNI_FALSE;
+	}
+	int result = isValidCharacterSequence(buffer, encoding);
+	if(result == 0){
+		return JNI_FALSE;
+	}else{
+		return JNI_TRUE;
+	}
+}
+
+/**
+ * Check if a sequence is in the romance alphabet
+ */
+JNIEXPORT jboolean JNICALL Java_com_Language_LanguageStringUtils_isInRomanceAlphabet(JNIEnv * env, jobject thisObj, jstring str, jint encoding){
+	const char * buffer = (*env)->GetStringUTFChars(env, str, NULL);
+	if(buffer == NULL){
+		return JNI_FALSE;
+	}
+	int result = isInRomanceAlphabetSequence(buffer, encoding);
+	if(result == 0){
+		return JNI_FALSE;
+	}else{
+		return JNI_TRUE;
+	}
+}
+
+/**
+ * Check if a sequence is in an alphabet of an arbitrary language
+ */
+JNIEXPORT jboolean JNICALL Java_com_Language_LanguageStringUtils_isInAlphabet
+(JNIEnv * env, jobject obj, jstring str, jint encoding, jint language){
+	const char * buffer = (*env)->GetStringUTFChars(env, str, NULL);
+	if(buffer == NULL){
+		return JNI_FALSE;
+	}
+	int result = isInAlphabetSequence(buffer, encoding, language);
+	if(result == 0){
+		return JNI_FALSE;
+	}else{
+		return JNI_TRUE;
+	}
+}
+
+

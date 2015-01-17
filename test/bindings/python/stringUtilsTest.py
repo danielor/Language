@@ -22,6 +22,9 @@ from Language.stringUtils import length
 from Language.stringUtils import lengthEscaped
 from Language.stringUtils import isNaturalNumber
 from Language.stringUtils import isHexNumber
+from Language.stringUtils import isValid
+from Language.stringUtils import isInRomanceAlphabet
+from Language.stringUtils import isInAlphabet
 from LanguageUtils.StringUtils import StringUtils
 
 class StringUtilsTestCase(unittest.TestCase):
@@ -62,6 +65,42 @@ class StringUtilsTestCase(unittest.TestCase):
         self.assertTrue(isHexNumber("0123456789", sEncodings['ASCII']))
         self.assertFalse(isHexNumber("g", sEncodings['ASCII']))
         self.assertFalse(isHexNumber("G", sEncodings['ASCII']))
+        
+    def test_isValid(self):
+        """
+        Test the string utils is valid
+        """
+        sEncodings = StringUtils.stringEncodings()
+        invalidString = ''.join(map(unichr, [13, 14, 5]))
+        self.assertTrue(isValid("abcdef", sEncodings['ASCII']))
+        self.assertTrue(isValid("ABCDEF", sEncodings['ASCII']))
+        self.assertTrue(isValid("0123456789", sEncodings['ASCII']))
+        self.assertTrue(isValid("g", sEncodings['ASCII']))
+        self.assertTrue(isValid("G", sEncodings['ASCII']))
+        self.assertFalse(isValid(invalidString, sEncodings['ISO_8859_1']))
+
+    def test_isInRomanceAlphabet(self):
+        """
+        Test the string utils is romance alphabet
+        """
+        sEncodings = StringUtils.stringEncodings()
+        self.assertTrue(isInRomanceAlphabet("abcdef", sEncodings['ASCII']))
+        self.assertTrue(isInRomanceAlphabet("ABCDEF", sEncodings['ASCII']))
+        self.assertFalse(isInRomanceAlphabet("0123456789", sEncodings['ASCII']))
+        self.assertTrue(isInRomanceAlphabet("g", sEncodings['ASCII']))
+        self.assertTrue(isInRomanceAlphabet("G", sEncodings['ASCII']))
+    
+    def test_isInAlphabet(self):
+        """
+        Test the string utils is in alphabet
+        """
+        sEncodings = StringUtils.stringEncodings()
+        lEncodings = StringUtils.languageEncodings()
+        
+        self.assertTrue(isInAlphabet("Howdy", sEncodings['ASCII'],lEncodings['ENGLISH']))
+        self.assertTrue(isInAlphabet("First", sEncodings['ASCII'], lEncodings['ENGLISH']))
+        self.assertFalse(isInAlphabet("0123456789", sEncodings['ASCII'], lEncodings['ENGLISH']))
+        self.assertTrue(isInAlphabet("g", sEncodings['ASCII'], lEncodings['ENGLISH']))
     
     def test_stringUtils(self):
         """
@@ -70,8 +109,11 @@ class StringUtilsTestCase(unittest.TestCase):
         s = StringUtils('567', 1)
         self.assertTrue(len(s) == 3)
         self.assertTrue(s.lenEscaped() == 3)
-        self.assertTrue(s.isNaturalNumber() == True)
-        self.assertTrue(s.isHexNumber() == True)
+        self.assertTrue(s.isNaturalNumber())
+        self.assertTrue(s.isHexNumber())
+        self.assertTrue(s.isValid())
+        self.assertFalse(s.isInRomanceAlphabet())
+        self.assertFalse(s.isInAlphabet())
         
 if __name__=='__main__':
     unittest.main()

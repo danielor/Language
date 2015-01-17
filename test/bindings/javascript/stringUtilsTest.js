@@ -13,7 +13,7 @@ var JavascriptStringUtilsTest = (function(){
 	/**
 	 * Test the string length function
 	 * @function testStringLength
-	 * @memberof JavascriptUtilsTest
+	 * @memberof JavascriptStringUtilsTest
 	 */
 	function testStringLength(){
 		var StringUtils = LanguageModule.StringUtils;
@@ -25,7 +25,7 @@ var JavascriptStringUtilsTest = (function(){
 	/**
 	 * Test the string length unescaped function
 	 * @function testStringLengthEscaped
-	 * @memberof JavascriptUtilsTest
+	 * @memberof JavascriptStringUtilsTest
 	 */
 	function testStringLengthEscaped(){
 		var StringUtils = LanguageModule.StringUtils;
@@ -43,7 +43,7 @@ var JavascriptStringUtilsTest = (function(){
 	/**
 	 * Test the isNumber sequence functionality
 	 * @function testIsNumberSequence
-	 * @memberof JavascriptUtilsTest
+	 * @memberof JavascriptStringUtilsTest
 	 */
 	function testIsNaturalNumber(){
 		var StringUtils = LanguageModule.StringUtils;
@@ -63,7 +63,7 @@ var JavascriptStringUtilsTest = (function(){
 	/**
 	 * Test the string encoding functionality
 	 * @function testStringEncodings
-	 * @memberof JavascriptUtilsTest
+	 * @memberof JavascriptStringUtilsTest
 	 */
 	function testStringEncodings(){
 		var StringUtils = LanguageModule.StringUtils;
@@ -76,6 +76,24 @@ var JavascriptStringUtilsTest = (function(){
 		expect(encodings.UTF8_BINARY).to.eql(0);
 		expect(encodings.ASCII).to.eql(1);
 		expect(encodings.ISO_8859_1).to.eql(2);
+	}
+	
+	/**
+	 * Test the language encoding functionality
+	 * @function testLanguageEncodings
+	 * @memberof JavascriptStringUtilsTest
+	 */
+	function testLanguageEncodings(){
+		var StringUtils = LanguageModule.StringUtils;
+		var stringUtils = new StringUtils();
+		var encodings = stringUtils.languageEncodings;
+		expect(_.isObject(encodings)).to.eql(true);
+		expect(_.has(encodings, "ENGLISH")).to.eql(true);
+		expect(_.has(encodings, "SPANISH")).to.eql(true);
+		expect(_.has(encodings, "FRENCH")).to.eql(true);
+		expect(encodings.ENGLISH).to.eql(0);
+		expect(encodings.SPANISH).to.eql(1);
+		expect(encodings.FRENCH).to.eql(2);
 	}
 	
 	/**
@@ -102,6 +120,72 @@ var JavascriptStringUtilsTest = (function(){
 	}
 	
 	/**
+	 * Test the is valid functionality
+	 * @function testIsValid
+	 * @memberof JavascriptStringUtilsTest
+	 */
+	function testIsValid(){
+		var StringUtils = LanguageModule.StringUtils;
+		var stringUtils = new StringUtils();
+		var encodings = stringUtils.stringEncodings;
+		
+		var invalidString = "G" + String.fromCharCode(13);
+		var validTest1 = stringUtils.isValid("abcdef", encodings.ASCII);
+		var validTest2 = stringUtils.isValid("ABCDEF", encodings.ASCII);
+		var validTest3 = stringUtils.isValid("0123456789", encodings.ASCII);
+		var validTest4 = stringUtils.isValid("g", encodings.ASCII);
+		var validTest5 = stringUtils.isValid(invalidString, encodings.ISO_8859_1);
+		expect(validTest1).to.eql(true);
+		expect(validTest2).to.eql(true);
+		expect(validTest3).to.eql(true);
+		expect(validTest4).to.eql(true);
+		expect(validTest5).to.eql(false);
+	}
+	
+	/**
+	 * Test the is in romance alphabet functionality
+	 * @function testIsInRomanceAlphabet
+	 * @memberof JavascriptStringUtilsTest
+	 */
+	function testIsInRomanceAlphabet(){
+		var StringUtils = LanguageModule.StringUtils;
+		var stringUtils = new StringUtils();
+		var encodings = stringUtils.stringEncodings;
+		var romanceTest1 = stringUtils.isInRomanceAlphabet("abcdef", encodings.ASCII);
+		var romanceTest2 = stringUtils.isInRomanceAlphabet("ABCDEF", encodings.ASCII);
+		var romanceTest3 = stringUtils.isInRomanceAlphabet("0123456789", encodings.ASCII);
+		var romanceTest4 = stringUtils.isInRomanceAlphabet("g", encodings.ASCII);
+		var romanceTest5 = stringUtils.isInRomanceAlphabet("->?", encodings.ASCII);
+		expect(romanceTest1).to.eql(true);
+		expect(romanceTest2).to.eql(true);
+		expect(romanceTest3).to.eql(false);
+		expect(romanceTest4).to.eql(true);
+		expect(romanceTest5).to.eql(false);
+	}
+	
+	/**
+	 * Test the is in alphabet functionality
+	 * @function testIsInAlphabet
+	 * @memberof JavascriptStringUtilsTest
+	 */
+	function testIsInAlphabet(){
+		var StringUtils = LanguageModule.StringUtils;
+		var stringUtils = new StringUtils();
+		var encodings = stringUtils.stringEncodings;
+		var lencodings = stringUtils.languageEncodings;
+		var romanceTest1 = stringUtils.isInAlphabet("abcdef", encodings.ASCII, lencodings.ENGLISH);
+		var romanceTest2 = stringUtils.isInAlphabet("ABCDEF", encodings.ASCII, lencodings.ENGLISH);
+		var romanceTest3 = stringUtils.isInAlphabet("0123456789", encodings.ASCII, lencodings.ENGLISH);
+		var romanceTest4 = stringUtils.isInAlphabet("g", encodings.ASCII, lencodings.ENGLISH);
+		var romanceTest5 = stringUtils.isInAlphabet("->?", encodings.ASCII, lencodings.ENGLISH);
+		expect(romanceTest1).to.eql(true);
+		expect(romanceTest2).to.eql(true);
+		expect(romanceTest3).to.eql(false);
+		expect(romanceTest4).to.eql(true);
+		expect(romanceTest5).to.eql(false);
+	}
+	
+	/**
 	 * The public interface
 	 */
 	return {
@@ -109,7 +193,11 @@ var JavascriptStringUtilsTest = (function(){
 		testStringLengthEscaped:testStringLengthEscaped,
 		testIsNaturalNumber:testIsNaturalNumber,
 		testStringEncodings:testStringEncodings,
-		testIsHexNumber:testIsHexNumber
+		testLanguageEncodings:testLanguageEncodings,
+		testIsHexNumber:testIsHexNumber,
+		testIsValid:testIsValid,
+		testIsInRomanceAlphabet:testIsInRomanceAlphabet,
+		testIsInAlphabet:testIsInAlphabet
 	}
 })();
 
@@ -118,6 +206,10 @@ describe("Test the javascript string utils", function(){
 	it('JavascriptStringUtils Length Escaped Test', JavascriptStringUtilsTest.testStringLengthEscaped);
 	it('JavascriptStringUtils Natural Number Test', JavascriptStringUtilsTest.testIsNaturalNumber);
 	it('JavascriptStringUtils String Encodings Test', JavascriptStringUtilsTest.testStringEncodings);
+	it('JavascriptStringUtils Language Encodings Test', JavascriptStringUtilsTest.testLanguageEncodings);
 	it('JavascriptStringUtils Is Hex Number Test', JavascriptStringUtilsTest.testIsHexNumber);
+	it('JavascriptStringUtils Is Valid Test', JavascriptStringUtilsTest.testIsValid);
+	it('JavascriptStrignUtils Is Romance Alphabet Test', JavascriptStringUtilsTest.testIsInRomanceAlphabet);
+	it('JavascriptStringUtils Is In Alphabet Test', JavascriptStringUtilsTest.testIsInAlphabet);
 });
 

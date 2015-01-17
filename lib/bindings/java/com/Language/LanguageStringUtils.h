@@ -48,6 +48,30 @@ JNIEXPORT jboolean JNICALL Java_com_Language_LanguageStringUtils_isNaturalNumber
 JNIEXPORT jboolean JNICALL Java_com_Language_LanguageStringUtils_isHexNumber
 (JNIEnv *, jobject, jstring, jint);
 
+/*
+ * Class:     LanguageStringUtils
+ * Method:    isValid
+ * Signature: (Ljava/lang/String;I)B
+ */
+JNIEXPORT jboolean JNICALL Java_com_Language_LanguageStringUtils_isValid
+(JNIEnv *, jobject, jstring, jint);
+
+/*
+ * Class:     LanguageStringUtils
+ * Method:    isInRomanceAlphabet
+ * Signature: (Ljava/lang/String;I)B
+ */
+JNIEXPORT jboolean JNICALL Java_com_Language_LanguageStringUtils_isInRomanceAlphabet
+(JNIEnv *, jobject, jstring, jint);
+
+/*
+ * Class:     LanguageStringUtils
+ * Method:    isInAlphabet
+ * Signature: (Ljava/lang/String;I;I)B
+ */
+JNIEXPORT jboolean JNICALL Java_com_Language_LanguageStringUtils_isInAlphabet
+(JNIEnv *, jobject, jstring, jint, jint);
+
 #ifdef __cplusplus
 }
 #endif
