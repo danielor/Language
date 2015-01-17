@@ -101,102 +101,11 @@ static PyObject * py_stringutils_lengthescaped(PyObject * self, PyObject * args)
 	return PyInt_FromLong((long)ldist);
 }
 
-/**
- * A python function that checks if a sequence of characters is a natural number
- * in different encodings
- */
-static PyObject * py_stringutils_isNaturalNumber(PyObject * self, PyObject *args){
-	// The string argument for the string utils
-	PyObject * stringArg = NULL;
-	PyObject * encodingArg = NULL;
-
-	// The main buffere of the py utils
-	const char * buffer = NULL;
-	int encoding = UTF8_BINARY;
-
-	// Check if the pyarg unpack tuple
-	if(!PyArg_UnpackTuple(args, "stringutils_isNaturalNumber", 2, 2, &stringArg, &encodingArg)){
-		Py_RETURN_FALSE;
-	}
-
-	// Check if the argument is a unicode string or an ascii string. For the ascii
-	// utf-8 can be encoded into the string.
-	if(PyObject_TypeCheck(stringArg, &PyString_Type)){
-		buffer = PyString_AS_STRING(stringArg);
-	}else if(PyObject_TypeCheck(stringArg, &PyUnicode_Type)){
-		buffer = PyUnicode_AS_DATA(stringArg);
-	}else{
-		PyErr_Format(PyExc_TypeError, "Py_stringutils_length expects a string");
-	}
-
-	// Check for different types of encoding parameters to assert what state the length
-	// parameter should be analyzed with different constraints
-	if(encodingArg != NULL){
-		if(PyObject_TypeCheck(encodingArg, &PyInt_Type)){
-			int potentialEncoding = PyInt_AsLong(encodingArg);
-			if(potentialEncoding >= UTF8_BINARY && potentialEncoding <= ISO_8859_1){
-				encoding = potentialEncoding;
-			}
-		}
-	}
-	size_t ldist = isNumberSequence(buffer, encoding);
-	if(ldist == 0){
-		Py_RETURN_FALSE;
-	}else{
-		Py_RETURN_TRUE;
-	}
-}
-
-
-/**
- * A python function that checks if a sequence of a characters is a hex number
- * in different encodings
- */
-static PyObject * py_stringutils_isHexNumber(PyObject * self, PyObject * args){
-	// The string argument for the string utils
-	PyObject * stringArg = NULL;
-	PyObject * encodingArg = NULL;
-
-	// The main buffere of the py utils
-	const char * buffer = NULL;
-	int encoding = UTF8_BINARY;
-
-	// Check if the pyarg unpack tuple
-	if(!PyArg_UnpackTuple(args, "stringutils_isHexNumber", 2, 2, &stringArg, &encodingArg)){
-		Py_RETURN_FALSE;
-	}
-
-	// Check if the argument is a unicode string or an ascii string. For the ascii
-	// utf-8 can be encoded into the string.
-	if(PyObject_TypeCheck(stringArg, &PyString_Type)){
-		buffer = PyString_AS_STRING(stringArg);
-	}else if(PyObject_TypeCheck(stringArg, &PyUnicode_Type)){
-		buffer = PyUnicode_AS_DATA(stringArg);
-	}else{
-		PyErr_Format(PyExc_TypeError, "Py_stringutils_length expects a string");
-	}
-	// Check for different types of encoding parameters to assert what state the length
-	// parameter should be analyzed with different constraints
-	if(encodingArg != NULL){
-		if(PyObject_TypeCheck(encodingArg, &PyInt_Type)){
-			int potentialEncoding = PyInt_AsLong(encodingArg);
-			if(potentialEncoding >= UTF8_BINARY && potentialEncoding <= ISO_8859_1){
-				encoding = potentialEncoding;
-			}
-		}
-	}
-	size_t ldist = isHexSequence(buffer, encoding);
-	if(ldist == 0){
-		Py_RETURN_FALSE;
-	}else{
-		Py_RETURN_TRUE;
-	}
-}
 
 /**
  * A python function that checks if a character is of a certain type
  */
-static PyObject * py_charutils_charCheck(PyObject * self, PyObject * args, int (*func)(const char *, int),
+static PyObject * checkStringContent(PyObject * self, PyObject * args, int (*func)(const char *, int),
 		const char * unPackString, const char * errorString){
 	// The string argument for the string utils
 	PyObject * stringArg = NULL;
@@ -239,12 +148,107 @@ static PyObject * py_charutils_charCheck(PyObject * self, PyObject * args, int (
 	}
 }
 
+/**
+ * A python function that checks if a sequence of characters is a natural number
+ * in different encodings
+ */
+static PyObject * py_stringutils_isNaturalNumber(PyObject * self, PyObject *args){
+	return  checkStringContent(self, args, isNumberSequence,"stringutils_isNaturalNumber",
+				"py_stringutils_isNaturalNumber expects a string");
+
+}
+
+/**
+ * A python function that checks if a sequence of a characters is a hex number
+ * in different encodings
+ */
+static PyObject * py_stringutils_isHexNumber(PyObject * self, PyObject * args){
+	return  checkStringContent(self, args, isHexSequence,"stringutils_isHexNumber",
+			"py_stringutils_isHexNumber expects a string");
+}
+
+/**
+ * A python object that checks if a sequence of character is valid in different
+ * encodings
+ */
+static PyObject * py_stringutils_isValid(PyObject * self, PyObject * args){
+	return  checkStringContent(self, args, isValidCharacterSequence,"stringutils_isHexNumber",
+			"Py_stringutils_length expects a string");
+}
+
+/**
+ * A python function that checks if a sequence of characters is part of the
+ * romance alphabet
+ */
+static PyObject * py_stringutils_isInRomanceAlphabet(PyObject * self, PyObject * args){
+	return  checkStringContent(self, args, isInRomanceAlphabetSequence,"stringutils_isInRomanceAlphabet",
+				"Py_stringutils_length expects a string");
+}
+
+/**
+ * A python function that checks if a sequence of characeters is part of an alphabet
+ * for a specific language and encoding
+ */
+static PyObject * py_stringutils_isInAlphabet(PyObject * self, PyObject * args){
+	// The string argument for the string utils
+	PyObject * stringArg = NULL;
+	PyObject * encodingArg = NULL;
+	PyObject * languageArg = NULL;
+
+	// The main buffere of the py utils
+	const char * buffer = NULL;
+	int encoding = UTF8_BINARY;
+	int language = ENGLISH;
+
+	// Check if the pyarg unpack tuple
+	if(!PyArg_UnpackTuple(args, "stringutils_isInAlphabet", 3, 3, &stringArg, &encodingArg, &languageArg)){
+		Py_RETURN_FALSE;
+	}
+
+	// Check if the argument is a unicode string or an ascii string. For the ascii
+	// utf-8 can be encoded into the string.
+	if(PyObject_TypeCheck(stringArg, &PyString_Type)){
+		buffer = PyString_AS_STRING(stringArg);
+	}else if(PyObject_TypeCheck(stringArg, &PyUnicode_Type)){
+		buffer = PyUnicode_AS_DATA(stringArg);
+	}else{
+		PyErr_Format(PyExc_TypeError, "py_stringutils_isInAlphabet expects a string");
+		Py_RETURN_FALSE;
+	}
+	// Check for different types of encoding parameters to assert what state the length
+	// parameter should be analyzed with different constraints
+	if(encodingArg != NULL){
+		if(PyObject_TypeCheck(encodingArg, &PyInt_Type)){
+			int potentialEncoding = PyInt_AsLong(encodingArg);
+			if(potentialEncoding >= UTF8_BINARY && potentialEncoding <= ISO_8859_1){
+				encoding = potentialEncoding;
+			}
+		}
+	}
+
+	// Check for differen type of encoding parameters
+	if(languageArg == NULL){
+		if(PyObject_TypeCheck(languageArg, &PyInt_Type)){
+			int potentialEncoding = PyInt_AsLong(languageArg);
+			if(potentialEncoding >= ENGLISH && potentialEncoding <= FRENCH){
+				language = potentialEncoding;
+			}
+		}
+	}
+
+	size_t ldist = isInAlphabet(buffer, encoding, language);
+	if(ldist == 0){
+		Py_RETURN_FALSE;
+	}else{
+		Py_RETURN_TRUE;
+	}
+}
 
 /**
  * A python function to check if a character is a hex number
  */
 static PyObject * py_charutils_isHexNumber(PyObject * self, PyObject * args){
-	return py_charutils_charCheck(self, args, isHex,"charutils_isHexNumber",
+	return checkStringContent(self, args, isHex,"charutils_isHexNumber",
 			"Py_charutils_isHexNumber expects a string");
 }
 
@@ -252,7 +256,7 @@ static PyObject * py_charutils_isHexNumber(PyObject * self, PyObject * args){
  * A python function to check if a character is a natural number
  */
 static PyObject * py_charutils_isNaturalNumber(PyObject * self, PyObject * args){
-	return py_charutils_charCheck(self, args, isNumber, "charutils_isNaturalNumber",
+	return checkStringContent(self, args, isNumber, "charutils_isNaturalNumber",
 			"Py_charutils_isNaturalNumber expects a string");
 }
 
@@ -260,7 +264,7 @@ static PyObject * py_charutils_isNaturalNumber(PyObject * self, PyObject * args)
  * A python function to check if a character is in the romance alphabet
  */
 static PyObject * py_charutils_isInRomanceAlphabet(PyObject * self, PyObject * args){
-	return py_charutils_charCheck(self, args, isInRomanceAlphabet, "charutils_isInRomanceAlphabet",
+	return checkStringContent(self, args, isInRomanceAlphabet, "charutils_isInRomanceAlphabet",
 			"Py_charutils_isInRomanceAlphabet");
 }
 
@@ -268,7 +272,7 @@ static PyObject * py_charutils_isInRomanceAlphabet(PyObject * self, PyObject * a
  * A python function to check if a character is valid in a certain encoding
  */
 static PyObject * py_charutils_isValidCharacter(PyObject * self, PyObject * args){
-	return py_charutils_charCheck(self, args, isValidCharacter, "charutils_isValidCharacter",
+	return checkStringContent(self, args, isValidCharacter, "charutils_isValidCharacter",
 			"Py_charutils_isValidCharacter");
 }
 
@@ -339,6 +343,9 @@ static PyMethodDef stringutils_methods[] = {
 		{"lengthEscaped", py_stringutils_lengthescaped, METH_VARARGS, "Calculate the length of an escaped string with different encodings"},
 		{"isNaturalNumber", py_stringutils_isNaturalNumber, METH_VARARGS, "Is the sequence of text a natural number?"},
 		{"isHexNumber",py_stringutils_isHexNumber, METH_VARARGS,"Is the sequence of text a hex number?"},
+		{"isValid",py_stringutils_isValid, METH_VARARGS, "Is the sequence of text all valid characters?"},
+		{"isInRomanceAlphabet", py_stringutils_isInRomanceAlphabet, METH_VARARGS, "Is the sequence text part of the romance alphabet? "},
+		{"isInAlphabet", py_stringutils_isInAlphabet, METH_VARARGS, "Is the sequence of text part of an alphabet?"},
 		{NULL, NULL}
 };
 

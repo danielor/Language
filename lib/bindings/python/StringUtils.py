@@ -11,6 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+from twisted.trial.test.sample import AlphabetTest
 """
 A string utils class that wraps the Language C bindngs
 @author: Daniel Ortiz
@@ -20,19 +21,24 @@ from Language.stringUtils import length
 from Language.stringUtils import lengthEscaped
 from Language.stringUtils import isNaturalNumber
 from Language.stringUtils import isHexNumber
+from Language.stringUtils import isValid
+from Language.stringUtils import isInRomanceAlphabet
+from Language.stringUtils import isInAlphabet
 from BaseUtils import BaseUtils
 
 class StringUtils(BaseUtils):
     """
     An object that encapsulates the string Utils
     """
-    def __init__(self, str, encoding):
+    def __init__(self, str, encoding, language = 0):
         """
         @param str: The string to calculate the utils 
         @param encoding: The encoding of the string
+        @param lanaguage: The language of the string(defaults to EnglisH)
         """
         self.str = str
         self.encoding = encoding
+        self.language = language
         
     def __len__(self):
         """
@@ -64,3 +70,21 @@ class StringUtils(BaseUtils):
         Return true if the string is a hex Number
         """
         return isHexNumber(self.str, self.encoding)
+    
+    def isValid(self):
+        """
+        Return true if the string is valid
+        """
+        return isValid(self.str, self.encoding)
+    
+    def isInRomanceAlphabet(self):
+        """
+        Return true if string is in romance alphabet 
+        """
+        return isInRomanceAlphabet(self.str, self.encoding)
+    
+    def isInAlphabet(self):
+        """
+        Return true if string is in alphabet 
+        """
+        return isInAlphabet(self.str, self.encoding, self.language)

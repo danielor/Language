@@ -50,6 +50,30 @@ public class LanguageStringUtils{
 	 */
 	public native boolean isHexNumber(String str, int encoding);
 	
+	/**
+	 * Check if a character sequence is a valid character sequence in
+	 * an arbitrary encoding
+	 * @param str A java string
+	 * @param encoding The encoding of the str
+	 */
+	public native boolean isValid(String str, int encoding);
+	
+	/**
+	 * Check if a character sequence is in the romance alphabet in an
+	 * arbitrary encoding
+	 * @param str A java string
+	 * @param encoding The encoding of the str
+	 */
+	public native boolean isInRomanceAlphabet(String str, int encoding);
+	
+	/**
+	 * Check if a character sequence is in the alphabet of a language
+	 * @param str A java string
+	 * @param encoding The encoding of the str
+	 * @param language The language of the str
+	 */
+	public native boolean isInAlphabet(String str, int encoding, int language);
+	
 	public static void main(String[] args) {
 		new LanguageStringUtils().length("Hello", 0);  // invoke the native method
 	}
