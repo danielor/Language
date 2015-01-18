@@ -676,6 +676,389 @@ static int isFrenchExtendedCharacter(const char * charValue, int encoding){
 }
 
 /**
+ * Check if a character is part of english punctuation marks
+ * @param charValue The character to check
+ * @param encoding The encoding of the character
+ */
+static int isEnglishPunctuationMark(const char * charValue, int encoding){
+	// UTF8 and binary are the same for the first 127 characters
+	if(encoding == ASCII || encoding == UTF8_BINARY){
+		char value = *charValue;
+		// 20 = !, 21=", 27=', 28=(
+		// 29 = ), 2c=, ,2e=., 3a=:
+		// 3b = ;, 3f=?, 5b=[, 5d=]
+		// 7b = {, 7d=}, 2d=-
+		if(value == 0x20 || value == 0x21 || value == 0x27 || value == 0x28 ||
+		   value == 0x29 || value == 0x2c || value == 0x2e || value == 0x3a ||
+		   value == 0x3b || value == 0x3f || value == 0x5b || value == 0x5d ||
+		   value == 0x7b || value == 0x7d || value == 0x2d){
+			return 1;
+		}else{
+			return 0;
+		}
+	}else if(encoding == ISO_8859_1){
+		unsigned char value = (unsigned char)(*charValue);
+		// 21 = !, 22 = ", 27 = ', 28 = (
+		// 29 = ), 2c = ,, 2e = ., 3a = :
+		// 3b = ;, 3f = ?, 5b = [, 5d = ]
+		// 7b = {, 7d = }, 2d = -
+		if(value == 0x21 || value == 0x22 || value == 0x27 || value == 0x28 ||
+		   value == 0x29 || value == 0x2c || value == 0x2e || value == 0x3a ||
+		   value == 0x3b || value == 0x3f || value == 0x5b || value == 0x5d ||
+		   value == 0x7b || value == 0x7d || value == 0x2d){
+			return 1;
+		}else{
+			return 0;
+		}
+	}else{
+		return 0;
+	}
+}
+
+/**
+ * Check if a character is part of the spanish punctutation marks
+ * @param charValue The character to check
+ * @param encoding The encoding of the character
+ */
+static int isSpanishPunctuationMark(const char * charValue, int encoding){
+	// The ASCII set does not contain all of the spanish punctuation marks
+	if(encoding == ASCII){
+		return 0;
+	}else if(encoding == ISO_8859_1){
+		unsigned char value = (unsigned char)(*charValue);
+		// 21 = !, 22 = ", 27 = ', 28 = (
+		// 29 = ), 2c = ,, 2e = ., 3a = :
+		// 3b = ;, 3f = ?, 5b = [, 5d = ]
+		// 7b = {, 7d = }, ab = <<, bb = >>
+		// a1 = flip(!), bf = flip(?), 2d = -
+		if(value == 0x21 || value == 0x22 || value == 0x27 || value == 0x28 ||
+		   value == 0x29 || value == 0x2c || value == 0x2e || value == 0x3a ||
+		   value == 0x3b || value == 0x3f || value == 0x5b || value == 0x5d ||
+		   value == 0x7b || value == 0x7d || value == 0xab || value == 0xbb ||
+		   value == 0xa1 || value == 0xbf || value == 0x2d){
+			return 1;
+		}else{
+			return 0;
+		}
+	}else if(encoding == UTF8_BINARY){
+		char value = *charValue;
+		// 21 = !, 22 = ", 27 = ', 28 = (
+		// 29 = ), 2c = ,, 2e = ., 3a = :
+		// 3b = ;, 3f = ?, 5b = [, 5d = ]
+		// 7b = {, 7d = }, 2d = -
+		if(value == 0x21 || value == 0x22 || value == 0x27 || value == 0x28 ||
+		   value == 0x29 || value == 0x2c || value == 0x2e || value == 0x3a ||
+		   value == 0x3b || value == 0x3f || value == 0x5b || value == 0x5d ||
+		   value == 0x7b || value == 0x7d || value == 0x2d){
+			return 1;
+		}else{
+			// ab = <<, bb = >> a1 = flip(!), bf = flip(?)
+			int spanisCodeList[4] = {0xab,0xbb,0xa1,0xbf};
+			return isUTF8BinaryCharacterInUTFSet(charValue, spanisCodeList, 4);
+		}
+	}
+}
+
+/**
+ * Check if a character is part of the french punctutation marks
+ * @param charValue The character to check
+ * @param encoding The encoding of the character
+ */
+static int isFrenchPunctuationMark(const char * charValue, int encoding){
+	// The ASCII set does not contain all of the spanish punctuation marks
+	if(encoding == ASCII){
+		return 0;
+	}else if(encoding == ISO_8859_1){
+		unsigned char value = (unsigned char)(*charValue);
+		// 21 = !, 22 = ", 27 = ', 28 = (
+		// 29 = ), 2c = ,, 2e = ., 3a = :
+		// 3b = ;, 3f = ?, 5b = [, 5d = ]
+		// 7b = {, 7d = }, ab = <<, bb = >>
+		// 2d = -
+		if(value == 0x21 || value == 0x22 || value == 0x27 || value == 0x28 ||
+		   value == 0x29 || value == 0x2c || value == 0x2e || value == 0x3a ||
+		   value == 0x3b || value == 0x3f || value == 0x5b || value == 0x5d ||
+		   value == 0x7b || value == 0x7d ||value == 0x2d){
+			return 1;
+		}else{
+			return 0;
+		}
+	}else if(encoding == UTF8_BINARY){
+		char value = *charValue;
+		// 21 = !, 22 = ", 27 = ', 28 = (
+		// 29 = ), 2c = ,, 2e = ., 3a = :
+		// 3b = ;, 3f = ?, 5b = [, 5d = ]
+		// 7b = {, 7d = }, 2d = -
+		if(value == 0x21 || value == 0x22 || value == 0x27 || value == 0x28 ||
+		   value == 0x29 || value == 0x2c || value == 0x2e || value == 0x3a ||
+		   value == 0x3b || value == 0x3f || value == 0x5b || value == 0x5d ||
+		   value == 0x7b || value == 0x7d || value == 0x2d){
+			return 1;
+		}else{
+			// ab = <<, bb = >>
+			int spanisCodeList[2] = {0xab,0xbb};
+			return isUTF8BinaryCharacterInUTFSet(charValue, spanisCodeList, 2);
+		}
+	}
+}
+
+/**
+ * Check if a character is part of an alphabet's punctuation for different languages
+ * and encodings.
+ * @param charValue The character to check
+ * @param encoding The encoding of the character
+ * @param language The language of the character
+ * @returns {0=false, 1=true}
+ */
+static int isPunctuationMarkInAlphabet(const char * charValue, int encoding, int language){
+	if(language == ENGLISH){
+		return isEnglishPunctuationMark(charValue, encoding);
+	}else if(language == FRENCH){
+		return isFrenchPunctuationMark(charValue, encoding);
+	}else if(language == SPANISH){
+		return isSpanishPunctuationMark(charValue, encoding);
+	}else{
+		return 0;
+	}
+}
+
+/**
+ * Check if a character is upper case in the english language
+ * @param charValue The character to check
+ * @param encoding The encoding of the character
+ */
+static int isUpperCaseEnglish(const char * charValue, int encoding){
+	if(encoding == ASCII || encoding == UTF8_BINARY || encoding == ISO_8859_1){
+		if(*charValue >= 65 && *charValue <= 90){
+			return 1;
+		}else{
+			return 0;
+		}
+	}else{
+		return 0;
+	}
+}
+
+/**
+ * Check if a character is upper case in the spanish language
+ * @param charValue The character to check
+ * @param encoding The encoding of the character
+ */
+static int isUpperCaseSpanish(const char * charValue, int encoding){
+	if(encoding == ASCII){
+		return 0;
+	}else if(encoding == ISO_8859_1){
+		if(*charValue >= 65 && *charValue <= 90){
+			return 1;
+		}else{
+			// c1 = A(acute),  c9 = E(acute), cd = I(acute), d3 = O(acute)
+			// da = U(acute), d1 = N(tilde)
+			if(value == 0xc1 || value == 0xc9 || value == 0xcd || value = 0xd3 ||
+					value == 0xda || value == 0xd1){
+				return 1;
+			}else{
+				return 0;
+			}
+		}
+	}else if(encoding == UTF8_BINARY){
+		if(*charValue >= 65 && *charValue <= 90){
+			return 1;
+		}else{
+			// 193 = A(acute), 201 = E(acute), 205 = I(acute),  211 = O(acute),
+			// 218 = U(acute), 209 = N(tilde)
+			int spanishCodePointList[6] = {
+				193,201,205,211,218,209
+			};
+			return isUTF8BinaryCharacterInUTFSet(charValue, spanishCodePointList, 6);
+		}
+	}else{
+		return 0;
+	}
+}
+
+/**
+ * Check if a character is an upper case in the French language
+ * @param charValue The character to check
+ * @param encoding The encoding of the character
+ */
+static int isUpperCaseFrench(const char * charValue, int encoding){
+	if(encoding == ASCII){
+		return 0;
+	}else if(encoding == ISO_8859_1){
+		if(*charValue >= 65 && *charValue <= 90){
+			return 1;
+		}else{
+			unsigned char value = (unsigned char)(*charValue);
+			// c9 = E(acute), c0 = A(grave), c8 = E(grave), d9 = U(grave),
+			// c2 = A(circumflex),  ca = E(circumflex), ce = I(circumflex), d4 = O(circumflex)
+			// db = U(circumflex),  cb = E(diaresis), cc = I(diaresis),  dc = U(diaresis)
+			// c7 = cedilla
+			if(value == 0xc9 || value == 0xc0 || value == 0xc8 || value == 0xd9 ||
+				value == 0xc2 || value == 0xca || value == 0xce || value == 0xd4 ||
+				value == 0xdb || value == 0xcb || value == 0xcc || value == 0xdc ||
+				value == 0xc7){
+				return 1;
+			}else{
+				return 0;
+			}
+		}
+	}else if(encoding == UTF8_BINARY){
+		if(*charValue >= 65 && *charValue <= 90){
+			return 1;
+		}else{
+			// 201 = E(acute)  192 = A(grave), 200 = E(grave), 217 = U(grave)
+			// 194 = A(circumflex), 202 = E(circumflex), 206 = I(circumflex), 212 = O(circumflex)
+			// 219 = U(circumflex),  203 = E(diaresis), 207 = I(diaresis),  220 = U(diaresis)
+			// 199 = cedilla capital
+			int frenchCodePointList[17] = {
+					201,192,200,217,194,202,206,212,
+					219,203,207,220,199
+			};
+			return isUTF8BinaryCharacterInUTFSet(charValue, spanishCodePointList, 17);
+		}
+	}else{
+		return 0;
+	}
+}
+
+/**
+ * Check if a character is upper case in an alphabet for different languages
+ * and encodings
+ * @param charValue The character to check
+ * @param encoding The encoding of the character
+ * @param language The language of the character
+ */
+static int isUpperCaseInAlphabet(const char * charValue, int encoding, int language){
+	if(language == ENGLISH){
+		return isUpperCaseEnglish(charValue, encoding);
+	}else if(language == SPANISH){
+		return isUpperCaseSpanish(charValue, encoding);
+	}else if(language == FRENCH){
+		return isUpperCaseFrench(charValue, encoding);
+	}else{
+		return 0;
+	}
+}
+
+/**
+ * Check if a character is lower case in the english language
+ * @param charValue The character to check
+ * @param encoding The encoding of the character
+ */
+static int isLowerCaseEnglish(const char * charValue, int encoding){
+	if(encoding == ASCII || encoding == UTF8_BINARY || encoding == ISO_8859_1){
+		if(*charValue >= 97 && *charValue <= 122){
+			return 1;
+		}else{
+			return 0;
+		}
+	}else{
+		return 0;
+	}
+}
+
+/**
+ * Check if a character is lower case in the spanish language
+ * @param charValue The character to check
+ * @param encoding The encoding of the character
+ */
+static int isLowerCaseSpanish(const char * charValue, int encoding){
+	if(encoding == ASCII){
+		return 0;
+	}else if(encoding == ISO_8859_1){
+		if(*charValue >= 97 && *charValue <= 122){
+			return 1;
+		}else{
+			// e1 = a(acute), e9 = e(acute), ed = i(acute), f3 = o(acute),
+			// fa = u(acute), fc = u(diaresis), f1 = n(tilde)
+			if(value == 0xe1 || value == 0xe9 || value == 0xed || value = 0xf3 ||
+					value == 0xfa || value == 0xfc || value == 0xf1){
+				return 1;
+			}else{
+				return 0;
+			}
+		}
+	}else if(encoding == UTF8_BINARY){
+		if(*charValue >= 97 && *charValue <= 122){
+			return 1;
+		}else{
+			// 225 = a(acute), 233 = e(acute), 237 = i(acute), 243 = o(acute)
+			// 250 = u(acute), 252 = u(diaresis), 241 = n(tilde)
+			int spanishCodePointList[7] = {
+					225,233,237,243,250,252,241
+			};
+			return isUTF8BinaryCharacterInUTFSet(charValue, spanishCodePointList, 7);
+		}
+	}else{
+		return 0;
+	}
+}
+
+/**
+ * Check if a character is an upper case in the French language
+ * @param charValue The character to check
+ * @param encoding The encoding of the character
+ */
+static int isLowerCaseFrench(const char * charValue, int encoding){
+	if(encoding == ASCII){
+		return 0;
+	}else if(encoding == ISO_8859_1){
+		if(*charValue >= 97 && *charValue <= 122){
+			return 1;
+		}else{
+			unsigned char value = (unsigned char)(*charValue);
+			// e9 = e(acute), e0 = a(grave), e8 = e(grave), f9 = u(grave)
+			// e2 = a(circumflex), ea = e(circumflex), ee = i(circumflex), f4 = o(circumflex)
+			// fb = u(circumflex), eb = e(diaresis), ec = i(diaresis),  fc = u(diaresis)
+			// ff = y(diaresis),  e7 = cedilla
+			if(value == 0xe9 || value == 0xe0 || value == 0xe8 || value == 0xf9 ||
+				value == 0xe2 || value == 0xea || value == 0xee || value == 0xf4 ||
+				value == 0xfb || value == 0xeb || value == 0xec || value == 0xfc ||
+				value == 0xff || value == 0xe7){
+				return 1;
+			}else{
+				return 0;
+			}
+		}
+	}else if(encoding == UTF8_BINARY){
+		if(*charValue >= 97 && *charValue <= 122){
+			return 1;
+		}else{
+			// 233 = e(acute),  224 = a(grave), 232 = e(grave), 249 = u(grave)
+			// 226 = a(circumflex), 234 = e(circumflex), 238 = i(circumflex),  244 = o(circumflex)
+			// 251 = u(circumflex), 235 = e(diaresis), 239 = i(diaresis), 252 = u(diaresis)
+			// 255 = y(diaresis), 231 cedilla lower
+			int frenchCodePointList[14] = {
+					233,224,232,249,226,234,238,244,
+					251,235,239,252,255,231
+			};
+			return isUTF8BinaryCharacterInUTFSet(charValue, frenchCodePointList, 14);
+		}
+	}else{
+		return 0;
+	}
+}
+
+/**
+ * Check if a character is lower case in an alphabet for different languages
+ * and encodings
+ * @param charValue The character to check
+ * @param encoding The encoding of the character
+ * @param language The language of the character
+ */
+static int isLowerCaseInAlphabet(const char * charValue, int encoding, int language){
+	if(language == ENGLISH){
+		return isLowerCaseEnglish(charValue, encoding);
+	}else if(language == SPANISH){
+		return isLowerCaseSpanish(charValue, encoding);
+	}else if(language == FRENCH){
+		return isLowerCaseFrench(charValue, encoding);
+	}else{
+		return 0;
+	}
+}
+
+/**
  * Check if a character is part of the alphabet of different languages.
  * Different languages have added characters that go beyond the standard
  * ASCII characters.
@@ -706,6 +1089,26 @@ static int isInAlphabet(const char * charValue, int encoding, int language){
 }
 
 /**
+ * Check if a sequence of characters conforms to different character
+ * checks
+ * @param func The function used to check
+ * @param charSequence The string to check
+ * @param encoding The encoding of the character
+ * @param language The language of the characters
+ * @returns {0 = false, 1 = true}
+ */
+static int _isLanguageSequenceOf(int (*func)(const char *, int, int), const char * charSequence, int encoding, int language){
+	const char * characterPointer = charSequence;
+	while(*characterPointer != '\0'){
+		if(func(characterPointer, encoding, language) == 0){
+			return 0;
+		}
+		characterPointer++;
+	}
+	return 1;
+}
+
+/**
  * A function that checks if an entire sequence is part of different languages
  * @param charSequence The character sequence to check
  * @param encoding The encoding of the character
@@ -713,14 +1116,40 @@ static int isInAlphabet(const char * charValue, int encoding, int language){
  * @returns {0=false, 1=true}
  */
 static int isInAlphabetSequence(const char * charSequence, int encoding, int language){
-	const char * characterPointer = charSequence;
-	while(*characterPointer != '\0'){
-		if(isInAlphabet(characterPointer, encoding, language) == 0){
-			return 0;
-		}
-		characterPointer++;
-	}
-	return 1;
+	return _isLanguageSequenceOf(isInAlphabet, charSequence, encoding, language);
+}
+
+/**
+ * A function that checks if an entire sequence is part of the punctuation of a language
+ * @param charSequence The character sequence to check
+ * @param encoding The encoding of the character
+ * @param language The language of the character
+ * @returns {0=false, 1=true}
+ */
+static int isPunctuationMarkInAlphabetSequence(const char * charSequence, int enoding, int language){
+	return _isLanguageSequenceOf(isPunctuationMarkInAlphabet, charSequence, encoding, language);
+}
+
+/**
+ * A function that checks if an entire sequence is part of the uppercase letters of an alphabet
+ * @param charSequence The character sequence to check
+ * @param encoding The encoding of the character
+ * @param language The language of the character
+ * @returns {0=false, 1=true}
+ */
+static int isUpperCaseInAlphabetSequence(const char * charSequence, int encoding, int language){
+	return _isLanguageSequenceOf(isUpperCaseInAlphabet, charSequence, encoding, language);
+}
+
+/**
+ * A function that checks if an entire sequence is part of the lowercase letters of an alphabet
+ * @param charSequence The character sequence to check
+ * @param encoding The encoding of the character
+ * @param language The language of the character
+ * @returns {0=false, 1=true}
+ */
+static int isLowerCaseInAlphabetSequence(const char * charSequence, int encoding, int language){
+	return _isLanguageSequenceOf(isLowerCaseInAlphabet, charSequence, encoding, language);
 }
 
 /**
