@@ -50,7 +50,7 @@ def setupPythonLanguagePackage():
         "Language",
         include_dirs=['/usr/local/include', currentDir + "/lib"],
         library_dirs=['/usr/local/lib', currentDir + "/lib"],
-        sources=[currentDir + "/lib/bindings/python/stringUtilsPython.c"]
+        sources=[currentDir + "/bindings/python/stringUtilsPython.c"]
     )
     
     # Setup the package
@@ -73,7 +73,7 @@ def setupPythonLanguagePackage():
         ],                                              # The classifiers associated with the package
        keywords='Generics Language',                    # Keywords associated with the package
        ext_modules = [languageExtension],
-       package_dir = {"LanguageUtils": "lib/bindings/python"},
+       package_dir = {"LanguageUtils": "bindings/python"},
        packages = ['LanguageUtils']
     )
 if __name__ == '__main__':
