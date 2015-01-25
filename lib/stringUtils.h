@@ -828,8 +828,8 @@ static int isFrenchPunctuationMark(const char * charValue, int encoding){
 			return 1;
 		}else{
 			// ab = <<, bb = >>
-			int spanisCodeList[2] = {0xab,0xbb};
-			return isUTF8BinaryCharacterInUTFSet(charValue, spanisCodeList, 2);
+			int frenchCodeList[2] = {0xab,0xbb};
+			return isUTF8BinaryCharacterInUTFSet(charValue, frenchCodeList, 2);
 		}
 	}else{
 		return 0;
@@ -1202,7 +1202,7 @@ static int convertToNumber(const char *charValue, int encoding){
 }
 
 /**
- * Convert hex character into binary in a certain encoding(At the moment ASCII)
+ * Convert hex character into binary in a certain encoding
  * @param hexValue The hex value
  * @param encoding The encoding of the hexValue
  */
