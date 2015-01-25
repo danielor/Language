@@ -708,6 +708,91 @@ int testInAphabetSequence(){
 	return -1;
 }
 
+// A function that checks if a character is part of the uper case portion of
+// an alphabet
+int testIsUpperCaseInAlphabet(){
+	int r;
+	const char * buffer = convertCodePointToUTF8Binary(201);
+	const unsigned char buffer2[] = {0xc1,'\0'};
+	struct LanguageTest languageTests[] = {
+			{"A",ASCII,SPANISH,0},{"B",UTF8_BINARY,FRENCH,1},{"C",ISO_8859_1,ENGLISH,1},
+			{buffer,UTF8_BINARY,FRENCH,1},{(const char*)buffer2,ISO_8859_1,SPANISH,1},
+			{"0",ISO_8859_1,ENGLISH,0}
+	};
+	for(r = 0; r< 6; r++){
+		struct LanguageTest test = languageTests[r];
+		if(isUpperCaseInAlphabet(test.buffer, test.encoding, test.language) != test.expectedResult){
+			return 0;
+		}
+	}
+	return -1;
+}
+
+// A function that checks if a character is part of the upper case portion of
+// an alphabet sequence
+int testIsUpperCaseInAlphabetSequence(){
+	int r;
+	const int codePoints[] = {201,192,200,217};
+	const char *buffer = converListOfCodePointsToUTF8Binary(codePoints, 4);
+	const unsigned char buffer2[] = {0xc1,0xc9,0xcd,'\0'};
+
+	struct LanguageTest languageTests[] = {
+				{"ABAA",ASCII,SPANISH,0},{"BCD",UTF8_BINARY,FRENCH,1},{"CZZ",ISO_8859_1,ENGLISH,1},
+				{buffer,UTF8_BINARY,FRENCH,1},{(const char*)buffer2,ISO_8859_1,SPANISH,1},
+				{"0",ISO_8859_1,ENGLISH,0}
+		};
+	for(r = 0; r< 6; r++){
+		struct LanguageTest test = languageTests[r];
+		if(isUpperCaseInAlphabetSequence(test.buffer, test.encoding, test.language) != test.expectedResult){
+			return 0;
+		}
+	}
+	return -1;
+}
+
+// A function that checks if a character is part of the lower case portion of
+// an alphabet
+int testIsLowerCaseInAlphabet(){
+	int r;
+	const char * buffer = convertCodePointToUTF8Binary(233);
+	const unsigned char buffer2[] = {0xe1,'\0'};
+	struct LanguageTest languageTests[] = {
+			{"a",ASCII,SPANISH,0},{"b",UTF8_BINARY,FRENCH,1},{"c",ISO_8859_1,ENGLISH,1},
+			{buffer,UTF8_BINARY,FRENCH,1},{(const char*)buffer2,ISO_8859_1,SPANISH,1},
+			{"0",ISO_8859_1,ENGLISH,0}
+	};
+	for(r = 0; r< 6; r++){
+		struct LanguageTest test = languageTests[r];
+		if(isLowerCaseInAlphabet(test.buffer, test.encoding, test.language) != test.expectedResult){
+			return 0;
+		}
+	}
+	return -1;
+}
+
+// A function that checks if a character is part of the lowe case portion of
+// an alphabet sequence
+int testIsLowerCaseInAlphabetSequence(){
+	int r;
+	const int codePoints[] = {233,224,232,249};
+	const char *buffer = converListOfCodePointsToUTF8Binary(codePoints, 4);
+	const unsigned char buffer2[] = {0xe1,0xe9,0xed,'\0'};
+
+	struct LanguageTest languageTests[] = {
+				{"abaa",ASCII,SPANISH,0},{"bcd",UTF8_BINARY,FRENCH,1},{"czz",ISO_8859_1,ENGLISH,1},
+				{buffer,UTF8_BINARY,FRENCH,1},{(const char*)buffer2,ISO_8859_1,SPANISH,1},
+				{"A",ISO_8859_1,ENGLISH,0}
+		};
+	for(r = 0; r< 6; r++){
+		struct LanguageTest test = languageTests[r];
+
+		if(isLowerCaseInAlphabetSequence(test.buffer, test.encoding, test.language) != test.expectedResult){
+			return 0;
+		}
+	}
+	return -1;
+}
+
 // A function that tests the main points of functionality associated with the
 int testStringUtils(){
 	// The success/failure count
@@ -715,29 +800,40 @@ int testStringUtils(){
 	int failureCount = 0;
 
 	int testIter = 0;
-	int numberOfTests = 21;
-	int (*test_Array[21])() = {testGetUTF8State, testStringLength, testConvertHex, testIsNumber,
+	int numberOfTests = 25;
+	int (*test_Array[25])() = {testGetUTF8State, testStringLength, testConvertHex, testIsNumber,
 			testStringLengthEscaped, testIsNumberSequence,testIsDiacriticalMarkUTF8, testIsUTF8BinaryCodePoint,
 			testIsUTFBinaryCharacterInUTFSet, testIsInRomanceAlphabet, testIsHex, testIsHexSequence,
 			testIsSpanishExtendCharacter, testIsFrenchExtendCharacter, testConvertUTF8BinaryToCodePoint,testConvertCodePointToUTF8Binary,
 			testIsInAlphabet,testConvertCodePointListToUTF8Binary,testIsValidCharacterSequence, testInRomanceAlphabetSequence,
-			testInAphabetSequence};
-	const char * testNames[21] = {"UTF8State test", "String Length test", "Convert hex test", "Is number test",
+			testInAphabetSequence,testIsUpperCaseInAlphabet, testIsLowerCaseInAlphabet,testIsUpperCaseInAlphabetSequence,
+			testIsLowerCaseInAlphabetSequence};
+	const char * testNames[25] = {"UTF8State test", "String Length test", "Convert hex test", "Is number test",
 			"String Length Unescaped test", "IsNumberSequence test", "TestIsDiacriticalMarkUTF8 test", "IsUTF8BinaryCodePoint test",
 			"Is UTF8 Character in Code Point Set test", "Is Romance Character test", "Is Hex Character test", "Is Hex Sequence test",
 			"Is Spanish Extended Character Test","Is French Extend Character Set", "Convert UTF8 Binary To Code Point Test","Convert Code Point to UTF8 binary",
 			"Is In Alphabet Test", "Convert Code Points to UTF8 binary","Test is valid Character sequence", "Test is In Romance Alphabet Sequence",
-			"Test Is In Aphabet Sequence"};
+			"Test Is In Aphabet Sequence", "Test is Upper Case in Alphabet", "Test is Lower Case in Alphabet", "Test is Upper Case in Alphabet Sequence",
+			"Test is Lower Case in Alphabet Sequence"};
 	for(testIter = 0; testIter < numberOfTests; testIter++){
 		const char * testName = testNames[testIter];
 		int (*test)() = test_Array[testIter];
 		if(test() == -1){
+			successCount++;
 			printf("*SUCCESS - %s passed\n", testName);
 		}else{
+			failureCount++;
 			printf("*FAILURE - %s failed\n", testName);
 		}
 	}
-
+	printf("\n");
+	if(successCount > 0){
+		printf("%d tests succeeded\n", successCount);
+	}
+	if(failureCount > 0){
+		printf("%d tests failed\n", failureCount);
+	}
+	printf("\n");
 	return 0;
 }
 

@@ -103,6 +103,31 @@ static int getUTF8State(const char controlChar){
 }
 
 /**
+ * Get the number of character until the begining of next char
+ * @param trialCharacter The character to check
+ * @param encoding The encoding to check the character
+ */
+static int getCharacterStrideLength(const char * trialCharacter, int encoding){
+	if(encoding == UTF8_BINARY){
+		int utf8State = getUTF8State(*trialCharacter);
+		if(utf8State == UTF8_BINARY_7BIT_STATE){
+			return 1;
+		}else if(utf8State == UTF8_BINARY_11BIT_STATE){
+			return 2;
+		}else if(utf8State == UTF8_BINARY_16BIT_STATE){
+			return 3;
+		}else if(utf8State == UTF8_BINARY_21BIT_STATE){
+			return 4;
+		}else{
+			return 1;
+		}
+	}else{
+		return 1;
+	}
+}
+
+
+/**
  * A function that checks if a code point is a diacritical mark.
  * @param codePoint A utf8 code point
  * @returns {0 = false, 1 = true}
@@ -334,6 +359,7 @@ static int isUTF8BinaryCharacterInUTFSet(const char * charValue, int *codePoints
 	int * codePointer = codePoints;
 	for(j=0; j < numberOfCodePoints; j++){
 		int codePoint = *codePointer;
+
 		if(isUTF8BinaryCodePoint(charValue, codePoint) == 1){
 			return 1;
 		}
@@ -483,12 +509,16 @@ static int isNumber(const char * charValue, int encoding){
  * @returns {0 = false, 1 = true}
  */
 static int _isSequenceOf(int (*func)(const char *, int), const char * charSequence, int encoding){
+	int r;
 	const char * characterPointer = charSequence;
 	while(*characterPointer != '\0'){
 		if(func(characterPointer, encoding) == 0){
 			return 0;
 		}
-		characterPointer++;
+		int strideLength = getCharacterStrideLength(charSequence, encoding);
+		for(r = 0; r < strideLength; r++){
+			characterPointer++;
+		}
 	}
 	return 1;
 }
@@ -756,6 +786,8 @@ static int isSpanishPunctuationMark(const char * charValue, int encoding){
 			int spanisCodeList[4] = {0xab,0xbb,0xa1,0xbf};
 			return isUTF8BinaryCharacterInUTFSet(charValue, spanisCodeList, 4);
 		}
+	}else{
+		return 0;
 	}
 }
 
@@ -799,6 +831,8 @@ static int isFrenchPunctuationMark(const char * charValue, int encoding){
 			int spanisCodeList[2] = {0xab,0xbb};
 			return isUTF8BinaryCharacterInUTFSet(charValue, spanisCodeList, 2);
 		}
+	}else{
+		return 0;
 	}
 }
 
@@ -851,9 +885,10 @@ static int isUpperCaseSpanish(const char * charValue, int encoding){
 		if(*charValue >= 65 && *charValue <= 90){
 			return 1;
 		}else{
+			unsigned char value = (unsigned char)(*charValue);
 			// c1 = A(acute),  c9 = E(acute), cd = I(acute), d3 = O(acute)
 			// da = U(acute), d1 = N(tilde)
-			if(value == 0xc1 || value == 0xc9 || value == 0xcd || value = 0xd3 ||
+			if(value == 0xc1 || value == 0xc9 || value == 0xcd || value == 0xd3 ||
 					value == 0xda || value == 0xd1){
 				return 1;
 			}else{
@@ -910,11 +945,11 @@ static int isUpperCaseFrench(const char * charValue, int encoding){
 			// 194 = A(circumflex), 202 = E(circumflex), 206 = I(circumflex), 212 = O(circumflex)
 			// 219 = U(circumflex),  203 = E(diaresis), 207 = I(diaresis),  220 = U(diaresis)
 			// 199 = cedilla capital
-			int frenchCodePointList[17] = {
+			int frenchCodePointList[13] = {
 					201,192,200,217,194,202,206,212,
 					219,203,207,220,199
 			};
-			return isUTF8BinaryCharacterInUTFSet(charValue, spanishCodePointList, 17);
+			return isUTF8BinaryCharacterInUTFSet(charValue, frenchCodePointList, 13);
 		}
 	}else{
 		return 0;
@@ -969,9 +1004,10 @@ static int isLowerCaseSpanish(const char * charValue, int encoding){
 		if(*charValue >= 97 && *charValue <= 122){
 			return 1;
 		}else{
+			unsigned char value = (unsigned char)(*charValue);
 			// e1 = a(acute), e9 = e(acute), ed = i(acute), f3 = o(acute),
 			// fa = u(acute), fc = u(diaresis), f1 = n(tilde)
-			if(value == 0xe1 || value == 0xe9 || value == 0xed || value = 0xf3 ||
+			if(value == 0xe1 || value == 0xe9 || value == 0xed || value == 0xf3 ||
 					value == 0xfa || value == 0xfc || value == 0xf1){
 				return 1;
 			}else{
@@ -1098,12 +1134,16 @@ static int isInAlphabet(const char * charValue, int encoding, int language){
  * @returns {0 = false, 1 = true}
  */
 static int _isLanguageSequenceOf(int (*func)(const char *, int, int), const char * charSequence, int encoding, int language){
+	int r;
 	const char * characterPointer = charSequence;
 	while(*characterPointer != '\0'){
+		int strideLength = getCharacterStrideLength(charSequence, encoding);
 		if(func(characterPointer, encoding, language) == 0){
 			return 0;
 		}
-		characterPointer++;
+		for(r = 0; r < strideLength; r++){
+			characterPointer++;
+		}
 	}
 	return 1;
 }
@@ -1126,7 +1166,7 @@ static int isInAlphabetSequence(const char * charSequence, int encoding, int lan
  * @param language The language of the character
  * @returns {0=false, 1=true}
  */
-static int isPunctuationMarkInAlphabetSequence(const char * charSequence, int enoding, int language){
+static int isPunctuationMarkInAlphabetSequence(const char * charSequence, int encoding, int language){
 	return _isLanguageSequenceOf(isPunctuationMarkInAlphabet, charSequence, encoding, language);
 }
 
