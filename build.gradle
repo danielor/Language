@@ -61,7 +61,7 @@ The dependencies for the test compilation
 */
 dependencies{
 	testCompile group:'junit', name:'junit', version: '4.+'
-	testCompile files("./lib/bindings/java")
+	testCompile files("./bindings/java")
 }
 
  
@@ -80,7 +80,7 @@ tasks.withType(Test){
 		showStandardStreams = true
 		events 'started','passed', 'standard_out', 'standard_error'
 	}
-	systemProperty "java.library.path", file("./lib/bindings/java/com/Language")
+	systemProperty "java.library.path", file("./bindings/java/com/Language")
 }
 
 /**

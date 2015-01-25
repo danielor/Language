@@ -13,7 +13,7 @@
 //limitations under the License.
 #include <node.h>
 #include "StringUtils.h"
-#include "../../../stringUtils.h"
+#include "../../../lib/stringUtils.h"
 
 // Setup the string utils v8 constructor
 v8::Persistent<v8::Function> StringUtils::constructor;

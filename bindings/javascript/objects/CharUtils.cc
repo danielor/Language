@@ -13,7 +13,7 @@
 //limitations under the License.
 #include <node.h>
 #include "CharUtils.h"
-#include "../../../stringUtils.h"
+#include "../../../lib/stringUtils.h"
 
 // Setup the char utils constructor
 v8::Persistent<v8::Function> CharUtils::constructor;
