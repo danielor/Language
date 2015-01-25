@@ -17,6 +17,7 @@
 
 #include <string.h>
 #include <stdlib.h>
+#import "Language.h"
 
 #ifdef __cplusplus
 extern "C"{
@@ -1398,9 +1399,5 @@ static int lenEscaped(const char * buffer, int baseEncoding, const char * contro
 	return lenEscapedCount;
 }
 
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif
