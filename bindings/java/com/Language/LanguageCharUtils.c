@@ -64,7 +64,7 @@ JNIEXPORT jboolean JNICALL Java_com_Language_LanguageCharUtils_isUpperCaseInAlph
  * Check if character is  upper case in a language set
  * of characters in an encoding
  */
-JNIEXPORT jboolean JNICALL Java_com_Language_LanguageCharUtils_isPunctucationMarkInAlphabet
+JNIEXPORT jboolean JNICALL Java_com_Language_LanguageCharUtils_isPunctuationMarkInAlphabet
 (JNIEnv * env, jobject thisObj, jstring str, jint encoding, jint language){
 	return alphabetLanguageSequenceCheck(isPunctuationMarkInAlphabet, env, thisObj, str, encoding, language);
 }

@@ -99,4 +99,58 @@ public class CharUtilsTest{
 		assertEquals("'a' is a char in the romance alphabet", isRomanceChar3, true);
 		assertEquals("'Z' is a char in the romance alphabet", isRomanceChar4, true);
 	}
+	
+	/**
+	 * Test if a character is in the upper case part of an alphabet
+	 */
+	@Test
+	public void testIsLowerCaseInAlphabet(){
+		LanguageCharUtils charUtils = new LanguageCharUtils();
+		int asciiEncoding = StringEncodings.ASCII.getEncodingValue();
+		int englishEncoding = LanguageEncodings.ENGLISH.getEncodingValue();
+		boolean isLowerCaseChar = charUtils.isLowerCaseInAlphabet("0", asciiEncoding, englishEncoding);
+		boolean isLowerCaseChar2 = charUtils.isLowerCaseInAlphabet("5", asciiEncoding, englishEncoding);
+		boolean isLowerCaseChar3 = charUtils.isLowerCaseInAlphabet("a", asciiEncoding, englishEncoding);
+		boolean isLowerCaseChar4 = charUtils.isLowerCaseInAlphabet("Z", asciiEncoding, englishEncoding);
+		assertEquals("'0' is not lower case in the english alphabet", isLowerCaseChar, false);
+		assertEquals("'5' is not lower case in the english alphabet", isLowerCaseChar2, false);
+		assertEquals("'a' is lower case in the english alphabet", isLowerCaseChar3, true);
+		assertEquals("'Z' is not lower case in the english alphabet", isLowerCaseChar4, false);
+	}
+	
+	/**
+	 * Test if a character is in the upper case part of an alphabet
+	 */
+	@Test
+	public void testIsUpperCaseInAlphabet(){
+		LanguageCharUtils charUtils = new LanguageCharUtils();
+		int asciiEncoding = StringEncodings.ASCII.getEncodingValue();
+		int englishEncoding = LanguageEncodings.ENGLISH.getEncodingValue();
+		boolean isUpperCaseChar = charUtils.isUpperCaseInAlphabet("0", asciiEncoding, englishEncoding);
+		boolean isUpperCaseChar2 = charUtils.isUpperCaseInAlphabet("5", asciiEncoding, englishEncoding);
+		boolean isUpperCaseChar3 = charUtils.isUpperCaseInAlphabet("a", asciiEncoding, englishEncoding);
+		boolean isUpperCaseChar4 = charUtils.isUpperCaseInAlphabet("Z", asciiEncoding, englishEncoding);
+		assertEquals("'0' is not upper case in the english alphabet", isUpperCaseChar, false);
+		assertEquals("'5' is not upper case in the english alphabet", isUpperCaseChar2, false);
+		assertEquals("'a' is not upper case in the english alphabet", isUpperCaseChar3, false);
+		assertEquals("'Z' is upper case in the english alphabet", isUpperCaseChar4, true);
+	}
+	
+	/**
+	 * Test if a character is a punctuation mark of an alphabet
+	 */
+	@Test
+	public void testIsPunctuationMarkInAlphabet(){
+		LanguageCharUtils charUtils = new LanguageCharUtils();
+		int asciiEncoding = StringEncodings.ASCII.getEncodingValue();
+		int englishEncoding = LanguageEncodings.ENGLISH.getEncodingValue();
+		boolean isUpperCaseChar = charUtils.isLowerCaseInAlphabet(",", asciiEncoding, englishEncoding);
+		boolean isUpperCaseChar2 = charUtils.isLowerCaseInAlphabet("5", asciiEncoding, englishEncoding);
+		boolean isUpperCaseChar3 = charUtils.isLowerCaseInAlphabet("a", asciiEncoding, englishEncoding);
+		boolean isUpperCaseChar4 = charUtils.isLowerCaseInAlphabet("Z", asciiEncoding, englishEncoding);
+		assertEquals("',' is not a punctuation mark in the english alphabet", isUpperCaseChar, false);
+		assertEquals("'5' is not punctuation mark in the english alphabet", isUpperCaseChar2, false);
+		assertEquals("'a' is not punctuation mark in the english alphabet", isUpperCaseChar3, true);
+		assertEquals("'Z' is not punctuation mark in the english alphabet", isUpperCaseChar4, false);
+	}
 }

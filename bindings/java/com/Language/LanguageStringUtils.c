@@ -77,9 +77,9 @@ JNIEXPORT jboolean JNICALL Java_com_Language_LanguageStringUtils_isInAlphabet
  * Check if a sequence is in the upper case portion of alphabet in
  * an arbitrary language and encoding.
  */
-JNIEXPORT jboolean JNICALL Java_com_Language_LanguageStringUtils_isInUpperCaseInAlphabet
+JNIEXPORT jboolean JNICALL Java_com_Language_LanguageStringUtils_isUpperCaseInAlphabet
 (JNIEnv * env, jobject obj, jstring str, jint encoding, jint language){
-	return alphabetLanguageSequenceCheck(isInAlphabetSequence, env, obj, str, encoding, language);
+	return alphabetLanguageSequenceCheck(isUpperCaseInAlphabetSequence, env, obj, str, encoding, language);
 }
 
 /**
@@ -88,16 +88,16 @@ JNIEXPORT jboolean JNICALL Java_com_Language_LanguageStringUtils_isInUpperCaseIn
  */
 JNIEXPORT jboolean JNICALL Java_com_Language_LanguageStringUtils_isLowerCaseInAlphabet
 (JNIEnv * env, jobject obj, jstring str, jint encoding, jint language){
-	return alphabetLanguageSequenceCheck(isInAlphabetSequence, env, obj, str, encoding, language);
+	return alphabetLanguageSequenceCheck(isLowerCaseInAlphabetSequence, env, obj, str, encoding, language);
 }
 
 /**
  * Check if a sequence is a punctuation mark of an alphabet in
  * an arbitrary language and encoding.
  */
-JNIEXPORT jboolean JNICALL Java_com_Language_LanguageStringUtils_isPunctucationMarkInAlphabet
+JNIEXPORT jboolean JNICALL Java_com_Language_LanguageStringUtils_isPunctuationMarkInAlphabet
 (JNIEnv * env, jobject obj, jstring str, jint encoding, jint language){
-	return alphabetLanguageSequenceCheck(isInAlphabetSequence, env, obj, str, encoding, language);
+	return alphabetLanguageSequenceCheck(isPunctuationMarkInAlphabetSequence, env, obj, str, encoding, language);
 }
 
 

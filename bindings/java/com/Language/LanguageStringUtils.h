@@ -74,10 +74,10 @@ JNIEXPORT jboolean JNICALL Java_com_Language_LanguageStringUtils_isInAlphabet
 
 /*
  * Class:     LanguageStringUtils
- * Method:    isInUpperCaseInAlphabet
+ * Method:    isUpperCaseInAlphabet
  * Signature: (Ljava/lang/String;I;I)B
  */
-JNIEXPORT jboolean JNICALL Java_com_Language_LanguageStringUtils_isInUpperCaseInAlphabet
+JNIEXPORT jboolean JNICALL Java_com_Language_LanguageStringUtils_isUpperCaseInAlphabet
 (JNIEnv *, jobject, jstring, jint, jint);
 
 /*
@@ -93,7 +93,7 @@ JNIEXPORT jboolean JNICALL Java_com_Language_LanguageStringUtils_isLowerCaseInAl
  * Method:    isLowerCaseInAlphabet
  * Signature: (Ljava/lang/String;I;I)B
  */
-JNIEXPORT jboolean JNICALL Java_com_Language_LanguageStringUtils_isPunctucationMarkInAlphabet
+JNIEXPORT jboolean JNICALL Java_com_Language_LanguageStringUtils_isPunctuationMarkInAlphabet
 (JNIEnv *, jobject, jstring, jint, jint);
 
 #ifdef __cplusplus

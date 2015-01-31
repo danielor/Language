@@ -81,7 +81,7 @@ public class LanguageStringUtils{
 	 * @param encoding The encoding of the str
 	 * @param language The language of the str
 	 */
-	public native boolean isInUpperCaseInAlphabet(String str, int encoding, int language);
+	public native boolean isUpperCaseInAlphabet(String str, int encoding, int language);
 	
 	/**
 	 * Check if a character sequence is lower case in an alphabet of a language
@@ -99,7 +99,7 @@ public class LanguageStringUtils{
 	 * @param encoding The encoding of the str
 	 * @param language The language of the str
 	 */
-	public native boolean isPunctucationMarkInAlphabet(String str, int encoding, int language);
+	public native boolean isPunctuationMarkInAlphabet(String str, int encoding, int language);
 	
 	public static void main(String[] args) {
 		new LanguageStringUtils().length("Hello", 0);  // invoke the native method

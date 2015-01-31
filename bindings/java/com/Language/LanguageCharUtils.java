@@ -59,7 +59,7 @@ public class LanguageCharUtils{
 	 * @param encoding The encoding of the string
 	 * @param language The language of the string
 	 */
-	public native boolean isInUpperCaseInAlphabet(String str, int encoding, int language);
+	public native boolean isUpperCaseInAlphabet(String str, int encoding, int language);
 	
 	/**
 	 * Check if a character is a punctuation makr in an alphabet of a language
@@ -68,5 +68,5 @@ public class LanguageCharUtils{
 	 * @param encoding The encoding of the str
 	 * @param language The language of the str
 	 */
-	public native boolean isPunctucationMarkInAlphabet(String str, int encoding, int language);
+	public native boolean isPunctuationMarkInAlphabet(String str, int encoding, int language);
 };
