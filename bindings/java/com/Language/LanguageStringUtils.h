@@ -72,6 +72,30 @@ JNIEXPORT jboolean JNICALL Java_com_Language_LanguageStringUtils_isInRomanceAlph
 JNIEXPORT jboolean JNICALL Java_com_Language_LanguageStringUtils_isInAlphabet
 (JNIEnv *, jobject, jstring, jint, jint);
 
+/*
+ * Class:     LanguageStringUtils
+ * Method:    isInUpperCaseInAlphabet
+ * Signature: (Ljava/lang/String;I;I)B
+ */
+JNIEXPORT jboolean JNICALL Java_com_Language_LanguageStringUtils_isInUpperCaseInAlphabet
+(JNIEnv *, jobject, jstring, jint, jint);
+
+/*
+ * Class:     LanguageStringUtils
+ * Method:    isLowerCaseInAlphabet
+ * Signature: (Ljava/lang/String;I;I)B
+ */
+JNIEXPORT jboolean JNICALL Java_com_Language_LanguageStringUtils_isLowerCaseInAlphabet
+(JNIEnv *, jobject, jstring, jint, jint);
+
+/*
+ * Class:     LanguageStringUtils
+ * Method:    isLowerCaseInAlphabet
+ * Signature: (Ljava/lang/String;I;I)B
+ */
+JNIEXPORT jboolean JNICALL Java_com_Language_LanguageStringUtils_isPunctucationMarkInAlphabet
+(JNIEnv *, jobject, jstring, jint, jint);
+
 #ifdef __cplusplus
 }
 #endif

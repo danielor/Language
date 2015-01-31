@@ -1,5 +1,6 @@
 #include <jni.h>
 #include "stringUtils.h"
+#include "JNISequenceUtils.h"
 
 /*
  * Get the length of the string
@@ -34,86 +35,70 @@ JNIEXPORT jint JNICALL Java_com_Language_LanguageStringUtils_lengthEscapedWithEn
 	return lenEscaped(buffer, encoding, escapedStr,escapedEncoding, endString);
 }
 
+
 /**
  * Check if a sequence is a natural number
  */
 JNIEXPORT jboolean JNICALL Java_com_Language_LanguageStringUtils_isNaturalNumber(JNIEnv * env, jobject thisObj, jstring str, jint encoding){
-	const char * buffer = (*env)->GetStringUTFChars(env, str, NULL);
-	if(buffer == NULL){
-		return JNI_FALSE;
-	}
-	int result = isNumberSequence(buffer, encoding);
-	if(result == 0){
-		return JNI_FALSE;
-	}else{
-		return JNI_TRUE;
-	}
-
+	return sequenceCheck(isNumberSequence, env, thisObj, str, encoding);
 }
 
 /**
  * Check if a sequence is a hex number
  */
 JNIEXPORT jboolean JNICALL Java_com_Language_LanguageStringUtils_isHexNumber(JNIEnv * env, jobject thisObj, jstring str, jint encoding){
-	const char * buffer = (*env)->GetStringUTFChars(env, str, NULL);
-	if(buffer == NULL){
-		return JNI_FALSE;
-	}
-	int result = isHexSequence(buffer, encoding);
-	if(result == 0){
-		return JNI_FALSE;
-	}else{
-		return JNI_TRUE;
-	}
+	return sequenceCheck(isHexSequence, env, thisObj, str, encoding);
 }
 
 /**
  * Check if a sequence is a valid character
  */
 JNIEXPORT jboolean JNICALL Java_com_Language_LanguageStringUtils_isValid(JNIEnv * env, jobject thisObj, jstring str, jint encoding){
-	const char * buffer = (*env)->GetStringUTFChars(env, str, NULL);
-	if(buffer == NULL){
-		return JNI_FALSE;
-	}
-	int result = isValidCharacterSequence(buffer, encoding);
-	if(result == 0){
-		return JNI_FALSE;
-	}else{
-		return JNI_TRUE;
-	}
+	return sequenceCheck(isValidCharacterSequence,env, thisObj, str, encoding);
 }
 
 /**
  * Check if a sequence is in the romance alphabet
  */
 JNIEXPORT jboolean JNICALL Java_com_Language_LanguageStringUtils_isInRomanceAlphabet(JNIEnv * env, jobject thisObj, jstring str, jint encoding){
-	const char * buffer = (*env)->GetStringUTFChars(env, str, NULL);
-	if(buffer == NULL){
-		return JNI_FALSE;
-	}
-	int result = isInRomanceAlphabetSequence(buffer, encoding);
-	if(result == 0){
-		return JNI_FALSE;
-	}else{
-		return JNI_TRUE;
-	}
+	return sequenceCheck(isInRomanceAlphabetSequence, env, thisObj, str, encoding);
 }
+
 
 /**
  * Check if a sequence is in an alphabet of an arbitrary language
  */
 JNIEXPORT jboolean JNICALL Java_com_Language_LanguageStringUtils_isInAlphabet
 (JNIEnv * env, jobject obj, jstring str, jint encoding, jint language){
-	const char * buffer = (*env)->GetStringUTFChars(env, str, NULL);
-	if(buffer == NULL){
-		return JNI_FALSE;
-	}
-	int result = isInAlphabetSequence(buffer, encoding, language);
-	if(result == 0){
-		return JNI_FALSE;
-	}else{
-		return JNI_TRUE;
-	}
+	return alphabetLanguageSequenceCheck(isInAlphabetSequence, env, obj, str, encoding, language);
 }
+
+/**
+ * Check if a sequence is in the upper case portion of alphabet in
+ * an arbitrary language and encoding.
+ */
+JNIEXPORT jboolean JNICALL Java_com_Language_LanguageStringUtils_isInUpperCaseInAlphabet
+(JNIEnv * env, jobject obj, jstring str, jint encoding, jint language){
+	return alphabetLanguageSequenceCheck(isInAlphabetSequence, env, obj, str, encoding, language);
+}
+
+/**
+ * Check if a sequence is in the lower case portion of alphabet in
+ * an arbitrary language and encoding.
+ */
+JNIEXPORT jboolean JNICALL Java_com_Language_LanguageStringUtils_isLowerCaseInAlphabet
+(JNIEnv * env, jobject obj, jstring str, jint encoding, jint language){
+	return alphabetLanguageSequenceCheck(isInAlphabetSequence, env, obj, str, encoding, language);
+}
+
+/**
+ * Check if a sequence is a punctuation mark of an alphabet in
+ * an arbitrary language and encoding.
+ */
+JNIEXPORT jboolean JNICALL Java_com_Language_LanguageStringUtils_isPunctucationMarkInAlphabet
+(JNIEnv * env, jobject obj, jstring str, jint encoding, jint language){
+	return alphabetLanguageSequenceCheck(isInAlphabetSequence, env, obj, str, encoding, language);
+}
+
 
 

@@ -14,28 +14,28 @@ public class LanguageCharUtils{
 	 * @param str A java string to test first character
 	 * @param encoding The encoding of the string
 	 */
-	public native boolean isHexNumberChar(String str, int encoding);
+	public native boolean isHexNumber(String str, int encoding);
 	
 	/**
 	 * Check if the first character of a java string is a natural number
 	 * @param str A java string to test first character
 	 * @param encoding The encoding of the string
 	 */
-	public native boolean isNaturalNumberChar(String str, int encoding);
+	public native boolean isNaturalNumber(String str, int encoding);
 	
 	/**
 	 * Check if the first character of a java string is part of the Romance alphabet
 	 * @param str A java string to test first character
 	 * @param encoding The encoding of the string
 	 */
-	public native boolean isInRomanceAlphabetChar(String str, int encoding);
+	public native boolean isInRomanceAlphabet(String str, int encoding);
 	
 	/**
 	 * Check if the first character of a java string is valid
 	 * @param str A java string to test first character
 	 * @param encoding The encoding of the string
 	 */
-	public native boolean isValidChar(String str, int encoding);
+	public native boolean isValid(String str, int encoding);
 	
 	/**
 	 * Check if the first character of a character is in an alphabet
@@ -43,5 +43,30 @@ public class LanguageCharUtils{
 	 * @param encoding The encoding of the string
 	 * @param language The language of the string
 	 */
-	public native boolean isInAlphabetChar(String str, int encoding, int language);
+	public native boolean isInAlphabet(String str, int encoding, int language);
+
+	/**
+	 * Check if the character of a string is in the lower part of an alphabet
+	 * @param str A java string to test the first character
+	 * @param encoding The encoding of the string
+	 * @param language The language of the string
+	 */
+	public native boolean isLowerCaseInAlphabet(String str, int encoding, int language);
+
+	/**
+	 * Check if the character of a string is in the upper part of an alphabet
+	 * @param str A java string to test the character
+	 * @param encoding The encoding of the string
+	 * @param language The language of the string
+	 */
+	public native boolean isInUpperCaseInAlphabet(String str, int encoding, int language);
+	
+	/**
+	 * Check if a character is a punctuation makr in an alphabet of a language
+	 * for a specific encoding
+	 * @param str A java string
+	 * @param encoding The encoding of the str
+	 * @param language The language of the str
+	 */
+	public native boolean isPunctucationMarkInAlphabet(String str, int encoding, int language);
 };
