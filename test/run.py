@@ -70,7 +70,7 @@ def runTests(compile):
         runListOfCommands(listOfCommands)
         
         # Setup the java bindings
-        listOfCommands = [['make','-C','../lib/bindings/java/com/Language']]
+        listOfCommands = [['make','-C','../bindings/java/com/Language']]
         runListOfCommands(listOfCommands)
         
 

@@ -16,11 +16,14 @@ A char utils class that wraps the Language C bindngs
 @author: Daniel Ortiz
 @version: 0.01
 """
-from Language.charUtils import isHexChar
-from Language.charUtils import isNaturalChar
-from Language.charUtils import isRomanceChar
-from Language.charUtils import isValidChar
-from Language.charUtils import isInAlphabetChar
+from Language.charUtils import isHexNumber
+from Language.charUtils import isNaturalNumber
+from Language.charUtils import isInRomanceAlphabet
+from Language.charUtils import isValid
+from Language.charUtils import isInAlphabet
+from Language.charUtils import isUpperCaseInAlphabet
+from Language.charUtils import isLowerCaseInAlphabet
+from Language.charUtils import isPunctuationMarkInAlphabet
 from BaseUtils import BaseUtils
 
 class CharUtils(BaseUtils):
@@ -37,32 +40,50 @@ class CharUtils(BaseUtils):
         self.encoding = encoding
         self.language = language 
         
-    def isHexNumberChar(self):
+    def isHexNumber(self):
         """
         Return true if the string is a hex character
         """
-        return isHexChar(self.char, self.encoding)
+        return isHexNumber(self.char, self.encoding)
     
-    def isNaturalNumberChar(self):
+    def isNaturalNumber(self):
         """
         Return true if the string is a natural character 
         """
-        return isNaturalChar(self.char, self.encoding)
+        return isNaturalNumber(self.char, self.encoding)
     
-    def isInRomanceAlphabetChar(self):
+    def isInRomanceAlphabet(self):
         """
         Return true if the string is a romance character
         """
-        return isRomanceChar(self.char, self.encoding)
+        return isInRomanceAlphabet(self.char, self.encoding)
     
-    def isValidChar(self):
+    def isValid(self):
         """
         Return true if the string is a valid character
         """
-        return isValidChar(self.char, self.encoding)
+        return isValid(self.char, self.encoding)
     
-    def isInAlphabetChar(self):
+    def isInAlphabet(self):
         """
         Return true if the string is in an alphabet character
         """
-        return isInAlphabetChar(self.char, self.encoding, self.language)
+        return isInAlphabet(self.char, self.encoding, self.language)
+    
+    def isUpperCaseInAlphabet(self):
+        """
+        Return true if the string is upper case in alphabet character
+        """
+        return isUpperCaseInAlphabet(self.char, self.encoding, self.language)
+    
+    def isLowerCaseInAlphabet(self):
+        """
+        Return true if the string is lower case in alphabet character
+        """
+        return isLowerCaseInAlphabet(self.char, self.encoding, self.language)
+    
+    def isPunctuationMarkInAlphabet(self):
+        """
+        Return true if the string is a punctuation mark alphabet character
+        """
+        return isPunctuationMarkInAlphabet(self.char, self.encoding, self.language)

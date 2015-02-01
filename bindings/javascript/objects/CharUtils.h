@@ -41,11 +41,14 @@ private:
 	static v8::Handle<v8::Value> getLanguageEncodings(v8::Local<v8::String> name, const v8::AccessorInfo & info);
 
 	// The character utils interface
-	static v8::Handle<v8::Value> isHexNumberChar(const v8::Arguments & args);
-	static v8::Handle<v8::Value> isNaturalNumberChar(const v8::Arguments & args);
-	static v8::Handle<v8::Value> isValidChar(const v8::Arguments & args);
-	static v8::Handle<v8::Value> isInAlphabetChar(const v8::Arguments & args);
-	static v8::Handle<v8::Value> isInRomanceAlphabetChar(const v8::Arguments & args);
+	static v8::Handle<v8::Value> isHexNumber(const v8::Arguments & args);
+	static v8::Handle<v8::Value> isNaturalNumber(const v8::Arguments & args);
+	static v8::Handle<v8::Value> isValid(const v8::Arguments & args);
+	static v8::Handle<v8::Value> isInAlphabet(const v8::Arguments & args);
+	static v8::Handle<v8::Value> isInRomanceAlphabet(const v8::Arguments & args);
+	static v8::Handle<v8::Value> isLowerCaseInAlphabet(const v8::Arguments & args);
+	static v8::Handle<v8::Value> isUpperCaseInAlphabet(const v8::Arguments & args);
+	static v8::Handle<v8::Value> isPunctuationMarkInAlphabet(const v8::Arguments & args);
 };
 
 #endif
