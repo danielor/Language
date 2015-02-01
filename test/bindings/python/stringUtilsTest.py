@@ -25,6 +25,9 @@ from Language.stringUtils import isHexNumber
 from Language.stringUtils import isValid
 from Language.stringUtils import isInRomanceAlphabet
 from Language.stringUtils import isInAlphabet
+from Language.stringUtils import isUpperCaseInAlphabet
+from Language.stringUtils import isLowerCaseInAlphabet
+from Language.stringUtils import isPunctuationMarkInAlphabet
 from LanguageUtils.StringUtils import StringUtils
 
 class StringUtilsTestCase(unittest.TestCase):
@@ -102,6 +105,46 @@ class StringUtilsTestCase(unittest.TestCase):
         self.assertFalse(isInAlphabet("0123456789", sEncodings['ASCII'], lEncodings['ENGLISH']))
         self.assertTrue(isInAlphabet("g", sEncodings['ASCII'], lEncodings['ENGLISH']))
     
+    def test_isUpperCaseInAlphabet(self):
+        """
+        Test the string utils is in alphabet
+        """
+        sEncodings = StringUtils.stringEncodings()
+        lEncodings = StringUtils.languageEncodings()
+        
+        self.assertFalse(isUpperCaseInAlphabet("abcdef", sEncodings['ASCII'], lEncodings['ENGLISH']))
+        self.assertTrue(isUpperCaseInAlphabet("ABCDEF", sEncodings['ASCII'], lEncodings['ENGLISH']))
+        self.assertFalse(isUpperCaseInAlphabet("0123456789", sEncodings['ASCII'], lEncodings['ENGLISH']))
+        self.assertFalse(isUpperCaseInAlphabet("g", sEncodings['ASCII'], lEncodings['ENGLISH']))
+        self.assertTrue(isUpperCaseInAlphabet("G", sEncodings['ASCII'], lEncodings['ENGLISH']))
+        
+    def test_isLowerCaseInAlphabet(self):
+        """
+        Test the string utils is in alphabet
+        """
+        sEncodings = StringUtils.stringEncodings()
+        lEncodings = StringUtils.languageEncodings()
+        
+        self.assertTrue(isLowerCaseInAlphabet("abcdef", sEncodings['ASCII'], lEncodings['ENGLISH']))
+        self.assertFalse(isLowerCaseInAlphabet("ABCDEF", sEncodings['ASCII'], lEncodings['ENGLISH']))
+        self.assertFalse(isLowerCaseInAlphabet("0123456789", sEncodings['ASCII'], lEncodings['ENGLISH']))
+        self.assertTrue(isLowerCaseInAlphabet("g", sEncodings['ASCII'], lEncodings['ENGLISH']))
+        self.assertFalse(isLowerCaseInAlphabet("G", sEncodings['ASCII'], lEncodings['ENGLISH']))
+    
+    def test_isPunctuationMarkInAlphabet(self):
+        """
+        Test the string utils is in alphabet
+        """
+        sEncodings = StringUtils.stringEncodings()
+        lEncodings = StringUtils.languageEncodings()
+        
+        self.assertFalse(isPunctuationMarkInAlphabet("abcdef", sEncodings['ASCII'], lEncodings['ENGLISH']))
+        self.assertFalse(isPunctuationMarkInAlphabet("ABCDEF", sEncodings['ASCII'], lEncodings['ENGLISH']))
+        self.assertFalse(isPunctuationMarkInAlphabet("0123456789", sEncodings['ASCII'], lEncodings['ENGLISH']))
+        self.assertFalse(isPunctuationMarkInAlphabet("g", sEncodings['ASCII'], lEncodings['ENGLISH']))
+        self.assertFalse(isPunctuationMarkInAlphabet("G", sEncodings['ASCII'], lEncodings['ENGLISH']))
+        self.assertTrue(isPunctuationMarkInAlphabet(",", sEncodings['ASCII'], lEncodings['ENGLISH']))
+    
     def test_stringUtils(self):
         """
         Test the string utils around the Language functional interface
@@ -114,6 +157,9 @@ class StringUtilsTestCase(unittest.TestCase):
         self.assertTrue(s.isValid())
         self.assertFalse(s.isInRomanceAlphabet())
         self.assertFalse(s.isInAlphabet())
+        self.assertFalse(s.isUpperCaseInAlphabet())
+        self.assertFalse(s.isLowerCaseInAlphabet())
+        self.assertFalse(s.isPunctuationMarkInAlphabet())
         
 if __name__=='__main__':
     unittest.main()

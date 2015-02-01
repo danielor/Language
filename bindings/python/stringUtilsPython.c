@@ -362,7 +362,7 @@ static PyMethodDef stringutils_methods[] = {
 		{"isInAlphabet", py_stringutils_isInAlphabet, METH_VARARGS, "Is the sequence of text part of an alphabet?"},
 		{"isUpperCaseInAlphabet", py_stringutils_isUpperCaseInAlphabetSequence, METH_VARARGS, "Is the sequence of text part of the upper case of an alphabet?"},
 		{"isLowerCaseInAlphabet", py_stringutils_isLowerCaseInAlphabetSequence, METH_VARARGS, "Is the sequence of text part of the lower case of an alphabet?"},
-		{"isPunctuationMarkInAlphabet",py_stringutils_isPunctuationMarkInAlphabet, METH_VARARGS, "Is the sequence of text a punctuation makr in an alphabet?"},
+		{"isPunctuationMarkInAlphabet",py_stringutils_isPunctuationMarkInAlphabetSequence, METH_VARARGS, "Is the sequence of text a punctuation makr in an alphabet?"},
 		{NULL, NULL}
 };
 

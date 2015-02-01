@@ -23,6 +23,9 @@ from Language.charUtils import isNaturalNumber
 from Language.charUtils import isInRomanceAlphabet
 from Language.charUtils import isValid
 from Language.charUtils import isInAlphabet
+from Language.charUtils import isUpperCaseInAlphabet
+from Language.charUtils import isLowerCaseInAlphabet
+from Language.charUtils import isPunctuationMarkInAlphabet
 from LanguageUtils.CharUtils import CharUtils
 
 class CharUtilsTestCase(unittest.TestCase):
@@ -79,6 +82,39 @@ class CharUtilsTestCase(unittest.TestCase):
         self.assertTrue(isInAlphabet("z", encoding['ASCII'], language['ENGLISH']))
         self.assertFalse(isInAlphabet("-", encoding['ASCII'], language['ENGLISH']))
         
+    def test_isUpperCaseInAlphabet(self):
+        """
+        Test if upper case characters are in different alphabet
+        """
+        encoding = CharUtils.stringEncodings()
+        language = CharUtils.languageEncodings()
+        self.assertFalse(isInAlphabet("0", encoding['ASCII'], language['ENGLISH']))
+        self.assertFalse(isInAlphabet("9", encoding['ASCII'], language['ENGLISH']))
+        self.assertTrue(isInAlphabet("Z", encoding['ASCII'], language['ENGLISH']))
+        self.assertFalse(isInAlphabet("-", encoding['ASCII'], language['ENGLISH']))
+        
+    def test_isLowerCaseInAlphabet(self):
+        """
+        Test if upper case characters are in different alphabet
+        """
+        encoding = CharUtils.stringEncodings()
+        language = CharUtils.languageEncodings()
+        self.assertFalse(isLowerCaseInAlphabet("0", encoding['ASCII'], language['ENGLISH']))
+        self.assertFalse(isLowerCaseInAlphabet("9", encoding['ASCII'], language['ENGLISH']))
+        self.assertTrue(isLowerCaseInAlphabet("z", encoding['ASCII'], language['ENGLISH']))
+        self.assertFalse(isLowerCaseInAlphabet("-", encoding['ASCII'], language['ENGLISH']))
+      
+    def test_isPunctuationMarkInAlphabet(self):
+        """
+        Test if upper case characters are in different alphabet
+        """
+        encoding = CharUtils.stringEncodings()
+        language = CharUtils.languageEncodings()
+        self.assertFalse(isPunctuationMarkInAlphabet("0", encoding['ASCII'], language['ENGLISH']))
+        self.assertFalse(isPunctuationMarkInAlphabet("9", encoding['ASCII'], language['ENGLISH']))
+        self.assertFalse(isPunctuationMarkInAlphabet("z", encoding['ASCII'], language['ENGLISH']))
+        self.assertTrue(isPunctuationMarkInAlphabet("-", encoding['ASCII'], language['ENGLISH']))
+    
     def test_charUtils(self):
         """
         Test the character utils class
@@ -86,10 +122,14 @@ class CharUtilsTestCase(unittest.TestCase):
         encoding = CharUtils.stringEncodings()
         language = CharUtils.languageEncodings()
         charUtils = CharUtils("z", encoding['ASCII'], language['ENGLISH'])
-        self.assertFalse(charUtils.isHexNumberChar())
-        self.assertFalse(charUtils.isNaturalNumberChar())
-        self.assertTrue(charUtils.isInRomanceAlphabetChar())
-        self.assertTrue(charUtils.isValidChar())
-        self.assertTrue(charUtils.isInAlphabetChar())
+        self.assertFalse(charUtils.isHexNumber())
+        self.assertFalse(charUtils.isNaturalNumber())
+        self.assertTrue(charUtils.isInRomanceAlphabet())
+        self.assertTrue(charUtils.isValid())
+        self.assertTrue(charUtils.isInAlphabet())
+        self.assertFalse(charUtils.isUpperCaseInAlphabet())
+        self.assertTrue(charUtils.isLowerCaseInAlphabet())
+        self.assertFalse(charUtils.isPunctuationMarkInAlphabet())
+        
 if __name__ == '__main__':
     unittest.main()
