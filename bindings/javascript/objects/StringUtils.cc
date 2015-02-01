@@ -13,6 +13,7 @@
 //limitations under the License.
 #include <node.h>
 #include "StringUtils.h"
+#include "BaseUtils.h"
 #include "../../../lib/stringUtils.h"
 
 // Setup the string utils v8 constructor
@@ -137,136 +138,32 @@ v8::Handle<v8::Value> StringUtils::lengthEscaped(const v8::Arguments & args){
 
 v8::Handle<v8::Value> StringUtils::isNaturalNumber(const v8::Arguments & args){
 	v8::HandleScope scope;
-
-	// The base encoding
-	int encoding = UTF8_BINARY;
-	const char * buffer;
-	bool isValid = false;
-
-	// Get the variables from the arguments
-	if(args[0]->IsString()){
-		buffer = *v8::String::Utf8Value(args[0]);
-		isValid = true;
-	}
-	if(args[1]->IsNumber()){
-		encoding = args[1]->Uint32Value();
-	}
-
-	// Find the length if we have a valid call. If not return 0
-	int result = 0;
-	if(isValid){
-		result = isNumberSequence(buffer, encoding);
-	}
-
+	int result = checkStringInEncoding(args, isNumberSequence);
 	return scope.Close(v8::Boolean::New(result == 1));
 }
 
 v8::Handle<v8::Value> StringUtils::isHexNumber(const v8::Arguments & args){
 	v8::HandleScope scope;
-
-	// The base encoding
-	int encoding = UTF8_BINARY;
-	const char * buffer;
-	bool isValid = false;
-
-	// Get the variables from the arguments
-	if(args[0]->IsString()){
-		buffer = *v8::String::Utf8Value(args[0]);
-		isValid = true;
-	}
-	if(args[1]->IsNumber()){
-		encoding = args[1]->Uint32Value();
-	}
-
-	// Find the length if we have a valid call. If not return 0
-	int result = 0;
-	if(isValid){
-		result = isHexSequence(buffer, encoding);
-	}
-
+	int result = checkStringInEncoding(args, isHexSequence);
 	return scope.Close(v8::Boolean::New(result == 1));
 }
 
 v8::Handle<v8::Value> StringUtils::isValid(const v8::Arguments & args){
 	v8::HandleScope scope;
-
-	// The base encoding
-	int encoding = UTF8_BINARY;
-	const char * buffer;
-	bool isValid = false;
-
-	// Get the variables from the arguments
-	if(args[0]->IsString()){
-		buffer = *v8::String::Utf8Value(args[0]);
-		isValid = true;
-	}
-	if(args[1]->IsNumber()){
-		encoding = args[1]->Uint32Value();
-	}
-
-	// Find the length if we have a valid call. If not return 0
-	int result = 0;
-	if(isValid){
-		result = isValidCharacterSequence(buffer, encoding);
-	}
-
+	int result = checkStringInEncoding(args, isValidCharacterSequence);
 	return scope.Close(v8::Boolean::New(result == 1));
 }
 
 v8::Handle<v8::Value> StringUtils::isInRomanceAlphabet(const v8::Arguments & args){
 	v8::HandleScope scope;
-
-	// The base encoding
-	int encoding = UTF8_BINARY;
-	const char * buffer;
-	bool isValid = false;
-
-	// Get the variables from the arguments
-	if(args[0]->IsString()){
-		buffer = *v8::String::Utf8Value(args[0]);
-		isValid = true;
-	}
-	if(args[1]->IsNumber()){
-		encoding = args[1]->Uint32Value();
-	}
-
-	// Find the length if we have a valid call. If not return 0
-	int result = 0;
-	if(isValid){
-		result = isInRomanceAlphabetSequence(buffer, encoding);
-	}
-
+	int result = checkStringInEncoding(args, isInRomanceAlphabetSequence);
 	return scope.Close(v8::Boolean::New(result == 1));
 }
 
 
 v8::Handle<v8::Value> StringUtils::isInAlphabet(const v8::Arguments & args){
 	v8::HandleScope scope;
-
-	// The base encoding
-	int encoding = UTF8_BINARY;
-	int language = ENGLISH;
-	const char * buffer;
-	bool isValid = false;
-
-	// Get the variables from the arguments
-	if(args[0]->IsString()){
-		buffer = *v8::String::Utf8Value(args[0]);
-		isValid = true;
-	}
-	if(args[1]->IsNumber()){
-		encoding = args[1]->Uint32Value();
-	}
-	if(args[2]->IsNumber()){
-		language = args[2]->Uint32Value();
-	}
-
-	// Find the length if we have a valid call. If not return 0
-	int result = 0;
-	if(isValid){
-		result = isInAlphabetSequence(buffer, encoding, language);
-	}
-
+	int result = checkStringInEncodingAndLanguage(args, isInAlphabetSequence);
 	return scope.Close(v8::Boolean::New(result == 1));
 }
 
@@ -294,16 +191,4 @@ v8::Handle<v8::Value> StringUtils::getLanguageEncodings(v8::Local<v8::String> na
 	return scope.Close(obj);
 }
 
-// Helper function used or parsing the arguments from javascript
-void StringUtils::_parseInt(const v8::Arguments & args, int index, int * value){
-	if(args[index]->IsNumber()){
-		*value = args[index]->Uint32Value();
 
-	}
-}
-
-void StringUtils::_parseString(const v8::Arguments & args, int index, const char * value){
-	if(args[index]->IsString()){
-		 value = *v8::String::Utf8Value(args[index]);
-	}
-}
