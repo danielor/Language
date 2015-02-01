@@ -6,12 +6,13 @@
 extern "C" {
 #endif
 
+
 /*
  * Class:     LanguageCharUtils
  * Method:    isHexNumberChar
  * Signature: (Ljava/lang/String;I)B
  */
-JNIEXPORT jboolean JNICALL Java_com_Language_LanguageCharUtils_isHexNumberChar
+JNIEXPORT jboolean JNICALL Java_com_Language_LanguageCharUtils_isHexNumber
 (JNIEnv *, jobject, jstring, jint);
 
 /*
@@ -19,7 +20,7 @@ JNIEXPORT jboolean JNICALL Java_com_Language_LanguageCharUtils_isHexNumberChar
  * Method:    isHexNumberChar
  * Signature: (Ljava/lang/String;I)B
  */
-JNIEXPORT jboolean JNICALL Java_com_Language_LanguageCharUtils_isNaturalNumberChar
+JNIEXPORT jboolean JNICALL Java_com_Language_LanguageCharUtils_isNaturalNumber
 (JNIEnv *, jobject, jstring, jint);
 
 /*
@@ -27,7 +28,7 @@ JNIEXPORT jboolean JNICALL Java_com_Language_LanguageCharUtils_isNaturalNumberCh
  * Method:    isInRomanceAlphabetChar
  * Signature: (Ljava/lang/String;I)B
  */
-JNIEXPORT jboolean JNICALL Java_com_Language_LanguageCharUtils_isInRomanceAlphabetChar
+JNIEXPORT jboolean JNICALL Java_com_Language_LanguageCharUtils_isInRomanceAlphabet
 (JNIEnv *, jobject, jstring, jint);
 
 /*
@@ -35,7 +36,7 @@ JNIEXPORT jboolean JNICALL Java_com_Language_LanguageCharUtils_isInRomanceAlphab
  * Method:    isValidChar
  * Signature: (Ljava/lang/String;I)B
  */
-JNIEXPORT jboolean JNICALL Java_com_Language_LanguageCharUtils_isValidChar
+JNIEXPORT jboolean JNICALL Java_com_Language_LanguageCharUtils_isValid
 (JNIEnv *, jobject, jstring, jint);
 
 /*
@@ -43,7 +44,31 @@ JNIEXPORT jboolean JNICALL Java_com_Language_LanguageCharUtils_isValidChar
  * Method:    isInAlphabetChar
  * Signature: (Ljava/lang/String;I;I)B
  */
-JNIEXPORT jboolean JNICALL Java_com_Language_LanguageCharUtils_isInAlphabetChar
+JNIEXPORT jboolean JNICALL Java_com_Language_LanguageCharUtils_isInAlphabet
+(JNIEnv *, jobject, jstring, jint, jint);
+
+/*
+ * Class:     LanguageCharUtils
+ * Method:    isLowerCaseInAlphabet
+ * Signature: (Ljava/lang/String;I;I)B
+ */
+JNIEXPORT jboolean JNICALL Java_com_Language_LanguageCharUtils_isLowerCaseInAlphabet
+(JNIEnv *, jobject, jstring, jint, jint);
+
+/*
+ * Class:     LanguageCharUtils
+ * Method:    isInUpperCaseInAlphabet
+ * Signature: (Ljava/lang/String;I;I)B
+ */
+JNIEXPORT jboolean JNICALL Java_com_Language_LanguageCharUtils_isUpperCaseInAlphabet
+(JNIEnv *, jobject, jstring, jint, jint);
+
+/*
+ * Class:     LanguageCharUtils
+ * Method:    isPunctucationMarkInAlphabet
+ * Signature: (Ljava/lang/String;I;I)B
+ */
+JNIEXPORT jboolean JNICALL Java_com_Language_LanguageCharUtils_isPunctuationMarkInAlphabet
 (JNIEnv *, jobject, jstring, jint, jint);
 
 

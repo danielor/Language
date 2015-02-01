@@ -17,6 +17,7 @@
 #include <node.h>
 #include "objects/StringUtils.h"
 #include "objects/CharUtils.h"
+#include "objects/BaseUtils.h"
 
 
 // Setup the initialization of the node.js bindings.

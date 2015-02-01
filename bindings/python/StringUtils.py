@@ -24,6 +24,9 @@ from Language.stringUtils import isHexNumber
 from Language.stringUtils import isValid
 from Language.stringUtils import isInRomanceAlphabet
 from Language.stringUtils import isInAlphabet
+from Language.stringUtils import isUpperCaseInAlphabet
+from Language.stringUtils import isLowerCaseInAlphabet
+from Language.stringUtils import isPunctuationMarkInAlphabet
 from BaseUtils import BaseUtils
 
 class StringUtils(BaseUtils):
@@ -88,3 +91,21 @@ class StringUtils(BaseUtils):
         Return true if string is in alphabet 
         """
         return isInAlphabet(self.str, self.encoding, self.language)
+    
+    def isUpperCaseInAlphabet(self):
+        """
+        Return true if the string is upper case in alphaphet
+        """
+        return isUpperCaseInAlphabet(self.str, self.encoding, self.language)
+    
+    def isLowerCaseInAlphabet(self):
+        """
+        Return true if the string is lower case in alphabet 
+        """
+        return isLowerCaseInAlphabet(self.str, self.encoding, self.language)
+    
+    def isPunctuationMarkInAlphabet(self):
+        """
+        Return true if the string is a punctuation mark alphabet 
+        """
+        return isPunctuationMarkInAlphabet(self.str, self.encoding, self.language)

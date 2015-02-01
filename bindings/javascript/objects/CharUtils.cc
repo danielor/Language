@@ -13,6 +13,7 @@
 //limitations under the License.
 #include <node.h>
 #include "CharUtils.h"
+#include "BaseUtils.h"
 #include "../../../lib/stringUtils.h"
 
 // Setup the char utils constructor
@@ -35,16 +36,22 @@ void CharUtils::Init(v8::Handle<v8::Object> exports){
 	tpl->InstanceTemplate()->SetInternalFieldCount(1);
 
 	// Set the constructor and exporting of the v8 object
-	tpl->PrototypeTemplate()->Set(v8::String::NewSymbol("isHexNumberChar"),
-				v8::FunctionTemplate::New(isHexNumberChar)->GetFunction());
-		tpl->PrototypeTemplate()->Set(v8::String::NewSymbol("isNaturalNumberChar"),
-				v8::FunctionTemplate::New(isNaturalNumberChar)->GetFunction());
-		tpl->PrototypeTemplate()->Set(v8::String::NewSymbol("isValidChar"),
-					v8::FunctionTemplate::New(isValidChar)->GetFunction());
-		tpl->PrototypeTemplate()->Set(v8::String::NewSymbol("isInAlphabetChar"),
-				v8::FunctionTemplate::New(isInAlphabetChar)->GetFunction());
-		tpl->InstanceTemplate()->SetAccessor(v8::String::New("stringEncodings"), getStringEncodings);
-		tpl->InstanceTemplate()->SetAccessor(v8::String::New("languageEncodings"), getLanguageEncodings);
+	tpl->PrototypeTemplate()->Set(v8::String::NewSymbol("isHexNumber"),
+				v8::FunctionTemplate::New(isHexNumber)->GetFunction());
+	tpl->PrototypeTemplate()->Set(v8::String::NewSymbol("isNaturalNumber"),
+			v8::FunctionTemplate::New(isNaturalNumber)->GetFunction());
+	tpl->PrototypeTemplate()->Set(v8::String::NewSymbol("isValid"),
+				v8::FunctionTemplate::New(isValid)->GetFunction());
+	tpl->PrototypeTemplate()->Set(v8::String::NewSymbol("isInAlphabet"),
+			v8::FunctionTemplate::New(isInAlphabet)->GetFunction());
+	tpl->PrototypeTemplate()->Set(v8::String::NewSymbol("isLowerCaseInAlphabet"),
+			v8::FunctionTemplate::New(isLowerCaseInAlphabet)->GetFunction());
+	tpl->PrototypeTemplate()->Set(v8::String::NewSymbol("isUpperCaseInAlphabet"),
+			v8::FunctionTemplate::New(isUpperCaseInAlphabet)->GetFunction());
+	tpl->PrototypeTemplate()->Set(v8::String::NewSymbol("isPunctuationMarkInAlphabet"),
+			v8::FunctionTemplate::New(isPunctuationMarkInAlphabet)->GetFunction());
+	tpl->InstanceTemplate()->SetAccessor(v8::String::New("stringEncodings"), getStringEncodings);
+	tpl->InstanceTemplate()->SetAccessor(v8::String::New("languageEncodings"), getLanguageEncodings);
 
 	constructor = v8::Persistent<v8::Function>::New(tpl->GetFunction());
 	exports->Set(v8::String::NewSymbol("CharUtils"), constructor);
@@ -66,139 +73,52 @@ v8::Handle<v8::Value> CharUtils::New(const v8::Arguments & args){
 }
 
 // The main interface for characters
-v8::Handle<v8::Value> CharUtils::isHexNumberChar(const v8::Arguments & args){
+v8::Handle<v8::Value> CharUtils::isHexNumber(const v8::Arguments & args){
 	v8::HandleScope scope;
-
-	// The base encoding
-	int encoding = UTF8_BINARY;
-	const char * buffer;
-	bool isValid = false;
-
-	// Get the variables from the arguments
-	if(args[0]->IsString()){
-		buffer = *v8::String::Utf8Value(args[0]);
-		isValid = true;
-	}
-	if(args[1]->IsNumber()){
-		encoding = args[1]->Uint32Value();
-	}
-
-	// Find the length if we have a valid call. If not return 0
-	int result = 0;
-	if(isValid){
-		result = isHex(buffer, encoding);
-	}
-
+	int result = checkStringInEncoding(args, isHex);
 	return scope.Close(v8::Boolean::New(result == 1));
 }
 
-v8::Handle<v8::Value> CharUtils::isNaturalNumberChar(const v8::Arguments & args){
+v8::Handle<v8::Value> CharUtils::isNaturalNumber(const v8::Arguments & args){
 	v8::HandleScope scope;
-
-	// The base encoding
-	int encoding = UTF8_BINARY;
-	const char * buffer;
-	bool isValid = false;
-
-	// Get the variables from the arguments
-	if(args[0]->IsString()){
-		buffer = *v8::String::Utf8Value(args[0]);
-		isValid = true;
-	}
-	if(args[1]->IsNumber()){
-		encoding = args[1]->Uint32Value();
-	}
-
-	// Find the length if we have a valid call. If not return 0
-	int result = 0;
-	if(isValid){
-		result = isNumber(buffer, encoding);
-	}
-
+	int result = checkStringInEncoding(args, isNumber);
 	return scope.Close(v8::Boolean::New(result == 1));
 }
 
 
-v8::Handle<v8::Value> CharUtils::isValidChar(const v8::Arguments & args){
+v8::Handle<v8::Value> CharUtils::isValid(const v8::Arguments & args){
 	v8::HandleScope scope;
-
-	// The base encoding
-	int encoding = UTF8_BINARY;
-	const char * buffer;
-	bool isValid = false;
-
-	// Get the variables from the arguments
-	if(args[0]->IsString()){
-		buffer = *v8::String::Utf8Value(args[0]);
-		isValid = true;
-	}
-	if(args[1]->IsNumber()){
-		encoding = args[1]->Uint32Value();
-	}
-
-	// Find the length if we have a valid call. If not return 0
-	int result = 0;
-	if(isValid){
-		result = isValidCharacter(buffer, encoding);
-	}
-
+	int result = checkStringInEncoding(args, isValidCharacter);
 	return scope.Close(v8::Boolean::New(result == 1));
 }
 
-v8::Handle<v8::Value> CharUtils::isInAlphabetChar(const v8::Arguments & args){
+v8::Handle<v8::Value> CharUtils::isInAlphabet(const v8::Arguments & args){
 	v8::HandleScope scope;
-
-	// The base encoding
-	int encoding = UTF8_BINARY;
-	int language = ENGLISH;
-	const char * buffer;
-	bool isValid = false;
-
-	// Get the variables from the arguments
-	if(args[0]->IsString()){
-		buffer = *v8::String::Utf8Value(args[0]);
-		isValid = true;
-	}
-	if(args[1]->IsNumber()){
-		encoding = args[1]->Uint32Value();
-	}
-	if(args[2]->IsNumber()){
-		language = args[2]->Uint32Value();
-	}
-
-	// Find the length if we have a valid call. If not return 0
-	int result = 0;
-	if(isValid){
-		result = isInAlphabet(buffer, encoding, language);
-	}
-
+	int result = checkStringInEncodingAndLanguage(args, ::isInAlphabet);
 	return scope.Close(v8::Boolean::New(result == 1));
 }
 
-v8::Handle<v8::Value> CharUtils::isInRomanceAlphabetChar(const v8::Arguments & args){
+v8::Handle<v8::Value> CharUtils::isInRomanceAlphabet(const v8::Arguments & args){
 	v8::HandleScope scope;
+	int result = checkStringInEncoding(args, ::isInRomanceAlphabet);
+	return scope.Close(v8::Boolean::New(result == 1));
+}
 
-	// The base encoding
-	int encoding = UTF8_BINARY;
-	const char * buffer;
-	bool isValid = false;
+v8::Handle<v8::Value> CharUtils::isLowerCaseInAlphabet(const v8::Arguments & args){
+	v8::HandleScope scope;
+	int result = checkStringInEncodingAndLanguage(args, ::isLowerCaseInAlphabet);
+	return scope.Close(v8::Boolean::New(result == 1));
+}
 
-	// Get the variables from the arguments
-	if(args[0]->IsString()){
-		buffer = *v8::String::Utf8Value(args[0]);
-		isValid = true;
-	}
-	if(args[1]->IsNumber()){
-		encoding = args[1]->Uint32Value();
-	}
+v8::Handle<v8::Value> CharUtils::isUpperCaseInAlphabet(const v8::Arguments & args){
+	v8::HandleScope scope;
+	int result = checkStringInEncodingAndLanguage(args, ::isUpperCaseInAlphabet);
+	return scope.Close(v8::Boolean::New(result == 1));
+}
 
-
-	// Find the length if we have a valid call. If not return 0
-	int result = 0;
-	if(isValid){
-		result = isInRomanceAlphabet(buffer, encoding);
-	}
-
+v8::Handle<v8::Value> CharUtils::isPunctuationMarkInAlphabet(const v8::Arguments & args){
+	v8::HandleScope scope;
+	int result = checkStringInEncodingAndLanguage(args, ::isPunctuationMarkInAlphabet);
 	return scope.Close(v8::Boolean::New(result == 1));
 }
 

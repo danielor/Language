@@ -144,4 +144,73 @@ public class StringUtilsTest{
 		assertEquals("'g' is a valid english string", isValid4, true);
 		assertEquals("'Añoro' is not a valid english string", isValid5, false);
 	}
+	
+	/**
+	 * Test if it is the lower case part of the alphabet sequence
+	 */
+	@Test
+	public void testIsLowerCaseInAlphabet(){
+		LanguageStringUtils stringUtils = new LanguageStringUtils();
+		int asciiEncoding = StringEncodings.ASCII.getEncodingValue();
+		int iso8859Encoding = StringEncodings.ISO_8859_1.getEncodingValue();
+		int englishLanguage = LanguageEncodings.ENGLISH.getEncodingValue();
+		String invalidString = "Añoro";
+		boolean isValid1 = stringUtils.isLowerCaseInAlphabet("Howdy", asciiEncoding,englishLanguage);
+		boolean isValid2 = stringUtils.isLowerCaseInAlphabet("First", asciiEncoding, englishLanguage);
+		boolean isValid3 = stringUtils.isLowerCaseInAlphabet("0123456789", asciiEncoding, englishLanguage);
+		boolean isValid4 = stringUtils.isLowerCaseInAlphabet("g", asciiEncoding, englishLanguage);
+		boolean isValid5 = stringUtils.isLowerCaseInAlphabet(invalidString, iso8859Encoding, englishLanguage);
+		
+		assertEquals("'Howdy' is not a lower case english string", isValid1,false);
+		assertEquals("'First' is not a lower case english string", isValid2, false);
+		assertEquals("'0123456789' is not a lower case english string", isValid3, false);
+		assertEquals("'g' is  a lower case english string", isValid4, true);
+		assertEquals("'Añoro' is not a valid english string", isValid5, false);
+	}
+	
+	/**
+	 * Test if it is the upper case part of the alphabet sequence
+	 */
+	@Test
+	public void testIsUpperCaseInAlphabet(){
+		LanguageStringUtils stringUtils = new LanguageStringUtils();
+		int asciiEncoding = StringEncodings.ASCII.getEncodingValue();
+		int iso8859Encoding = StringEncodings.ISO_8859_1.getEncodingValue();
+		int englishLanguage = LanguageEncodings.ENGLISH.getEncodingValue();
+		String invalidString = "Añoro";
+		boolean isValid1 = stringUtils.isUpperCaseInAlphabet("Howdy", asciiEncoding,englishLanguage);
+		boolean isValid2 = stringUtils.isUpperCaseInAlphabet("First", asciiEncoding, englishLanguage);
+		boolean isValid3 = stringUtils.isUpperCaseInAlphabet("0123456789", asciiEncoding, englishLanguage);
+		boolean isValid4 = stringUtils.isUpperCaseInAlphabet("G", asciiEncoding, englishLanguage);
+		boolean isValid5 = stringUtils.isUpperCaseInAlphabet(invalidString, iso8859Encoding, englishLanguage);
+		
+		assertEquals("'Howdy' is not a upper case english string", isValid1, false);
+		assertEquals("'First' is not a upper case english string", isValid2, false);
+		assertEquals("'0123456789' is not a upper case english string", isValid3, false);
+		assertEquals("'G' is  a upper case english string", isValid4, true);
+		assertEquals("'Añoro' is not an upper english string", isValid5, false);
+	}
+	
+	/**
+	 * Test if it is a punctuation mark in an alphabet sequence
+	 */
+	@Test
+	public void testIsPunctuationMarkInAlphabet(){
+		LanguageStringUtils stringUtils = new LanguageStringUtils();
+		int asciiEncoding = StringEncodings.ASCII.getEncodingValue();
+		int iso8859Encoding = StringEncodings.ISO_8859_1.getEncodingValue();
+		int englishLanguage = LanguageEncodings.ENGLISH.getEncodingValue();
+		String invalidString = "Añoro";
+		boolean isValid1 = stringUtils.isPunctuationMarkInAlphabet("Howdy", asciiEncoding,englishLanguage);
+		boolean isValid2 = stringUtils.isPunctuationMarkInAlphabet("First", asciiEncoding, englishLanguage);
+		boolean isValid3 = stringUtils.isPunctuationMarkInAlphabet("0123456789", asciiEncoding, englishLanguage);
+		boolean isValid4 = stringUtils.isPunctuationMarkInAlphabet(",", asciiEncoding, englishLanguage);
+		boolean isValid5 = stringUtils.isPunctuationMarkInAlphabet(invalidString, iso8859Encoding, englishLanguage);
+		
+		assertEquals("'Howdy' is not a upper case english string", isValid1, false);
+		assertEquals("'First' is not a upper case english string", isValid2, false);
+		assertEquals("'0123456789' is not a upper case english string", isValid3, false);
+		assertEquals("',' is  a upper case english string", isValid4, true);
+		assertEquals("'Añoro' is not an upper english string", isValid5, false);
+	}
 }

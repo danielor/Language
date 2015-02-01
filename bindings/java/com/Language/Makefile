@@ -1,5 +1,5 @@
 J_HOME?=$(shell /usr/libexec/java_home)
-INCLUDES = -I. -I../../../../lib -I$(J_HOME)/include -I$(J_HOME)/include/linux -I$(J_HOME)/include/darwin
+INCLUDES = -I. -Ijni -I../../../../lib -I$(J_HOME)/include -I$(J_HOME)/include/linux -I$(J_HOME)/include/darwin
 
 all: shared
 
