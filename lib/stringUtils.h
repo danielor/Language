@@ -524,6 +524,28 @@ static int _isSequenceOf(int (*func)(const char *, int), const char * charSequen
 }
 
 /**
+ * Check if a sequence of character conforms to different character
+ * checks after an index
+ * @param func The function used to check
+ * @param charSequence The string to check
+ * @param encoding The encoding of the sequence
+ * @param index The index of the character
+ * @returns {0 = false, 1 = true}
+ */
+static int isSequenceAtIndex(int (*func)(const char *, int, int), const char * charSequence, int encoding,
+		int index){
+	int r;
+	if(index < 0){
+		return 0;
+	}
+	const char * characterPointer = charSequence;
+	for(r = 0; r < index; r++){
+		characterPointer++;
+	}
+	return _isSequenceOf(func, characterPointer, encoding);
+}
+
+/**
  * Check if a sequence of characters is a number in a different encodings
  * @param charSequence The character to check
  * @param encoding The encoding of the character
@@ -1146,6 +1168,29 @@ static int _isLanguageSequenceOf(int (*func)(const char *, int, int), const char
 		}
 	}
 	return 1;
+}
+
+/**
+ * Check if a character or sequence of character conforms to different
+ * character checks but with an offset
+ * @param func The function used to check
+ * @param charSequence The string to check
+ * @param encoding The encoding of the character
+ * @param language The language of the characters
+ * @param index The index of the character
+ * @returns {0 = false, 1 = true}
+ */
+static int isLanguageSequenceAtIndex(int (*func)(const char *, int, int), const char * charSequence, int encoding, int language,
+		int index){
+	int r;
+	if(index < 0){
+		return 0;
+	}
+	const char * characterPointer = charSequence;
+	for(r = 0; r < index; r++){
+		characterPointer++;
+	}
+	return _isLanguageSequenceOf(func, charSequence, encoding, language);
 }
 
 /**
