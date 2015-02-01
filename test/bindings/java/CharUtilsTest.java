@@ -144,13 +144,13 @@ public class CharUtilsTest{
 		LanguageCharUtils charUtils = new LanguageCharUtils();
 		int asciiEncoding = StringEncodings.ASCII.getEncodingValue();
 		int englishEncoding = LanguageEncodings.ENGLISH.getEncodingValue();
-		boolean isUpperCaseChar = charUtils.isLowerCaseInAlphabet(",", asciiEncoding, englishEncoding);
-		boolean isUpperCaseChar2 = charUtils.isLowerCaseInAlphabet("5", asciiEncoding, englishEncoding);
-		boolean isUpperCaseChar3 = charUtils.isLowerCaseInAlphabet("a", asciiEncoding, englishEncoding);
-		boolean isUpperCaseChar4 = charUtils.isLowerCaseInAlphabet("Z", asciiEncoding, englishEncoding);
-		assertEquals("',' is not a punctuation mark in the english alphabet", isUpperCaseChar, false);
+		boolean isUpperCaseChar = charUtils.isPunctuationMarkInAlphabet(",", asciiEncoding, englishEncoding);
+		boolean isUpperCaseChar2 = charUtils.isPunctuationMarkInAlphabet("5", asciiEncoding, englishEncoding);
+		boolean isUpperCaseChar3 = charUtils.isPunctuationMarkInAlphabet("a", asciiEncoding, englishEncoding);
+		boolean isUpperCaseChar4 = charUtils.isPunctuationMarkInAlphabet("Z", asciiEncoding, englishEncoding);
+		assertEquals("',' is not a punctuation mark in the english alphabet", isUpperCaseChar, true);
 		assertEquals("'5' is not punctuation mark in the english alphabet", isUpperCaseChar2, false);
-		assertEquals("'a' is not punctuation mark in the english alphabet", isUpperCaseChar3, true);
+		assertEquals("'a' is not punctuation mark in the english alphabet", isUpperCaseChar3, false);
 		assertEquals("'Z' is not punctuation mark in the english alphabet", isUpperCaseChar4, false);
 	}
 }

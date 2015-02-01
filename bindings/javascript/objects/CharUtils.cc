@@ -38,14 +38,20 @@ void CharUtils::Init(v8::Handle<v8::Object> exports){
 	// Set the constructor and exporting of the v8 object
 	tpl->PrototypeTemplate()->Set(v8::String::NewSymbol("isHexNumber"),
 				v8::FunctionTemplate::New(isHexNumber)->GetFunction());
-		tpl->PrototypeTemplate()->Set(v8::String::NewSymbol("isNaturalNumber"),
-				v8::FunctionTemplate::New(isNaturalNumber)->GetFunction());
-		tpl->PrototypeTemplate()->Set(v8::String::NewSymbol("isValid"),
-					v8::FunctionTemplate::New(isValid)->GetFunction());
-		tpl->PrototypeTemplate()->Set(v8::String::NewSymbol("isInAlphabet"),
-				v8::FunctionTemplate::New(isInAlphabet)->GetFunction());
-		tpl->InstanceTemplate()->SetAccessor(v8::String::New("stringEncodings"), getStringEncodings);
-		tpl->InstanceTemplate()->SetAccessor(v8::String::New("languageEncodings"), getLanguageEncodings);
+	tpl->PrototypeTemplate()->Set(v8::String::NewSymbol("isNaturalNumber"),
+			v8::FunctionTemplate::New(isNaturalNumber)->GetFunction());
+	tpl->PrototypeTemplate()->Set(v8::String::NewSymbol("isValid"),
+				v8::FunctionTemplate::New(isValid)->GetFunction());
+	tpl->PrototypeTemplate()->Set(v8::String::NewSymbol("isInAlphabet"),
+			v8::FunctionTemplate::New(isInAlphabet)->GetFunction());
+	tpl->PrototypeTemplate()->Set(v8::String::NewSymbol("isLowerCaseInAlphabet"),
+			v8::FunctionTemplate::New(isLowerCaseInAlphabet)->GetFunction());
+	tpl->PrototypeTemplate()->Set(v8::String::NewSymbol("isUpperCaseInAlphabet"),
+			v8::FunctionTemplate::New(isUpperCaseInAlphabet)->GetFunction());
+	tpl->PrototypeTemplate()->Set(v8::String::NewSymbol("isPunctuationMarkInAlphabet"),
+			v8::FunctionTemplate::New(isPunctuationMarkInAlphabet)->GetFunction());
+	tpl->InstanceTemplate()->SetAccessor(v8::String::New("stringEncodings"), getStringEncodings);
+	tpl->InstanceTemplate()->SetAccessor(v8::String::New("languageEncodings"), getLanguageEncodings);
 
 	constructor = v8::Persistent<v8::Function>::New(tpl->GetFunction());
 	exports->Set(v8::String::NewSymbol("CharUtils"), constructor);
@@ -95,6 +101,24 @@ v8::Handle<v8::Value> CharUtils::isInAlphabet(const v8::Arguments & args){
 v8::Handle<v8::Value> CharUtils::isInRomanceAlphabet(const v8::Arguments & args){
 	v8::HandleScope scope;
 	int result = checkStringInEncoding(args, ::isInRomanceAlphabet);
+	return scope.Close(v8::Boolean::New(result == 1));
+}
+
+v8::Handle<v8::Value> CharUtils::isLowerCaseInAlphabet(const v8::Arguments & args){
+	v8::HandleScope scope;
+	int result = checkStringInEncodingAndLanguage(args, ::isLowerCaseInAlphabet);
+	return scope.Close(v8::Boolean::New(result == 1));
+}
+
+v8::Handle<v8::Value> CharUtils::isUpperCaseInAlphabet(const v8::Arguments & args){
+	v8::HandleScope scope;
+	int result = checkStringInEncodingAndLanguage(args, ::isUpperCaseInAlphabet);
+	return scope.Close(v8::Boolean::New(result == 1));
+}
+
+v8::Handle<v8::Value> CharUtils::isPunctuationMarkInAlphabet(const v8::Arguments & args){
+	v8::HandleScope scope;
+	int result = checkStringInEncodingAndLanguage(args, ::isPunctuationMarkInAlphabet);
 	return scope.Close(v8::Boolean::New(result == 1));
 }
 

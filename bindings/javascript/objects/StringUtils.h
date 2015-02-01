@@ -44,6 +44,9 @@ private:
 	static v8::Handle<v8::Value> isValid(const v8::Arguments & args);
 	static v8::Handle<v8::Value> isInRomanceAlphabet(const v8::Arguments & args);
 	static v8::Handle<v8::Value> isInAlphabet(const v8::Arguments & args);
+	static v8::Handle<v8::Value> isLowerCaseInAlphabet(const v8::Arguments & args);
+	static v8::Handle<v8::Value> isUpperCaseInAlphabet(const v8::Arguments & args);
+	static v8::Handle<v8::Value> isPunctuationMarkInAlphabet(const v8::Arguments & args);
 
 	// Getters and setters
 	static v8::Handle<v8::Value> getStringEncodings(v8::Local<v8::String> name, const v8::AccessorInfo & info);

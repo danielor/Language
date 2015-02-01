@@ -52,6 +52,12 @@ void StringUtils::Init(v8::Handle<v8::Object> exports){
 			v8::FunctionTemplate::New(isInRomanceAlphabet)->GetFunction());
 	tpl->PrototypeTemplate()->Set(v8::String::NewSymbol("isInAlphabet"),
 			v8::FunctionTemplate::New(isInAlphabet)->GetFunction());
+	tpl->PrototypeTemplate()->Set(v8::String::NewSymbol("isLowerCaseInAlphabet"),
+				v8::FunctionTemplate::New(isLowerCaseInAlphabet)->GetFunction());
+	tpl->PrototypeTemplate()->Set(v8::String::NewSymbol("isUpperCaseInAlphabet"),
+			v8::FunctionTemplate::New(isUpperCaseInAlphabet)->GetFunction());
+	tpl->PrototypeTemplate()->Set(v8::String::NewSymbol("isPunctuationMarkInAlphabet"),
+			v8::FunctionTemplate::New(isPunctuationMarkInAlphabet)->GetFunction());
 	tpl->InstanceTemplate()->SetAccessor(v8::String::New("stringEncodings"), getStringEncodings);
 	tpl->InstanceTemplate()->SetAccessor(v8::String::New("languageEncodings"), getLanguageEncodings);
 
@@ -164,6 +170,24 @@ v8::Handle<v8::Value> StringUtils::isInRomanceAlphabet(const v8::Arguments & arg
 v8::Handle<v8::Value> StringUtils::isInAlphabet(const v8::Arguments & args){
 	v8::HandleScope scope;
 	int result = checkStringInEncodingAndLanguage(args, isInAlphabetSequence);
+	return scope.Close(v8::Boolean::New(result == 1));
+}
+
+v8::Handle<v8::Value> StringUtils::isLowerCaseInAlphabet(const v8::Arguments & args){
+	v8::HandleScope scope;
+	int result = checkStringInEncodingAndLanguage(args, ::isLowerCaseInAlphabetSequence);
+	return scope.Close(v8::Boolean::New(result == 1));
+}
+
+v8::Handle<v8::Value> StringUtils::isUpperCaseInAlphabet(const v8::Arguments & args){
+	v8::HandleScope scope;
+	int result = checkStringInEncodingAndLanguage(args, ::isUpperCaseInAlphabetSequence);
+	return scope.Close(v8::Boolean::New(result == 1));
+}
+
+v8::Handle<v8::Value> StringUtils::isPunctuationMarkInAlphabet(const v8::Arguments & args){
+	v8::HandleScope scope;
+	int result = checkStringInEncodingAndLanguage(args, ::isPunctuationMarkInAlphabetSequence);
 	return scope.Close(v8::Boolean::New(result == 1));
 }
 

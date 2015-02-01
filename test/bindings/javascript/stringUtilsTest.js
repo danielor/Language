@@ -186,6 +186,72 @@ var JavascriptStringUtilsTest = (function(){
 	}
 	
 	/**
+	 * Test the is lower cause in alphabet string functionality
+	 * @function testInLowerCaseAlphabet
+	 * @memberof JavascriptStringUtilsTest
+	 */
+	function testInLowerCaseAlphabet(){
+		var StringUtils = LanguageModule.StringUtils;
+		var stringUtils = new StringUtils();
+		var encodings = stringUtils.stringEncodings;
+		var lencodings = stringUtils.languageEncodings;
+		var isLowerCaseInAlphabet1 = stringUtils.isLowerCaseInAlphabet("abcdef", encodings.ASCII, lencodings.ENGLISH);
+		var isLowerCaseInAlphabet2 = stringUtils.isLowerCaseInAlphabet("ABCDEF", encodings.ASCII, lencodings.ENGLISH);
+		var isLowerCaseInAlphabet3 = stringUtils.isLowerCaseInAlphabet("0123456789", encodings.ASCII, lencodings.ENGLISH);
+		var isLowerCaseInAlphabet4 = stringUtils.isLowerCaseInAlphabet("g", encodings.ASCII, lencodings.ENGLISH);
+		var isLowerCaseInAlphabet5 = stringUtils.isLowerCaseInAlphabet("->?", encodings.ASCII, lencodings.ENGLISH);
+		expect(isLowerCaseInAlphabet1).to.eql(true);
+		expect(isLowerCaseInAlphabet2).to.eql(false);
+		expect(isLowerCaseInAlphabet3).to.eql(false);
+		expect(isLowerCaseInAlphabet4).to.eql(true);
+		expect(isLowerCaseInAlphabet5).to.eql(false);
+	}
+	
+	/**
+	 * Test the is upper cause in alphabet string functionality
+	 * @function testInLowerCaseAlphabet
+	 * @memberof JavascriptStringUtilsTest
+	 */
+	function testInUpperCaseAlphabet(){
+		var StringUtils = LanguageModule.StringUtils;
+		var stringUtils = new StringUtils();
+		var encodings = stringUtils.stringEncodings;
+		var lencodings = stringUtils.languageEncodings;
+		var isUpperCaseInAlphabet1 = stringUtils.isUpperCaseInAlphabet("abcdef", encodings.ASCII, lencodings.ENGLISH);
+		var isUpperCaseInAlphabet2 = stringUtils.isUpperCaseInAlphabet("ABCDEF", encodings.ASCII, lencodings.ENGLISH);
+		var isUpperCaseInAlphabet3 = stringUtils.isUpperCaseInAlphabet("0123456789", encodings.ASCII, lencodings.ENGLISH);
+		var isUpperCaseInAlphabet4 = stringUtils.isUpperCaseInAlphabet("g", encodings.ASCII, lencodings.ENGLISH);
+		var isUpperCaseInAlphabet5 = stringUtils.isUpperCaseInAlphabet("->?", encodings.ASCII, lencodings.ENGLISH);
+		expect(isUpperCaseInAlphabet1).to.eql(false);
+		expect(isUpperCaseInAlphabet2).to.eql(true);
+		expect(isUpperCaseInAlphabet3).to.eql(false);
+		expect(isUpperCaseInAlphabet4).to.eql(false);
+		expect(isUpperCaseInAlphabet5).to.eql(false);
+	}
+	
+	/**
+	 * Test the is punctuaion mark string functionality
+	 * @function testInPunctuationMarkAlphabet
+	 * @memberof JavascriptStringUtilsTest
+	 */
+	function testInPunctuationMarkAlphabet(){
+		var StringUtils = LanguageModule.StringUtils;
+		var stringUtils = new StringUtils();
+		var encodings = stringUtils.stringEncodings;
+		var lencodings = stringUtils.languageEncodings;
+		var isPunctuationMarkInAlphabet1 = stringUtils.isPunctuationMarkInAlphabet("abcdef", encodings.ASCII, lencodings.ENGLISH);
+		var isPunctuationMarkInAlphabet2 = stringUtils.isPunctuationMarkInAlphabet("ABCDEF", encodings.ASCII, lencodings.ENGLISH);
+		var isPunctuationMarkInAlphabet3 = stringUtils.isPunctuationMarkInAlphabet("0123456789", encodings.ASCII, lencodings.ENGLISH);
+		var isPunctuationMarkInAlphabet4 = stringUtils.isPunctuationMarkInAlphabet("g", encodings.ASCII, lencodings.ENGLISH);
+		var isPunctuationMarkInAlphabet5 = stringUtils.isPunctuationMarkInAlphabet("-,?", encodings.ASCII, lencodings.ENGLISH);
+		expect(isPunctuationMarkInAlphabet1).to.eql(false);
+		expect(isPunctuationMarkInAlphabet2).to.eql(false);
+		expect(isPunctuationMarkInAlphabet3).to.eql(false);
+		expect(isPunctuationMarkInAlphabet4).to.eql(false);
+		expect(isPunctuationMarkInAlphabet5).to.eql(true);
+	}
+	
+	/**
 	 * The public interface
 	 */
 	return {
@@ -197,7 +263,10 @@ var JavascriptStringUtilsTest = (function(){
 		testIsHexNumber:testIsHexNumber,
 		testIsValid:testIsValid,
 		testIsInRomanceAlphabet:testIsInRomanceAlphabet,
-		testIsInAlphabet:testIsInAlphabet
+		testIsInAlphabet:testIsInAlphabet,
+		testInLowerCaseAlphabet:testInLowerCaseAlphabet,
+		testInUpperCaseAlphabet:testInUpperCaseAlphabet,
+		testInPunctuationMarkAlphabet:testInPunctuationMarkAlphabet
 	}
 })();
 
@@ -211,5 +280,8 @@ describe("Test the javascript string utils", function(){
 	it('JavascriptStringUtils Is Valid Test', JavascriptStringUtilsTest.testIsValid);
 	it('JavascriptStrignUtils Is Romance Alphabet Test', JavascriptStringUtilsTest.testIsInRomanceAlphabet);
 	it('JavascriptStringUtils Is In Alphabet Test', JavascriptStringUtilsTest.testIsInAlphabet);
+	it('JavascriptStringUtils Is In LowerCase Alphabet Test', JavascriptStringUtilsTest.testInLowerCaseAlphabet);
+	it('JavascriptStringUtils Is In UpperCase Alphabet Test', JavascriptStringUtilsTest.testInUpperCaseAlphabet);
+	it('JavascriptStringUtils Is Punctiona Mark Alphabet Test', JavascriptStringUtilsTest.testInPunctuationMarkAlphabet);
 });
 
