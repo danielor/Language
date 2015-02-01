@@ -149,6 +149,65 @@ static PyObject * checkStringContent(PyObject * self, PyObject * args, int (*fun
 }
 
 /**
+ * A python function that checks if a character is of a certain type in a language
+ */
+static PyObject * checkLanguageStringContent(PyObject * self, PyObject * args, int (*func)(const char *, int, int),
+		const char * unPackString, const char * errorString){
+	// The string argument for the string utils
+	PyObject * stringArg = NULL;
+	PyObject * encodingArg = NULL;
+	PyObject * languageArg = NULL;
+
+	// The main buffere of the py utils
+	const char * buffer = NULL;
+	int encoding = UTF8_BINARY;
+	int language = ENGLISH;
+
+	// Check if the pyarg unpack tuple
+	if(!PyArg_UnpackTuple(args, unPackString, 3, 3, &stringArg, &encodingArg, &languageArg)){
+		Py_RETURN_FALSE;
+	}
+
+	// Check if the argument is a unicode string or an ascii string. For the ascii
+	// utf-8 can be encoded into the string.
+	if(PyObject_TypeCheck(stringArg, &PyString_Type)){
+		buffer = PyString_AS_STRING(stringArg);
+	}else if(PyObject_TypeCheck(stringArg, &PyUnicode_Type)){
+		buffer = PyUnicode_AS_DATA(stringArg);
+	}else{
+		PyErr_Format(PyExc_TypeError, "%s",errorString);
+		Py_RETURN_FALSE;
+	}
+	// Check for different types of encoding parameters to assert what state the length
+	// parameter should be analyzed with different constraints
+	if(encodingArg != NULL){
+		if(PyObject_TypeCheck(encodingArg, &PyInt_Type)){
+			int potentialEncoding = PyInt_AsLong(encodingArg);
+			if(potentialEncoding >= UTF8_BINARY && potentialEncoding <= ISO_8859_1){
+				encoding = potentialEncoding;
+			}
+		}
+	}
+
+	// Check for differen type of encoding parameters
+	if(languageArg == NULL){
+		if(PyObject_TypeCheck(languageArg, &PyInt_Type)){
+			int potentialEncoding = PyInt_AsLong(languageArg);
+			if(potentialEncoding >= ENGLISH && potentialEncoding <= FRENCH){
+				language = potentialEncoding;
+			}
+		}
+	}
+
+	size_t ldist = func(buffer, encoding, language);
+	if(ldist == 0){
+		Py_RETURN_FALSE;
+	}else{
+		Py_RETURN_TRUE;
+	}
+}
+
+/**
  * A python function that checks if a sequence of characters is a natural number
  * in different encodings
  */
@@ -190,58 +249,35 @@ static PyObject * py_stringutils_isInRomanceAlphabet(PyObject * self, PyObject *
  * for a specific language and encoding
  */
 static PyObject * py_stringutils_isInAlphabet(PyObject * self, PyObject * args){
-	// The string argument for the string utils
-	PyObject * stringArg = NULL;
-	PyObject * encodingArg = NULL;
-	PyObject * languageArg = NULL;
+	return checkLanguageStringContent(self, args, isInAlphabetSequence, "stringutils_isInAlphabet",
+			"Py_stringutils_length expects a string");
+}
 
-	// The main buffere of the py utils
-	const char * buffer = NULL;
-	int encoding = UTF8_BINARY;
-	int language = ENGLISH;
+/**
+ * A python function to check if a character is upper case in a certain  encoding
+ * and language
+ */
+static PyObject * py_stringutils_isUpperCaseInAlphabetSequence(PyObject * self, PyObject * args){
+	return checkLanguageStringContent(self, args, isUpperCaseInAlphabetSequence, "charutils_isUpperCaseInAlphabetSequence",
+			"py_stringutils_isUpperCaseInAlphabetSequence");
+}
 
-	// Check if the pyarg unpack tuple
-	if(!PyArg_UnpackTuple(args, "stringutils_isInAlphabet", 3, 3, &stringArg, &encodingArg, &languageArg)){
-		Py_RETURN_FALSE;
-	}
+/**
+ * A python function to check if a character is upper case in a certain  encoding
+ * and language
+ */
+static PyObject * py_stringutils_isLowerCaseInAlphabetSequence(PyObject * self, PyObject * args){
+	return checkLanguageStringContent(self, args, isLowerCaseInAlphabetSequence, "charutils_isLowerCaseInAlphabetSequence",
+			"py_stringutils_isLowerCaseInAlphabetSequence");
+}
 
-	// Check if the argument is a unicode string or an ascii string. For the ascii
-	// utf-8 can be encoded into the string.
-	if(PyObject_TypeCheck(stringArg, &PyString_Type)){
-		buffer = PyString_AS_STRING(stringArg);
-	}else if(PyObject_TypeCheck(stringArg, &PyUnicode_Type)){
-		buffer = PyUnicode_AS_DATA(stringArg);
-	}else{
-		PyErr_Format(PyExc_TypeError, "py_stringutils_isInAlphabet expects a string");
-		Py_RETURN_FALSE;
-	}
-	// Check for different types of encoding parameters to assert what state the length
-	// parameter should be analyzed with different constraints
-	if(encodingArg != NULL){
-		if(PyObject_TypeCheck(encodingArg, &PyInt_Type)){
-			int potentialEncoding = PyInt_AsLong(encodingArg);
-			if(potentialEncoding >= UTF8_BINARY && potentialEncoding <= ISO_8859_1){
-				encoding = potentialEncoding;
-			}
-		}
-	}
-
-	// Check for differen type of encoding parameters
-	if(languageArg == NULL){
-		if(PyObject_TypeCheck(languageArg, &PyInt_Type)){
-			int potentialEncoding = PyInt_AsLong(languageArg);
-			if(potentialEncoding >= ENGLISH && potentialEncoding <= FRENCH){
-				language = potentialEncoding;
-			}
-		}
-	}
-
-	size_t ldist = isInAlphabet(buffer, encoding, language);
-	if(ldist == 0){
-		Py_RETURN_FALSE;
-	}else{
-		Py_RETURN_TRUE;
-	}
+/**
+ * A python function to check if a character is a punctuation mark in a certain  encoding
+ * and language
+ */
+static PyObject * py_stringutils_isPunctuationMarkInAlphabetSequence(PyObject * self, PyObject * args){
+	return checkLanguageStringContent(self, args, isPunctuationMarkInAlphabetSequence, "stringutils_isPunctuationMarkInAlphabet",
+			"py_stringutils_isPunctuationMarkInAlphabetSequence");
 }
 
 /**
@@ -277,60 +313,38 @@ static PyObject * py_charutils_isValidCharacter(PyObject * self, PyObject * args
 }
 
 /**
+ * A python function to check if a character is upper case in a certain  encoding
+ * and language
+ */
+static PyObject * py_charutils_isUpperCaseInAlphabet(PyObject * self, PyObject * args){
+	return checkLanguageStringContent(self, args, isUpperCaseInAlphabet, "charutils_isUpperCaseInAlphabet",
+			"py_charutils_isUpperCaseInAlphabet");
+}
+
+/**
+ * A python function to check if a character is upper case in a certain  encoding
+ * and language
+ */
+static PyObject * py_charutils_isLowerCaseInAlphabet(PyObject * self, PyObject * args){
+	return checkLanguageStringContent(self, args, isLowerCaseInAlphabet, "charutils_isLowerCaseInAlphabet",
+			"py_charutils_isLowerCaseInAlphabet");
+}
+
+/**
+ * A python function to check if a character is a punctuation mark in a certain  encoding
+ * and language
+ */
+static PyObject * py_charutils_isPunctuationMarkInAlphabet(PyObject * self, PyObject * args){
+	return checkLanguageStringContent(self, args, isPunctuationMarkInAlphabet, "charutils_isPunctuationMarkInAlphabet",
+			"py_charutils_isPunctuationMarknAlphabet");
+}
+
+/**
  * A python function that checks if a character is part of a language alphabet
  */
 static PyObject * py_charutils_isInAlphabet(PyObject * self, PyObject * args){
-	// The string argument for the string utils
-	PyObject * stringArg = NULL;
-	PyObject * encodingArg = NULL;
-	PyObject * languageArg = NULL;
-
-	// The main buffere of the py utils
-	const char * buffer = NULL;
-	int encoding = UTF8_BINARY;
-	int language = ENGLISH;
-
-	// Check if the pyarg unpack tuple
-	if(!PyArg_UnpackTuple(args, "charutils_isInAlphabet", 2, 3, &stringArg, &encodingArg, &languageArg)){
-		Py_RETURN_FALSE;
-	}
-
-	// Check if the argument is a unicode string or an ascii string. For the ascii
-	// utf-8 can be encoded into the string.
-	if(PyObject_TypeCheck(stringArg, &PyString_Type)){
-		buffer = PyString_AS_STRING(stringArg);
-	}else if(PyObject_TypeCheck(stringArg, &PyUnicode_Type)){
-		buffer = PyUnicode_AS_DATA(stringArg);
-	}else{
-		PyErr_Format(PyExc_TypeError, "Py_charutils_isInAlphabet expects a string");
-		Py_RETURN_FALSE;
-	}
-	// Check for different types of encoding parameters to assert what state the length
-	// parameter should be analyzed with different constraints
-	if(encodingArg != NULL){
-		if(PyObject_TypeCheck(encodingArg, &PyInt_Type)){
-			int potentialEncoding = PyInt_AsLong(encodingArg);
-			if(potentialEncoding >= UTF8_BINARY && potentialEncoding <= ISO_8859_1){
-				encoding = potentialEncoding;
-			}
-		}
-	}
-
-	if(languageArg != NULL){
-		if(PyObject_TypeCheck(languageArg, &PyInt_Type)){
-			int potentialLanguage = PyInt_AsLong(languageArg);
-			if(potentialLanguage >= UTF8_BINARY && potentialLanguage <= ISO_8859_1){
-				language = potentialLanguage;
-			}
-		}
-	}
-
-	size_t ldist = isInAlphabet(buffer, encoding, language);
-	if(ldist == 0){
-		Py_RETURN_FALSE;
-	}else{
-		Py_RETURN_TRUE;
-	}
+	return checkLanguageStringContent(self, args, isInAlphabet, "charutils_isInAlphabet",
+				"Py_charutils_isInAlphabet expects a string");
 }
 
 
@@ -346,6 +360,9 @@ static PyMethodDef stringutils_methods[] = {
 		{"isValid",py_stringutils_isValid, METH_VARARGS, "Is the sequence of text all valid characters?"},
 		{"isInRomanceAlphabet", py_stringutils_isInRomanceAlphabet, METH_VARARGS, "Is the sequence text part of the romance alphabet? "},
 		{"isInAlphabet", py_stringutils_isInAlphabet, METH_VARARGS, "Is the sequence of text part of an alphabet?"},
+		{"isUpperCaseInAlphabet", py_stringutils_isUpperCaseInAlphabetSequence, METH_VARARGS, "Is the sequence of text part of the upper case of an alphabet?"},
+		{"isLowerCaseInAlphabet", py_stringutils_isLowerCaseInAlphabetSequence, METH_VARARGS, "Is the sequence of text part of the lower case of an alphabet?"},
+		{"isPunctuationMarkInAlphabet",py_stringutils_isPunctuationMarkInAlphabet, METH_VARARGS, "Is the sequence of text a punctuation makr in an alphabet?"},
 		{NULL, NULL}
 };
 
@@ -353,11 +370,14 @@ static PyMethodDef stringutils_methods[] = {
  * A list of all of the methods defined in the char utils module.
  */
 static PyMethodDef charutils_methods[] = {
-		{"isHexChar",py_charutils_isHexNumber, METH_VARARGS, "Is the character of text a hex number?"},
-		{"isNaturalChar",py_charutils_isNaturalNumber, METH_VARARGS, "Is the character of text a natural number?"},
-		{"isRomanceChar",py_charutils_isInRomanceAlphabet, METH_VARARGS, "Is the character part of the base romance alphabet?"},
-		{"isValidChar",py_charutils_isValidCharacter, METH_VARARGS, "Is the character a valid character in the encoding?"},
-		{"isInAlphabetChar",py_charutils_isInAlphabet, METH_VARARGS, "Is the character part of an alphabet?"},
+		{"isHexNumber",py_charutils_isHexNumber, METH_VARARGS, "Is the character of text a hex number?"},
+		{"isNaturalNumber",py_charutils_isNaturalNumber, METH_VARARGS, "Is the character of text a natural number?"},
+		{"isInRomanceAlphabet",py_charutils_isInRomanceAlphabet, METH_VARARGS, "Is the character part of the base romance alphabet?"},
+		{"isValid",py_charutils_isValidCharacter, METH_VARARGS, "Is the character a valid character in the encoding?"},
+		{"isInAlphabet",py_charutils_isInAlphabet, METH_VARARGS, "Is the character part of an alphabet?"},
+		{"isUpperCaseInAlphabet", py_charutils_isUpperCaseInAlphabet, METH_VARARGS, "Is the character part of the upper case of an alphabet?"},
+		{"isLowerCaseInAlphabet", py_charutils_isLowerCaseInAlphabet, METH_VARARGS, "Is the character part of the lower case of an alphabet?"},
+		{"isPunctuationMarkInAlphabet",py_charutils_isPunctuationMarkInAlphabet, METH_VARARGS, "Is the character a punctuation makr in an alphabet?"},
 		{NULL, NULL}
 };
 
