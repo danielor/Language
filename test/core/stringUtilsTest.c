@@ -849,6 +849,60 @@ int testIsPunctuationMarkInAlphabetSequence(){
 	return -1;
 }
 
+// A function that checks if a character is isSequenceAtIndex
+int testIsSequenceAtIndex(){
+	int r;
+
+	int numberOfTests = 4;
+	const char * buffer = "567";
+	int (*funcList[4])(const char *, int);
+	funcList[0] = isNumberSequence;
+	funcList[1] = isHexSequence;
+	funcList[2] = isInRomanceAlphabetSequence;
+	funcList[3] = isValidCharacterSequence;
+	int expectedResultList[] = {1, 1, 0, 1};
+	int indexList[] = {0, 1, 2, 1};
+
+	for(r = 0; r < 4; r++){
+		int (*func)(const char *, int, int) = funcList[r];
+		int expectedResult =  expectedResultList[r];
+		int index = indexList[r];
+
+		// Is sequence at index?
+		if(isSequenceAtIndex(func, buffer, ASCII, index) != expectedResult){
+			return 0;
+		}
+	}
+	return -1;
+}
+
+// A function that check if a charter isLanguageSequenceAtIndex
+int testIsLanguageSequenceAtIndex(){
+	int r;
+
+	int numberOfTests = 4;
+	const char * buffer = "abc";
+	int (*funcList[4])(const char *, int, int);
+	funcList[0] = isLowerCaseInAlphabetSequence;
+	funcList[1] = isUpperCaseInAlphabetSequence;
+	funcList[2] = isPunctuationMarkInAlphabetSequence;
+	funcList[3] = isInAlphabetSequence;
+	int expectedResultList[] = {1, 0, 0, 1};
+	int indexList[] = {0, 1, 2, 1};
+
+	for(r = 0; r < 4; r++){
+		int (*func)(const char *, int, int) = funcList[r];
+		int expectedResult =  expectedResultList[r];
+		int index = indexList[r];
+
+		// Is sequence at index?
+		if(isLanguageSequenceAtIndex(func, buffer, ASCII, ENGLISH, index) != expectedResult){
+			return 0;
+		}
+	}
+	return -1;
+}
+
 // A function that tests the main points of functionality associated with the
 int testStringUtils(){
 	// The success/failure count
@@ -856,21 +910,23 @@ int testStringUtils(){
 	int failureCount = 0;
 
 	int testIter = 0;
-	int numberOfTests = 28;
-	int (*test_Array[28])() = {testGetUTF8State, testStringLength, testConvertHex, testIsNumber,
+	int numberOfTests = 30;
+	int (*test_Array[30])() = {testGetUTF8State, testStringLength, testConvertHex, testIsNumber,
 			testStringLengthEscaped, testIsNumberSequence,testIsDiacriticalMarkUTF8, testIsUTF8BinaryCodePoint,
 			testIsUTFBinaryCharacterInUTFSet, testIsInRomanceAlphabet, testIsHex, testIsHexSequence,
 			testIsSpanishExtendCharacter, testIsFrenchExtendCharacter, testConvertUTF8BinaryToCodePoint,testConvertCodePointToUTF8Binary,
 			testIsInAlphabet,testConvertCodePointListToUTF8Binary,testIsValidCharacterSequence, testInRomanceAlphabetSequence,
 			testInAphabetSequence,testIsUpperCaseInAlphabet, testIsLowerCaseInAlphabet,testIsUpperCaseInAlphabetSequence,
-			testIsLowerCaseInAlphabetSequence, testGetCharacterStrideLength, testIsPunctuationMarkInAlphabet,testIsPunctuationMarkInAlphabetSequence};
-	const char * testNames[28] = {"UTF8State test", "String Length test", "Convert hex test", "Is number test",
+			testIsLowerCaseInAlphabetSequence, testGetCharacterStrideLength, testIsPunctuationMarkInAlphabet,testIsPunctuationMarkInAlphabetSequence,
+			testIsSequenceAtIndex, testIsLanguageSequenceAtIndex};
+	const char * testNames[30] = {"UTF8State test", "String Length test", "Convert hex test", "Is number test",
 			"String Length Unescaped test", "IsNumberSequence test", "TestIsDiacriticalMarkUTF8 test", "IsUTF8BinaryCodePoint test",
 			"Is UTF8 Character in Code Point Set test", "Is Romance Character test", "Is Hex Character test", "Is Hex Sequence test",
 			"Is Spanish Extended Character Test","Is French Extend Character Set", "Convert UTF8 Binary To Code Point Test","Convert Code Point to UTF8 binary",
 			"Is In Alphabet Test", "Convert Code Points to UTF8 binary","Test is valid Character sequence", "Test is In Romance Alphabet Sequence",
 			"Test Is In Aphabet Sequence", "Test is Upper Case in Alphabet", "Test is Lower Case in Alphabet", "Test is Upper Case in Alphabet Sequence",
-			"Test is Lower Case in Alphabet Sequence", "Test Get Character Stride Length", "Test Is Punctuation Mark in Alphabet","Test Is Punctuation Mark in Alphabet Sequence"};
+			"Test is Lower Case in Alphabet Sequence", "Test Get Character Stride Length", "Test Is Punctuation Mark in Alphabet","Test Is Punctuation Mark in Alphabet Sequence",
+			"Test if Sequence is at Index", "Test is Language Sequence at Index"};
 	for(testIter = 0; testIter < numberOfTests; testIter++){
 		const char * testName = testNames[testIter];
 		int (*test)() = test_Array[testIter];
