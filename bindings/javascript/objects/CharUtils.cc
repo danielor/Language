@@ -75,50 +75,50 @@ v8::Handle<v8::Value> CharUtils::New(const v8::Arguments & args){
 // The main interface for characters
 v8::Handle<v8::Value> CharUtils::isHexNumber(const v8::Arguments & args){
 	v8::HandleScope scope;
-	int result = checkStringInEncoding(args, isHex);
+	int result = checkStringInEncodingAtIndex(args, isHex);
 	return scope.Close(v8::Boolean::New(result == 1));
 }
 
 v8::Handle<v8::Value> CharUtils::isNaturalNumber(const v8::Arguments & args){
 	v8::HandleScope scope;
-	int result = checkStringInEncoding(args, isNumber);
+	int result = checkStringInEncodingAtIndex(args, isNumber);
 	return scope.Close(v8::Boolean::New(result == 1));
 }
 
 
 v8::Handle<v8::Value> CharUtils::isValid(const v8::Arguments & args){
 	v8::HandleScope scope;
-	int result = checkStringInEncoding(args, isValidCharacter);
+	int result = checkStringInEncodingAtIndex(args, isValidCharacter);
 	return scope.Close(v8::Boolean::New(result == 1));
 }
 
 v8::Handle<v8::Value> CharUtils::isInAlphabet(const v8::Arguments & args){
 	v8::HandleScope scope;
-	int result = checkStringInEncodingAndLanguage(args, ::isInAlphabet);
+	int result = checkStringInEncodingAndLanguageAtIndex(args, ::isInAlphabet);
 	return scope.Close(v8::Boolean::New(result == 1));
 }
 
 v8::Handle<v8::Value> CharUtils::isInRomanceAlphabet(const v8::Arguments & args){
 	v8::HandleScope scope;
-	int result = checkStringInEncoding(args, ::isInRomanceAlphabet);
+	int result = checkStringInEncodingAtIndex(args, ::isInRomanceAlphabet);
 	return scope.Close(v8::Boolean::New(result == 1));
 }
 
 v8::Handle<v8::Value> CharUtils::isLowerCaseInAlphabet(const v8::Arguments & args){
 	v8::HandleScope scope;
-	int result = checkStringInEncodingAndLanguage(args, ::isLowerCaseInAlphabet);
+	int result = checkStringInEncodingAndLanguageAtIndex(args, ::isLowerCaseInAlphabet);
 	return scope.Close(v8::Boolean::New(result == 1));
 }
 
 v8::Handle<v8::Value> CharUtils::isUpperCaseInAlphabet(const v8::Arguments & args){
 	v8::HandleScope scope;
-	int result = checkStringInEncodingAndLanguage(args, ::isUpperCaseInAlphabet);
+	int result = checkStringInEncodingAndLanguageAtIndex(args, ::isUpperCaseInAlphabet);
 	return scope.Close(v8::Boolean::New(result == 1));
 }
 
 v8::Handle<v8::Value> CharUtils::isPunctuationMarkInAlphabet(const v8::Arguments & args){
 	v8::HandleScope scope;
-	int result = checkStringInEncodingAndLanguage(args, ::isPunctuationMarkInAlphabet);
+	int result = checkStringInEncodingAndLanguageAtIndex(args, ::isPunctuationMarkInAlphabet);
 	return scope.Close(v8::Boolean::New(result == 1));
 }
 
