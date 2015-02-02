@@ -21,10 +21,10 @@ public class CharUtilsTest{
 		LanguageCharUtils charUtils = new LanguageCharUtils();
 		int asciiEncoding = StringEncodings.ASCII.getEncodingValue();
 
-		boolean isHexNumberChar1 = charUtils.isHexNumber("a", asciiEncoding);
-		boolean isHexNumberChar2 = charUtils.isHexNumber("A", asciiEncoding);
-		boolean isHexNumberChar3 = charUtils.isHexNumber("3", asciiEncoding);
-		boolean isHexNumberChar4 = charUtils.isHexNumber("Z", asciiEncoding);
+		boolean isHexNumberChar1 = charUtils.isHexNumber("a", asciiEncoding, 0);
+		boolean isHexNumberChar2 = charUtils.isHexNumber("A", asciiEncoding, 0);
+		boolean isHexNumberChar3 = charUtils.isHexNumber("3", asciiEncoding, 0);
+		boolean isHexNumberChar4 = charUtils.isHexNumber("Z", asciiEncoding, 0);
 		assertEquals("'a' is a hex character", isHexNumberChar1, true);
 		assertEquals("'A' is a hex character", isHexNumberChar2, true);
 		assertEquals("'3' is a hex character", isHexNumberChar3, true);
@@ -38,10 +38,10 @@ public class CharUtilsTest{
 	public void testIsNumber(){
 		LanguageCharUtils charUtils = new LanguageCharUtils();
 		int asciiEncoding = StringEncodings.ASCII.getEncodingValue();
-		boolean isNumberChar = charUtils.isNaturalNumber("0", asciiEncoding);
-		boolean isNumberChar2 = charUtils.isNaturalNumber("5", asciiEncoding);
-		boolean isNumberChar3 = charUtils.isNaturalNumber("9", asciiEncoding);
-		boolean isNumberChar4 = charUtils.isNaturalNumber("Z", asciiEncoding);
+		boolean isNumberChar = charUtils.isNaturalNumber("0", asciiEncoding, 0);
+		boolean isNumberChar2 = charUtils.isNaturalNumber("5", asciiEncoding, 0);
+		boolean isNumberChar3 = charUtils.isNaturalNumber("9", asciiEncoding, 0);
+		boolean isNumberChar4 = charUtils.isNaturalNumber("Z", asciiEncoding, 0);
 		assertEquals("'0' is a number", isNumberChar, true);
 		assertEquals("'5' is a number", isNumberChar2, true);
 		assertEquals("'9' is a number", isNumberChar3, true);
@@ -55,10 +55,10 @@ public class CharUtilsTest{
 	public void testIsValidChar(){
 		LanguageCharUtils charUtils = new LanguageCharUtils();
 		int asciiEncoding = StringEncodings.ASCII.getEncodingValue();
-		boolean isValidChar = charUtils.isValid("0", asciiEncoding);
-		boolean isValidChar2 = charUtils.isValid("5", asciiEncoding);
-		boolean isValidChar3 = charUtils.isValid("9", asciiEncoding);
-		boolean isValidChar4 = charUtils.isValid("Z", asciiEncoding);
+		boolean isValidChar = charUtils.isValid("0", asciiEncoding, 0);
+		boolean isValidChar2 = charUtils.isValid("5", asciiEncoding, 0);
+		boolean isValidChar3 = charUtils.isValid("9", asciiEncoding, 0);
+		boolean isValidChar4 = charUtils.isValid("Z", asciiEncoding, 0);
 		assertEquals("'0' is a char", isValidChar, true);
 		assertEquals("'5' is a char", isValidChar2, true);
 		assertEquals("'9' is a char", isValidChar3, true);
@@ -73,10 +73,10 @@ public class CharUtilsTest{
 		LanguageCharUtils charUtils = new LanguageCharUtils();
 		int asciiEncoding = StringEncodings.ASCII.getEncodingValue();
 		int englishLanguage  = LanguageEncodings.ENGLISH.getEncodingValue();
-		boolean isInAlphabetChar = charUtils.isInAlphabet("0", asciiEncoding, englishLanguage);
-		boolean isInAlphabetChar2 = charUtils.isInAlphabet("5", asciiEncoding, englishLanguage);
-		boolean isInAlphabetChar3 = charUtils.isInAlphabet("a", asciiEncoding, englishLanguage);
-		boolean isInAlphabetChar4 = charUtils.isInAlphabet("Z", asciiEncoding, englishLanguage);
+		boolean isInAlphabetChar = charUtils.isInAlphabet("0", asciiEncoding, englishLanguage, 0);
+		boolean isInAlphabetChar2 = charUtils.isInAlphabet("5", asciiEncoding, englishLanguage, 0);
+		boolean isInAlphabetChar3 = charUtils.isInAlphabet("a", asciiEncoding, englishLanguage, 0);
+		boolean isInAlphabetChar4 = charUtils.isInAlphabet("Z", asciiEncoding, englishLanguage, 0);
 		assertEquals("'0' is not a char in the english alphabet", isInAlphabetChar, false);
 		assertEquals("'5' is not a char in the english alphabet", isInAlphabetChar2, false);
 		assertEquals("'a' is a char in the english alphabet", isInAlphabetChar3, true);
@@ -90,10 +90,10 @@ public class CharUtilsTest{
 	public void testInRomanceChar(){
 		LanguageCharUtils charUtils = new LanguageCharUtils();
 		int asciiEncoding = StringEncodings.ASCII.getEncodingValue();
-		boolean isRomanceChar = charUtils.isInRomanceAlphabet("0", asciiEncoding);
-		boolean isRomanceChar2 = charUtils.isInRomanceAlphabet("5", asciiEncoding);
-		boolean isRomanceChar3 = charUtils.isInRomanceAlphabet("a", asciiEncoding);
-		boolean isRomanceChar4 = charUtils.isInRomanceAlphabet("Z", asciiEncoding);
+		boolean isRomanceChar = charUtils.isInRomanceAlphabet("0", asciiEncoding, 0);
+		boolean isRomanceChar2 = charUtils.isInRomanceAlphabet("5", asciiEncoding, 0);
+		boolean isRomanceChar3 = charUtils.isInRomanceAlphabet("a", asciiEncoding, 0);
+		boolean isRomanceChar4 = charUtils.isInRomanceAlphabet("Z", asciiEncoding, 0);
 		assertEquals("'0' is not a char in the romance alphabet", isRomanceChar, false);
 		assertEquals("'5' is not a char in the romance alphabet", isRomanceChar2, false);
 		assertEquals("'a' is a char in the romance alphabet", isRomanceChar3, true);
@@ -108,10 +108,10 @@ public class CharUtilsTest{
 		LanguageCharUtils charUtils = new LanguageCharUtils();
 		int asciiEncoding = StringEncodings.ASCII.getEncodingValue();
 		int englishEncoding = LanguageEncodings.ENGLISH.getEncodingValue();
-		boolean isLowerCaseChar = charUtils.isLowerCaseInAlphabet("0", asciiEncoding, englishEncoding);
-		boolean isLowerCaseChar2 = charUtils.isLowerCaseInAlphabet("5", asciiEncoding, englishEncoding);
-		boolean isLowerCaseChar3 = charUtils.isLowerCaseInAlphabet("a", asciiEncoding, englishEncoding);
-		boolean isLowerCaseChar4 = charUtils.isLowerCaseInAlphabet("Z", asciiEncoding, englishEncoding);
+		boolean isLowerCaseChar = charUtils.isLowerCaseInAlphabet("0", asciiEncoding, englishEncoding, 0);
+		boolean isLowerCaseChar2 = charUtils.isLowerCaseInAlphabet("5", asciiEncoding, englishEncoding, 0);
+		boolean isLowerCaseChar3 = charUtils.isLowerCaseInAlphabet("a", asciiEncoding, englishEncoding, 0);
+		boolean isLowerCaseChar4 = charUtils.isLowerCaseInAlphabet("Z", asciiEncoding, englishEncoding, 0);
 		assertEquals("'0' is not lower case in the english alphabet", isLowerCaseChar, false);
 		assertEquals("'5' is not lower case in the english alphabet", isLowerCaseChar2, false);
 		assertEquals("'a' is lower case in the english alphabet", isLowerCaseChar3, true);
@@ -126,10 +126,10 @@ public class CharUtilsTest{
 		LanguageCharUtils charUtils = new LanguageCharUtils();
 		int asciiEncoding = StringEncodings.ASCII.getEncodingValue();
 		int englishEncoding = LanguageEncodings.ENGLISH.getEncodingValue();
-		boolean isUpperCaseChar = charUtils.isUpperCaseInAlphabet("0", asciiEncoding, englishEncoding);
-		boolean isUpperCaseChar2 = charUtils.isUpperCaseInAlphabet("5", asciiEncoding, englishEncoding);
-		boolean isUpperCaseChar3 = charUtils.isUpperCaseInAlphabet("a", asciiEncoding, englishEncoding);
-		boolean isUpperCaseChar4 = charUtils.isUpperCaseInAlphabet("Z", asciiEncoding, englishEncoding);
+		boolean isUpperCaseChar = charUtils.isUpperCaseInAlphabet("0", asciiEncoding, englishEncoding, 0);
+		boolean isUpperCaseChar2 = charUtils.isUpperCaseInAlphabet("5", asciiEncoding, englishEncoding, 0);
+		boolean isUpperCaseChar3 = charUtils.isUpperCaseInAlphabet("a", asciiEncoding, englishEncoding, 0);
+		boolean isUpperCaseChar4 = charUtils.isUpperCaseInAlphabet("Z", asciiEncoding, englishEncoding, 0);
 		assertEquals("'0' is not upper case in the english alphabet", isUpperCaseChar, false);
 		assertEquals("'5' is not upper case in the english alphabet", isUpperCaseChar2, false);
 		assertEquals("'a' is not upper case in the english alphabet", isUpperCaseChar3, false);
@@ -144,10 +144,10 @@ public class CharUtilsTest{
 		LanguageCharUtils charUtils = new LanguageCharUtils();
 		int asciiEncoding = StringEncodings.ASCII.getEncodingValue();
 		int englishEncoding = LanguageEncodings.ENGLISH.getEncodingValue();
-		boolean isUpperCaseChar = charUtils.isPunctuationMarkInAlphabet(",", asciiEncoding, englishEncoding);
-		boolean isUpperCaseChar2 = charUtils.isPunctuationMarkInAlphabet("5", asciiEncoding, englishEncoding);
-		boolean isUpperCaseChar3 = charUtils.isPunctuationMarkInAlphabet("a", asciiEncoding, englishEncoding);
-		boolean isUpperCaseChar4 = charUtils.isPunctuationMarkInAlphabet("Z", asciiEncoding, englishEncoding);
+		boolean isUpperCaseChar = charUtils.isPunctuationMarkInAlphabet(",", asciiEncoding, englishEncoding, 0);
+		boolean isUpperCaseChar2 = charUtils.isPunctuationMarkInAlphabet("5", asciiEncoding, englishEncoding, 0);
+		boolean isUpperCaseChar3 = charUtils.isPunctuationMarkInAlphabet("a", asciiEncoding, englishEncoding, 0);
+		boolean isUpperCaseChar4 = charUtils.isPunctuationMarkInAlphabet("Z", asciiEncoding, englishEncoding, 0);
 		assertEquals("',' is not a punctuation mark in the english alphabet", isUpperCaseChar, true);
 		assertEquals("'5' is not punctuation mark in the english alphabet", isUpperCaseChar2, false);
 		assertEquals("'a' is not punctuation mark in the english alphabet", isUpperCaseChar3, false);

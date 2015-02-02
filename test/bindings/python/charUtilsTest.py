@@ -37,39 +37,39 @@ class CharUtilsTestCase(unittest.TestCase):
         Test the is hex char function 
         """
         encoding = CharUtils.stringEncodings()
-        self.assertTrue(isHexNumber("a", encoding['ASCII']))
-        self.assertTrue(isHexNumber("F", encoding['ASCII']))
-        self.assertTrue(isHexNumber("3", encoding['ASCII']))
-        self.assertFalse(isHexNumber("z", encoding['ASCII']))
+        self.assertTrue(isHexNumber("a", encoding['ASCII'], 0))
+        self.assertTrue(isHexNumber("F", encoding['ASCII'], 0))
+        self.assertTrue(isHexNumber("3", encoding['ASCII'], 0))
+        self.assertFalse(isHexNumber("z", encoding['ASCII'], 0))
 
     def test_IsNaturalChar(self):
         """
         Test the is natural char function
         """
         encoding = CharUtils.stringEncodings()
-        self.assertTrue(isNaturalNumber("0", encoding['ASCII']))
-        self.assertTrue(isNaturalNumber("9", encoding['ASCII']))
-        self.assertFalse(isNaturalNumber("z", encoding['ASCII']))
+        self.assertTrue(isNaturalNumber("0", encoding['ASCII'], 0))
+        self.assertTrue(isNaturalNumber("9", encoding['ASCII'], 0))
+        self.assertFalse(isNaturalNumber("z", encoding['ASCII'], 0))
         
     def test_IsRomanceChar(self):
         """
         Test the is romance char function
         """
         encoding = CharUtils.stringEncodings()
-        self.assertFalse(isInRomanceAlphabet("0", encoding['ASCII']))
-        self.assertFalse(isInRomanceAlphabet("9", encoding['ASCII']))
-        self.assertTrue(isInRomanceAlphabet("z", encoding['ASCII']))
-        self.assertFalse(isInRomanceAlphabet("-", encoding['ASCII']))
+        self.assertFalse(isInRomanceAlphabet("0", encoding['ASCII'], 0))
+        self.assertFalse(isInRomanceAlphabet("9", encoding['ASCII'], 0))
+        self.assertTrue(isInRomanceAlphabet("z", encoding['ASCII'], 0))
+        self.assertFalse(isInRomanceAlphabet("-", encoding['ASCII'], 0))
         
     def test_IsValidChar(self):
         """
         Test the is valid char functoin
         """
         encoding = CharUtils.stringEncodings()
-        self.assertTrue(isValid("0", encoding['ASCII']))
-        self.assertTrue(isValid("9", encoding['ASCII']))
-        self.assertTrue(isValid("z", encoding['ASCII']))
-        self.assertTrue(isValid("-", encoding['ASCII']))
+        self.assertTrue(isValid("0", encoding['ASCII'], 0))
+        self.assertTrue(isValid("9", encoding['ASCII'], 0))
+        self.assertTrue(isValid("z", encoding['ASCII'], 0))
+        self.assertTrue(isValid("-", encoding['ASCII'], 0))
         
     def test_IsInAlphabetChar(self):
         """
@@ -77,10 +77,10 @@ class CharUtilsTestCase(unittest.TestCase):
         """
         encoding = CharUtils.stringEncodings()
         language = CharUtils.languageEncodings()
-        self.assertFalse(isInAlphabet("0", encoding['ASCII'], language['ENGLISH']))
-        self.assertFalse(isInAlphabet("9", encoding['ASCII'], language['ENGLISH']))
-        self.assertTrue(isInAlphabet("z", encoding['ASCII'], language['ENGLISH']))
-        self.assertFalse(isInAlphabet("-", encoding['ASCII'], language['ENGLISH']))
+        self.assertFalse(isInAlphabet("0", encoding['ASCII'], language['ENGLISH'], 0))
+        self.assertFalse(isInAlphabet("9", encoding['ASCII'], language['ENGLISH'], 0))
+        self.assertTrue(isInAlphabet("z", encoding['ASCII'], language['ENGLISH'], 0))
+        self.assertFalse(isInAlphabet("-", encoding['ASCII'], language['ENGLISH'], 0))
         
     def test_isUpperCaseInAlphabet(self):
         """
@@ -88,10 +88,10 @@ class CharUtilsTestCase(unittest.TestCase):
         """
         encoding = CharUtils.stringEncodings()
         language = CharUtils.languageEncodings()
-        self.assertFalse(isInAlphabet("0", encoding['ASCII'], language['ENGLISH']))
-        self.assertFalse(isInAlphabet("9", encoding['ASCII'], language['ENGLISH']))
-        self.assertTrue(isInAlphabet("Z", encoding['ASCII'], language['ENGLISH']))
-        self.assertFalse(isInAlphabet("-", encoding['ASCII'], language['ENGLISH']))
+        self.assertFalse(isInAlphabet("0", encoding['ASCII'], language['ENGLISH'], 0))
+        self.assertFalse(isInAlphabet("9", encoding['ASCII'], language['ENGLISH'], 0))
+        self.assertTrue(isInAlphabet("Z", encoding['ASCII'], language['ENGLISH'], 0))
+        self.assertFalse(isInAlphabet("-", encoding['ASCII'], language['ENGLISH'], 0))
         
     def test_isLowerCaseInAlphabet(self):
         """
@@ -99,10 +99,10 @@ class CharUtilsTestCase(unittest.TestCase):
         """
         encoding = CharUtils.stringEncodings()
         language = CharUtils.languageEncodings()
-        self.assertFalse(isLowerCaseInAlphabet("0", encoding['ASCII'], language['ENGLISH']))
-        self.assertFalse(isLowerCaseInAlphabet("9", encoding['ASCII'], language['ENGLISH']))
-        self.assertTrue(isLowerCaseInAlphabet("z", encoding['ASCII'], language['ENGLISH']))
-        self.assertFalse(isLowerCaseInAlphabet("-", encoding['ASCII'], language['ENGLISH']))
+        self.assertFalse(isLowerCaseInAlphabet("0", encoding['ASCII'], language['ENGLISH'], 0))
+        self.assertFalse(isLowerCaseInAlphabet("9", encoding['ASCII'], language['ENGLISH'], 0))
+        self.assertTrue(isLowerCaseInAlphabet("z", encoding['ASCII'], language['ENGLISH'], 0))
+        self.assertFalse(isLowerCaseInAlphabet("-", encoding['ASCII'], language['ENGLISH'], 0))
       
     def test_isPunctuationMarkInAlphabet(self):
         """
@@ -110,10 +110,10 @@ class CharUtilsTestCase(unittest.TestCase):
         """
         encoding = CharUtils.stringEncodings()
         language = CharUtils.languageEncodings()
-        self.assertFalse(isPunctuationMarkInAlphabet("0", encoding['ASCII'], language['ENGLISH']))
-        self.assertFalse(isPunctuationMarkInAlphabet("9", encoding['ASCII'], language['ENGLISH']))
-        self.assertFalse(isPunctuationMarkInAlphabet("z", encoding['ASCII'], language['ENGLISH']))
-        self.assertTrue(isPunctuationMarkInAlphabet("-", encoding['ASCII'], language['ENGLISH']))
+        self.assertFalse(isPunctuationMarkInAlphabet("0", encoding['ASCII'], language['ENGLISH'], 0))
+        self.assertFalse(isPunctuationMarkInAlphabet("9", encoding['ASCII'], language['ENGLISH'], 0))
+        self.assertFalse(isPunctuationMarkInAlphabet("z", encoding['ASCII'], language['ENGLISH'], 0))
+        self.assertTrue(isPunctuationMarkInAlphabet("-", encoding['ASCII'], language['ENGLISH'], 0))
     
     def test_charUtils(self):
         """
@@ -122,14 +122,14 @@ class CharUtilsTestCase(unittest.TestCase):
         encoding = CharUtils.stringEncodings()
         language = CharUtils.languageEncodings()
         charUtils = CharUtils("z", encoding['ASCII'], language['ENGLISH'])
-        self.assertFalse(charUtils.isHexNumber())
-        self.assertFalse(charUtils.isNaturalNumber())
-        self.assertTrue(charUtils.isInRomanceAlphabet())
-        self.assertTrue(charUtils.isValid())
-        self.assertTrue(charUtils.isInAlphabet())
-        self.assertFalse(charUtils.isUpperCaseInAlphabet())
-        self.assertTrue(charUtils.isLowerCaseInAlphabet())
-        self.assertFalse(charUtils.isPunctuationMarkInAlphabet())
+        self.assertFalse(charUtils.isHexNumber(0))
+        self.assertFalse(charUtils.isNaturalNumber(0))
+        self.assertTrue(charUtils.isInRomanceAlphabet(0))
+        self.assertTrue(charUtils.isValid(0))
+        self.assertTrue(charUtils.isInAlphabet(0))
+        self.assertFalse(charUtils.isUpperCaseInAlphabet(0))
+        self.assertTrue(charUtils.isLowerCaseInAlphabet(0))
+        self.assertFalse(charUtils.isPunctuationMarkInAlphabet(0))
         
 if __name__ == '__main__':
     unittest.main()

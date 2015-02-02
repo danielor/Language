@@ -40,50 +40,57 @@ class CharUtils(BaseUtils):
         self.encoding = encoding
         self.language = language 
         
-    def isHexNumber(self):
+    def isHexNumber(self, index = 0):
         """
         Return true if the string is a hex character
+        @param index: The index to check the character
         """
-        return isHexNumber(self.char, self.encoding)
+        return isHexNumber(self.char, self.encoding, index)
     
-    def isNaturalNumber(self):
+    def isNaturalNumber(self, index = 0):
         """
-        Return true if the string is a natural character 
+        Return true if the string is a natural character
+        @param index: The index to check the character
         """
-        return isNaturalNumber(self.char, self.encoding)
+        return isNaturalNumber(self.char, self.encoding, index)
     
-    def isInRomanceAlphabet(self):
+    def isInRomanceAlphabet(self, index = 0):
         """
         Return true if the string is a romance character
+        @param index: The index to check the character
         """
-        return isInRomanceAlphabet(self.char, self.encoding)
+        return isInRomanceAlphabet(self.char, self.encoding, index)
     
-    def isValid(self):
+    def isValid(self, index):
         """
         Return true if the string is a valid character
+        @param index: The index to check the character
         """
-        return isValid(self.char, self.encoding)
+        return isValid(self.char, self.encoding, index)
     
-    def isInAlphabet(self):
+    def isInAlphabet(self, index):
         """
         Return true if the string is in an alphabet character
+        @param index: The index to check the character
         """
-        return isInAlphabet(self.char, self.encoding, self.language)
+        return isInAlphabet(self.char, self.encoding, self.language, index)
     
-    def isUpperCaseInAlphabet(self):
+    def isUpperCaseInAlphabet(self, index):
         """
         Return true if the string is upper case in alphabet character
+        @param index: The index to check the character
         """
-        return isUpperCaseInAlphabet(self.char, self.encoding, self.language)
+        return isUpperCaseInAlphabet(self.char, self.encoding, self.language, index)
     
-    def isLowerCaseInAlphabet(self):
+    def isLowerCaseInAlphabet(self, index):
         """
         Return true if the string is lower case in alphabet character
+        @param index: The index to check the character
         """
-        return isLowerCaseInAlphabet(self.char, self.encoding, self.language)
+        return isLowerCaseInAlphabet(self.char, self.encoding, self.language, index)
     
-    def isPunctuationMarkInAlphabet(self):
+    def isPunctuationMarkInAlphabet(self, index):
         """
         Return true if the string is a punctuation mark alphabet character
         """
-        return isPunctuationMarkInAlphabet(self.char, self.encoding, self.language)
+        return isPunctuationMarkInAlphabet(self.char, self.encoding, self.language, index)

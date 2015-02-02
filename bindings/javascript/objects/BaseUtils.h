@@ -47,6 +47,39 @@ static int checkStringInEncoding(const v8::Arguments & args, int (*func)(const c
 }
 
 /**
+ * A helper function that checks using a func a string in a particular encoding
+ * starting at a particular index
+ * @param args The v8 arguments
+ * @param func The function to be used on the v8::Arguments
+ */
+static int checkStringInEncodingAtIndex(const v8::Arguments & args, int (*func)(const char *, int)){
+	// The base encoding
+	int encoding = UTF8_BINARY;
+	const char * buffer;
+	bool isValid = false;
+	int index = 0;
+
+	// Get the variables from the arguments
+	if(args[0]->IsString()){
+		buffer = *v8::String::Utf8Value(args[0]);
+		isValid = true;
+	}
+	if(args[1]->IsNumber()){
+		encoding = args[1]->Uint32Value();
+	}
+	if(args[2]->IsNumber()){
+		index = args[1]->Uint32Value();
+	}
+
+	// Find the length if we have a valid call. If not return 0
+	int result = 0;
+	if(isValid){
+		result = isSequenceAtIndex(func, buffer, encoding, index);
+	}
+	return result;
+}
+
+/**
  * A hlerp function that checks using a function if a string in particular encoding
  * and language has a certain characteristic
  * @param args The v8 arguments
@@ -75,6 +108,43 @@ static int checkStringInEncodingAndLanguage(const v8::Arguments & args, int (*fu
 	int result = 0;
 	if(isValid){
 		result = func(buffer, encoding, language);
+	}
+	return result;
+}
+
+/**
+ * A hlerp function that checks using a function if a string in particular encoding
+ * and language has a certain characteristic at an index
+ * @param args The v8 arguments
+ * @param func The function to be used on the v8:Arguments
+ */
+static int checkStringInEncodingAndLanguageAtIndex(const v8::Arguments & args, int (*func)(const char *, int, int)){
+	// The base encoding
+	int encoding = UTF8_BINARY;
+	int language = ENGLISH;
+	const char * buffer;
+	int index = 0;
+	bool isValid = false;
+
+	// Get the variables from the arguments
+	if(args[0]->IsString()){
+		buffer = *v8::String::Utf8Value(args[0]);
+		isValid = true;
+	}
+	if(args[1]->IsNumber()){
+		encoding = args[1]->Uint32Value();
+	}
+	if(args[2]->IsNumber()){
+		language = args[2]->Uint32Value();
+	}
+	if(args[3]->IsNumber()){
+		index = args[3]->Uint32Value();
+	}
+
+	// Find the length if we have a valid call. If not return 0
+	int result = 0;
+	if(isValid){
+		result = isLanguageSequenceAtIndex(func, buffer, encoding, language, index);
 	}
 	return result;
 }
