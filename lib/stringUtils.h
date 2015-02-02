@@ -532,7 +532,7 @@ static int _isSequenceOf(int (*func)(const char *, int), const char * charSequen
  * @param index The index of the character
  * @returns {0 = false, 1 = true}
  */
-static int isSequenceAtIndex(int (*func)(const char *, int, int), const char * charSequence, int encoding,
+static int isSequenceAtIndex(int (*func)(const char *, int), const char * charSequence, int encoding,
 		int index){
 	int r;
 	if(index < 0){
